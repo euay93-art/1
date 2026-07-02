@@ -1,0 +1,419 @@
+/* 기본 리셋 및 폰트 설정 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    user-select: none;
+}
+
+body {
+    background-color: #020617;
+    color: #f8fafc;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 스크롤바 커스텀 (럭셔리) */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0f172a; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #fbbf24; }
+
+/* 메인 래퍼 */
+.game-wrapper {
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 16px;
+    padding-bottom: 120px;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* 화면 번쩍임 효과 */
+#flash-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 999999;
+    transition: opacity 0.1s ease-out;
+}
+
+/* 탭 메뉴 */
+.game-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding-bottom: 8px;
+}
+
+.tab-btn {
+    flex-grow: 1;
+    min-width: 90px;
+    text-align: center;
+    
+    padding: 10px 18px;
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    color: #94a3b8;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    position: relative; /* 알림 뱃지를 띄우기 위한 기준점 */
+}
+
+.tab-btn:hover { 
+    background: #334155; 
+    color: #f1f5f9; 
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #fbbf24, #d97706) !important;
+    color: #ffffff !important;
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.4), inset 0 2px 2px rgba(255,255,255,0.2) !important;
+    transform: translateY(-2px);
+}
+
+.game-section { display: none; animation: fadeIn 0.4s ease forwards; }
+.game-section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* 레이아웃 뼈대 */
+.financial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+}
+
+.arena-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    background: #020617;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 10px;
+}
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+.timer-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 16px;
+}
+.timer-clock {
+    font-size: 20px;
+    font-weight: 900;
+    color: #ef4444;
+    letter-spacing: 2px;
+}
+
+/* 럭셔리 자산 카드 */
+.bank-card {
+    background: linear-gradient(145deg, #0f172a, #020617);
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    transition: transform 0.2s ease;
+}
+.bank-card:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(0,0,0,0.6); }
+.card-title { font-size: 12px; color: #94a3b8; font-weight: 700; margin-bottom: 6px; }
+.card-amount { font-size: 18px; font-weight: 900; color: #f8fafc; word-break: break-all; }
+.chip-color { color: #fbbf24; text-shadow: 0 0 10px rgba(251,191,36,0.3); }
+
+/* 버튼 액션 */
+.btn-charge-action {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white; border: none; border-radius: 8px; cursor: pointer;
+    transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+.btn-charge-action:active { transform: scale(0.95); }
+.btn-charge-action.all { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
+
+/* HUD 모니터 */
+.hud-monitor {
+    background: #000;
+    border: 2px solid #334155;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.4);
+    position: relative;
+    overflow: hidden;
+}
+.hud-monitor::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 4px, 3px 100%; pointer-events: none; opacity: 0.3;
+}
+.hud-status { font-size: 12px; color: #94a3b8; margin-bottom: 6px; font-weight: bold; }
+.hud-result { font-size: 20px; font-weight: 900; color: #f1f5f9; min-height: 30px; letter-spacing: 0.5px; }
+.hud-profit { font-size: 14px; font-weight: bold; margin-top: 6px; min-height: 21px; }
+
+/* 조작 보드 */
+.console-board {
+    background: linear-gradient(145deg, #0f172a, #020617);
+    border: 1px solid #334155; border-radius: 16px; padding: 16px; margin-bottom: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+.row-lbl { display: block; font-size: 12px; color: #94a3b8; font-weight: 700; margin-bottom: 8px; }
+
+.grid-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
+.grid-options.main-two { grid-template-columns: 1fr 1fr; }
+.btn-opt {
+    background: #1e293b; color: #f1f5f9; border: 1px solid #475569; border-radius: 10px;
+    padding: 12px 4px; font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.2s;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.btn-opt:hover { background: #334155; }
+.btn-opt.selected, .btn-opt.active {
+    background: linear-gradient(135deg, #fbbf24, #d97706); color: #fff;
+    border-color: #f59e0b; box-shadow: 0 0 10px rgba(251, 191, 36, 0.5); transform: scale(1.05);
+}
+.odds { font-size: 11px; color: #cbd5e1; font-weight: normal; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
+.btn-opt.selected .odds, .btn-opt.active .odds { color: #fff; background: rgba(0,0,0,0.2); }
+
+.cash-input-box {
+    width: 100%; padding: 14px; background: #020617; border: 1px solid #475569; border-radius: 10px;
+    color: #fbbf24; font-size: 18px; font-weight: 900; text-align: right; margin-bottom: 10px;
+    outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+}
+.cash-input-box:focus { border-color: #fbbf24; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5), 0 0 8px rgba(251,191,36,0.3); }
+
+.quick-cash-row { display: grid; gap: 6px; }
+.btn-quick { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; border-radius: 8px; padding: 8px 0; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.btn-quick:active { transform: scale(0.95); }
+.btn-quick.all-in { background: #7f1d1d; color: #fca5a5; border-color: #991b1b; }
+
+.btn-ignition {
+    width: 100%; padding: 16px; background: linear-gradient(135deg, #10b981, #059669);
+    color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 900;
+    cursor: pointer; transition: all 0.2s ease; box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4); letter-spacing: 1px;
+}
+.btn-ignition:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(16, 185, 129, 0.4); }
+.btn-ignition:disabled { background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed; }
+
+/* 슬롯머신 전용 스타일 */
+.jackpot-banner { animation: glowPulse 2s infinite alternate; }
+@keyframes glowPulse {
+    from { box-shadow: 0 0 10px rgba(251,191,36,0.2), inset 0 0 15px rgba(0,0,0,0.8); }
+    to { box-shadow: 0 0 25px rgba(251,191,36,0.6), inset 0 0 15px rgba(0,0,0,0.8); }
+}
+
+.slot-reel {
+    width: 80px; height: 180px; background: linear-gradient(to bottom, #cbd5e1, #f8fafc, #cbd5e1);
+    border-radius: 8px; border: 2px solid #94a3b8; overflow: hidden; position: relative;
+    box-shadow: inset 0 10px 15px rgba(0,0,0,0.6), inset 0 -10px 15px rgba(0,0,0,0.6);
+}
+.reel-strip { display: flex; flex-direction: column; align-items: center; width: 100%; will-change: transform; }
+.slot-symbol { width: 100%; height: 60px; display: flex; justify-content: center; align-items: center; font-size: 38px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
+
+/* 공통 패널 */
+.holdings-panel { background: linear-gradient(145deg, #0f172a, #020617); border: 1px solid #334155; border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+.holdings-title { font-size: 13px; color: #94a3b8; font-weight: 900; margin-bottom: 10px; border-bottom: 1px dashed #334155; padding-bottom: 6px; }
+
+/* 주식/코인 리스트 */
+.holding-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #0a0f1c;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+.holding-item:hover { border-color: #475569; }
+.holding-name { font-size: 14px; font-weight: 900; color: #f8fafc; }
+.holding-qty { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+.holding-actions { display: flex; align-items: center; gap: 12px; }
+.holding-value { text-align: right; font-size: 14px; font-weight: bold; color: #f1f5f9; }
+.holding-profit { font-size: 11px; margin-top: 2px; }
+.btn-sell-all {
+    background: linear-gradient(135deg, #ef4444, #dc2626); color: white;
+    border: none; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;
+}
+.btn-sell-all:hover { filter: brightness(1.2); }
+
+/* 로그 패널 */
+.history-panel { background: #020617; border-top: 1px solid #334155; padding: 16px; border-radius: 16px; margin-top: 20px; }
+.history-title { font-size: 14px; color: #cbd5e1; font-weight: bold; margin-bottom: 12px; }
+.history-items { list-style: none; font-size: 12px; color: #94a3b8; max-height: 200px; overflow-y: auto; padding-right: 4px; }
+.history-items li { padding: 8px 0; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; }
+.history-items li:last-child { border-bottom: none; }
+
+/* 블랙잭 */
+.blackjack-table { background: linear-gradient(135deg, #064e3b, #022c22); border: 4px solid #475569; border-radius: 20px; padding: 20px 10px; margin-bottom: 16px; position: relative; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); }
+.bj-zone { margin-bottom: 16px; text-align: center; }
+.zone-title { font-size: 11px; color: #fef08a; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; opacity: 0.8; }
+.card-container { display: flex; justify-content: center; gap: -20px; min-height: 100px; }
+.bj-card { width: 65px; height: 95px; background: #fff; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: 900; margin-left: -25px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); background-image: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); }
+.bj-card:first-child { margin-left: 0; }
+.card-red { color: #ef4444; }
+.card-black { color: #0f172a; }
+.card-hidden { background: repeating-linear-gradient(45deg, #1e293b, #1e293b 10px, #0f172a 10px, #0f172a 20px); color: transparent !important; }
+.score-badge { display: inline-block; background: rgba(0,0,0,0.6); color: #fff; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-top: -10px; position: relative; z-index: 5; border: 1px solid #fbbf24; }
+.bj-controls { display: grid; gap: 8px; }
+.btn-bj-action { padding: 12px 4px; border: none; border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; color: #fff; transition: all 0.2s; }
+.btn-bj-action:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-bj-action.deal { background: linear-gradient(135deg, #10b981, #059669); grid-column: span 2; font-size: 15px;}
+.btn-bj-action.hit { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.btn-bj-action.stand { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+/* 주식/코인 */
+.portfolio-summary { background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 12px; padding: 12px; margin-bottom: 12px; font-size: 13px; }
+.portfolio-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.portfolio-row:last-child { margin-bottom: 0; border-top: 1px dashed #475569; padding-top: 6px; font-weight: 900; color: #fbbf24; }
+
+.stock-selector { background: #020617; border: 1px solid #334155; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+.stock-name { font-size: 18px; font-weight: 900; color: #f8fafc; }
+.stock-price { font-size: 26px; font-weight: 900; color: #fbbf24; margin: 4px 0; }
+.stock-change { font-size: 13px; font-weight: bold; }
+.change-up { color: #ef4444; } 
+.change-down { color: #3b82f6; } 
+.change-even { color: #94a3b8; }
+.trade-input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; color: white; border-radius: 8px; font-size: 15px; font-weight: bold; margin-bottom: 10px; }
+
+/* 스폰서 뱃지 */
+.sponsor-badge {
+    background: #fbbf24;
+    color: #000;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* 애니메이션 */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.1); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.flash-win-effect { animation: flashWin 1s ease-out; }
+@keyframes flashWin {
+    0% { opacity: 0.8; background: rgba(16, 185, 129, 0.4); }
+    100% { opacity: 0; background: transparent; }
+}
+
+.flash-fail-effect { animation: flashFail 1s ease-out; }
+@keyframes flashFail {
+    0% { opacity: 0.8; background: rgba(239, 68, 68, 0.4); }
+    100% { opacity: 0; background: transparent; }
+}
+
+@keyframes equip-fail-shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px) rotate(-1deg); }
+    50% { transform: translateX(5px) rotate(1deg); }
+    75% { transform: translateX(-5px) rotate(-1deg); }
+    100% { transform: translateX(0); }
+}
+
+/* 유틸 */
+.text-green { color: #4ade80 !important; }
+.text-red { color: #f87171 !important; }
+.text-gold { color: #fbbf24 !important; }
+
+/* 탭 경고 애니메이션 */
+@keyframes tabGlowRed {
+    from { box-shadow: 0 0 5px rgba(220, 38, 38, 0.4); border-color: #991b1b; }
+    to { box-shadow: 0 0 18px rgba(239, 68, 68, 0.9); border-color: #ef4444; }
+}
+@keyframes tabGlowBlue {
+    from { box-shadow: 0 0 5px rgba(37, 99, 235, 0.4); border-color: #1e3a8a; }
+    to { box-shadow: 0 0 18px rgba(59, 130, 246, 0.9); border-color: #3b82f6; }
+}
+.tab-alert-red { animation: tabGlowRed 0.7s infinite alternate !important; color: #fca5a5 !important; }
+.tab-alert-blue { animation: tabGlowBlue 0.7s infinite alternate !important; color: #93c5fd !important; }
+
+/* ============================================================
+   ✨ 블랙 클럽 (VVIP 메신저 & 랭킹) 전용 스타일 추가
+   ============================================================ */
+
+/* 스마트폰 알림 뱃지 (읽지 않은 메시지 🔴) */
+.notification-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background-color: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+    animation: pulseBadge 1.5s infinite;
+    z-index: 10;
+}
+
+@keyframes pulseBadge {
+    0% { transform: scale(1); box-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
+    50% { transform: scale(1.15); box-shadow: 0 0 12px rgba(239, 68, 68, 0.9); }
+    100% { transform: scale(1); box-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
+}
+
+/* 랭킹 최상위권 (Top 3) 이펙트 */
+.rank-1-glow {
+    border: 2px solid #fbbf24 !important;
+    background: linear-gradient(145deg, #451a03, #020617) !important;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.4), inset 0 0 10px rgba(251, 191, 36, 0.1) !important;
+}
+
+.rank-2-glow {
+    border: 1px solid #94a3b8 !important;
+    background: linear-gradient(145deg, #1e293b, #020617) !important;
+}
+
+.rank-3-glow {
+    border: 1px solid #b45309 !important;
+    background: linear-gradient(145deg, #451a03, #020617) !important;
+}
+
+/* 메신저 말풍선 등장 애니메이션 (카톡 스타일) */
+.chat-bubble-enter {
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}

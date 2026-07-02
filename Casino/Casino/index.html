@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Casino</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#020617">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="game-wrapper">
+    <div id="flash-overlay"></div>
+
+    <div class="game-tabs" style="margin-bottom: 26px;">
+        <button type="button" id="tab-ladder" class="tab-btn active" onclick="switchGameView('ladder')">🪜 사다리</button>
+        <button type="button" id="tab-blackjack" class="tab-btn" onclick="switchGameView('blackjack')">🃏 블랙잭</button>
+        <button type="button" id="tab-roulette" class="tab-btn" onclick="switchGameView('roulette')">🎡 룰렛</button>
+        <button type="button" id="tab-slot" class="tab-btn" onclick="switchGameView('slot')">🎰 슬롯머신</button>
+        <button type="button" id="tab-market" class="tab-btn" onclick="switchGameView('market')">📈 주식</button>
+        <button type="button" id="tab-coin" class="tab-btn" onclick="switchGameView('coin')">🪙 코인</button>
+        <button type="button" id="tab-toto" class="tab-btn" onclick="switchGameView('toto')">⚽ 토토</button>
+        <button type="button" id="tab-equip" class="tab-btn" onclick="switchGameView('equip')">⚔️ 장비</button>
+        <button type="button" id="tab-arena" class="tab-btn" onclick="switchGameView('arena')">🩸 투기장</button>
+        <button type="button" id="tab-collection" class="tab-btn" onclick="switchGameView('collection')">🏆 컬렉션</button>
+        <button type="button" id="tab-blackmarket" class="tab-btn" onclick="switchGameView('blackmarket')">🕵️ 암시장</button>
+        <button type="button" id="tab-auction" class="tab-btn" onclick="switchGameView('auction')">📦 VVIP 경매장</button>
+        <button type="button" id="tab-blackclub" class="tab-btn" onclick="switchGameView('blackclub')">🏆 VVIP 랭킹</button>
+        <button type="button" id="tab-business" class="tab-btn" onclick="switchGameView('business')">🏢 지하 사업</button>
+        <button type="button" id="tab-quest" class="tab-btn" onclick="switchGameView('quest')">📋 퀘스트</button>
+        <button type="button" id="tab-stats" class="tab-btn" onclick="switchGameView('stats')">📊 통계</button>
+        <button type="button" id="tab-title" class="tab-btn" onclick="switchGameView('title')">🏅 칭호</button>
+        <button type="button" id="tab-guide" class="tab-btn" onclick="switchGameView('guide')">📖 가이드</button>
+        <button type="button" id="tab-info" class="tab-btn" onclick="switchGameView('info')">💾 저장</button>
+        <button type="button" id="tab-profile" class="tab-btn" onclick="switchGameView('profile')">👤 내 정보</button>
+    </div>
+
+    <div id="top-asset-bar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding:2px 6px; background: linear-gradient(90deg, #020617, #0f172a); border-radius:14px; border:1px solid #475569; box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: all 0.4s ease;">
+        <div id="top-title" style="font-size:14px; color:#fbbf24; font-weight:800; padding:8px 14px; letter-spacing:0.3px;">Casino</div>
+        <div style="text-align:right; padding:8px 14px;">
+            <div style="font-size:11px; color:#64748b; font-weight:600;">총 보유 자산</div>
+            <div id="top-total-asset" style="font-size:16px; color:#fbbf24; font-weight:900; line-height:1; letter-spacing:-0.5px;">20,000,000 원</div>
+        </div>
+    </div>
+
+    <details open style="margin-bottom: 22px; background: #020617; border: 1px solid #334155; border-radius: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: all 0.3s ease;">
+        <summary style="padding: 16px 18px; font-size: 15px; font-weight: 900; color: #fbbf24; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 18px; list-style: none;">
+            <div style="display:flex; align-items:center; gap:8px;">💼 자산 현황 <span style="font-size:12px; color:#94a3b8; font-weight:normal; margin-left:6px;">(펼치기/접기)</span></div>
+        </summary>
+        
+        <div style="padding: 16px 14px 14px;">
+            <div class="financial-grid" style="margin-bottom: 0; grid-template-columns: 1fr; gap: 14px;">
+                <div class="bank-card">
+                    <div class="card-title">💰 현금 (Bank)</div>
+                    <div class="card-amount" id="bank-txt">20,000,000 원</div>
+                    
+                    <div style="display:flex; flex-direction:row; gap:8px; margin-top:14px;">
+                        <button type="button" class="btn-charge-action" onclick="showChargeAmountModal()" style="font-size:13px; padding:11px 8px; font-weight:900; flex:1;">일부 환전</button>
+                        <button type="button" class="btn-charge-action all" onclick="chargeAllBankToChips()" style="font-size:13px; padding:11px 8px; font-weight:900; flex:1;">전액 환전</button>
+                    </div>
+                    <div style="font-size:10px; color:#475569; margin-top:8px; text-align:center;">현금을 칩으로 바꿔 게임에 참여하세요.</div>
+                </div>
+
+                <div class="bank-card">
+                    <div class="card-title">🪙 카지노 칩 (Chips)</div>
+                    <div class="card-amount chip-color" id="chips-txt">0 칩</div>
+                    
+                    <div style="display:flex; flex-direction:row; gap:8px; margin-top:14px;">
+                        <button type="button" class="btn-charge-action" onclick="showExchangeAmountModal()" style="background:#475569; font-size:13px; padding:11px 8px; font-weight:900; flex:1;">일부 현금화</button>
+                        <button type="button" class="btn-charge-action all" onclick="exchangeAllChipsToBank()" style="background:#b45309; font-size:13px; padding:11px 8px; font-weight:900; flex:1;">전액 현금화</button>
+                    </div>
+                    <div style="font-size:10px; color:#475569; margin-top:8px; text-align:center;">보유한 칩을 현금으로 되돌립니다.</div>
+                </div>
+
+                <div class="bank-card" style="border-color: #10b981; box-shadow: 0 10px 30px rgba(16,185,129,0.15);">
+                    <div class="card-title" style="color:#10b981;">🏦 스위스 비밀계좌 (Savings)</div>
+                    <div class="card-amount" id="savings-txt" style="color:#34d399;">0 원</div>
+                    <div id="pending-interest-txt" style="font-size:12px; color:#4ade80; margin-top:2px; font-weight:700;">대기중 이자: <span style="color:#fbbf24; font-weight:900;">0 원</span></div>
+                    
+                    <div id="savings-interest-timer" style="font-size:11px; color:#64748b; margin-top:3px; font-weight:700; background:#052e16; padding:3px 8px; border-radius:6px; display:inline-block; width:fit-content;">
+                        다음 이자까지: <span style="color:#fbbf24; font-weight:900;">--:--</span>
+                    </div>
+                    
+                    <div style="display:flex; flex-direction:row; gap:6px; margin-top:12px;">
+                        <button type="button" class="btn-charge-action" onclick="showSavingsDepositModal()" style="background:#059669; font-size:12.5px; padding:10px 6px; font-weight:900; flex:1;">예금</button>
+                        <button type="button" class="btn-charge-action" onclick="showSavingsWithdrawModal()" style="background:#475569; font-size:12.5px; padding:10px 6px; font-weight:900; flex:1;">출금</button>
+                        <button type="button" onclick="claimPendingInterest()" style="background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:10px 6px; font-size:12.5px; font-weight:900; border-radius:8px; cursor:pointer; flex:1.1;">이자 수령</button>
+                    </div>
+                    <div style="font-size:9.5px; color:#475569; margin-top:6px; text-align:center; line-height:1.3;">
+                        3분마다 0.08% 복리 이자 발생<br>(이자 수령을 눌러야 원금에 합산됩니다)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </details>
+
+    <div id="section-ladder" class="game-section active">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:8px 22px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:26px;">🪜</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24;">사다리 게임</div>
+            </div>
+        </div>
+
+        <div class="timer-banner">
+            <div style="font-size:11px; color:#94a3b8; font-weight:bold;">남은 시간:</div>
+            <div class="timer-clock" id="timer-display">00:15</div>
+        </div>
+        <div class="arena-container">
+            <canvas id="ladderCanvas" width="340" height="380"></canvas>
+        </div>
+        <div class="console-board">
+            <span class="row-lbl">시작 방향 [배당 1.95]</span>
+            <div class="grid-options main-two">
+                <button type="button" class="btn-opt" id="target-좌" onclick="selectBetTarget('좌', 1.95)">좌 <span class="odds">1.95</span></button>
+                <button type="button" class="btn-opt" id="target-우" onclick="selectBetTarget('우', 1.95)">우 <span class="odds">1.95</span></button>
+            </div>
+            <span class="row-lbl">줄 갯수 [배당 1.95]</span>
+            <div class="grid-options">
+                <button type="button" class="btn-opt" id="target-홀" onclick="selectBetTarget('홀', 1.95)">홀 <span class="odds">1.95</span></button>
+                <button type="button" class="btn-opt" id="target-짝" onclick="selectBetTarget('짝', 1.95)">짝 <span class="odds">1.95</span></button>
+                <button type="button" class="btn-opt" id="target-3줄" onclick="selectBetTarget('3줄', 1.95)">3줄 <span class="odds">1.95</span></button>
+                <button type="button" class="btn-opt" id="target-4줄" onclick="selectBetTarget('4줄', 1.95)">4줄 <span class="odds">1.95</span></button>
+            </div>
+            <span class="row-lbl">종합 조합 [배당 3.80]</span>
+            <div class="grid-options">
+                <button type="button" class="btn-opt" id="target-좌3짝" onclick="selectBetTarget('좌3짝', 3.80)">좌3짝 <span class="odds">3.80</span></button>
+                <button type="button" class="btn-opt" id="target-좌4홀" onclick="selectBetTarget('좌4홀', 3.80)">좌4홀 <span class="odds">3.80</span></button>
+                <button type="button" class="btn-opt" id="target-우3홀" onclick="selectBetTarget('우3홀', 3.80)">우3홀 <span class="odds">3.80</span></button>
+                <button type="button" class="btn-opt" id="target-우4짝" onclick="selectBetTarget('우4짝', 3.80)">우4짝 <span class="odds">3.80</span></button>
+            </div>
+
+            <span class="row-lbl">배팅 금액</span>
+            <input type="number" id="bet-amount-input" class="cash-input-box" value="100000" min="0" step="50000">
+            <div class="quick-cash-row" style="grid-template-columns: repeat(4, 1fr);">
+                <button type="button" id="ladder-10" class="btn-quick" onclick="setBetByPercent('ladder', 10)">10%</button>
+                <button type="button" id="ladder-25" class="btn-quick" onclick="setBetByPercent('ladder', 25)">25%</button>
+                <button type="button" id="ladder-50" class="btn-quick" onclick="setBetByPercent('ladder', 50)">50%</button>
+                <button type="button" class="btn-quick all-in" onclick="setBetToAllIn('ladder')">MAX</button>
+            </div>
+            <div style="margin-top:4px; text-align:right;">
+                <button type="button" class="btn-quick" style="background:#334155; padding:4px 10px; font-size:11px;" onclick="resetBetCash('ladder')">초기화</button>
+            </div>
+        </div>
+        <button type="button" id="launchLeverBtn" class="btn-ignition" onclick="manualLeverTrigger()">결과 강제 확인</button>
+    </div>
+
+    <div id="section-slot" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:8px 22px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:26px;">🎰</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24;">럭셔리 슬롯</div>
+            </div>
+        </div>
+
+        <div class="jackpot-banner" style="background: linear-gradient(180deg, #1e3a8a, #0f172a); border: 3px solid #fbbf24; border-radius: 16px; padding: 16px; margin-bottom: 20px; box-shadow: 0 0 20px rgba(251,191,36,0.3), inset 0 0 15px rgba(0,0,0,0.8); text-align: center; position: relative; overflow: hidden;">
+            <div style="font-size:12px; color:#fef08a; font-weight:900; letter-spacing:3px; margin-bottom:4px; text-shadow:0 2px 4px rgba(0,0,0,0.8);">💎 PROGRESSIVE JACKPOT 💎</div>
+            <div id="slot-jackpot-amount" style="font-size:36px; font-weight:900; color:#fbbf24; font-family:'Courier New', monospace; letter-spacing:-1px; text-shadow: 0 0 15px rgba(251,191,36,0.8), 0 4px 5px rgba(0,0,0,0.8); line-height:1;">10,000,000</div>
+        </div>
+
+        <div class="slot-machine-wrapper" style="background: linear-gradient(to bottom, #111827, #020617); padding: 20px; border-radius: 20px; border: 4px solid #475569; box-shadow: inset 0 0 30px rgba(0,0,0,0.9), 0 20px 40px rgba(0,0,0,0.6); margin-bottom: 20px; position:relative;">
+            <div id="slot-reels-container" style="display:flex; gap:10px; justify-content:center; background:#000; padding:10px; border-radius:12px; border:inset 4px #334155; position:relative; overflow:hidden; height:200px;">
+                <div class="slot-reel" id="reel-0"></div>
+                <div class="slot-reel" id="reel-1"></div>
+                <div class="slot-reel" id="reel-2"></div>
+            </div>
+        </div>
+
+        <div class="hud-monitor" style="margin-bottom:16px; min-height:70px;">
+            <div class="hud-status" id="slot-result-label">슬롯 대기 중...</div>
+            <div class="hud-result" id="slot-result-text" style="font-size:22px; color:#fbbf24;">-</div>
+            <div class="hud-profit" id="slot-profit-text"></div>
+        </div>
+
+        <div class="console-board">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span class="row-lbl">배팅 금액</span>
+                <label style="display:flex; align-items:center; gap:6px; color:#f87171; font-weight:bold; font-size:12px; cursor:pointer;">
+                    <input type="checkbox" id="slot-turbo-mode" style="accent-color:#ef4444; width:16px; height:16px;"> ⚡ 터보 모드
+                </label>
+            </div>
+            
+            <input type="number" id="slot-bet-amount" class="cash-input-box" value="10000" min="1000" step="10000">
+            
+            <div class="quick-cash-row" style="grid-template-columns: repeat(4, 1fr);">
+                <button type="button" class="btn-quick" onclick="setBetByPercent('slot', 10)">10%</button>
+                <button type="button" class="btn-quick" onclick="setBetByPercent('slot', 25)">25%</button>
+                <button type="button" class="btn-quick" onclick="setBetByPercent('slot', 50)">50%</button>
+                <button type="button" class="btn-quick all-in" onclick="setBetToAllIn('slot')">MAX</button>
+            </div>
+            <div style="margin-top:4px; text-align:right;">
+                <button type="button" class="btn-quick" style="background:#334155; padding:4px 10px; font-size:11px;" onclick="resetBetCash('slot')">초기화</button>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:14px;">
+                <button type="button" id="slot-auto-btn" class="btn-ignition" style="background: linear-gradient(135deg, #475569, #1e293b); font-size:15px; border:2px solid #64748b;" onclick="toggleAutoSlot()">🔄 오토 스핀</button>
+                <button type="button" id="slot-spin-btn" class="btn-ignition" style="background: linear-gradient(135deg, #d97706, #b45309);" onclick="spinSlot()">🎰 SPIN</button>
+            </div>
+        </div>
+    </div>
+    <div id="section-blackjack" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:8px 22px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:26px;">🃏</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24;">블랙잭</div>
+            </div>
+        </div>
+
+        <div class="blackjack-table">
+            <div class="bj-zone">
+                <div class="zone-title">DEALER HAND</div>
+                <div class="card-container" id="dealer-cards"></div>
+                <div class="score-badge" id="dealer-score-lbl">Score: 0</div>
+            </div>
+            <div class="bj-zone">
+                <div class="zone-title">PLAYER HAND</div>
+                <div class="card-container" id="player-cards"></div>
+                <div class="score-badge" id="player-score-lbl">Score: 0</div>
+            </div>
+        </div>
+        <div class="console-board" style="margin-bottom: 12px;">
+            <span class="row-lbl">배팅 금액</span>
+            <input type="number" id="bj-bet-input" class="cash-input-box" value="100000" min="0" step="50000">
+            <div class="quick-cash-row" style="grid-template-columns: repeat(4, 1fr);">
+                <button type="button" id="bj-10" class="btn-quick" onclick="setBetByPercent('bj', 10)">10%</button>
+                <button type="button" id="bj-25" class="btn-quick" onclick="setBetByPercent('bj', 25)">25%</button>
+                <button type="button" id="bj-50" class="btn-quick" onclick="setBetByPercent('bj', 50)">50%</button>
+                <button type="button" class="btn-quick all-in" onclick="setBetToAllIn('bj')">MAX</button>
+            </div>
+            <div style="margin-top:4px; text-align:right;">
+                <button type="button" class="btn-quick" style="background:#334155; padding:4px 10px; font-size:11px;" onclick="resetBetCash('bj')">초기화</button>
+            </div>
+        </div>
+        <div class="bj-controls" style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
+            <button type="button" id="bj-deal-btn" class="btn-bj-action deal" onclick="startBlackjackGame()">배팅 (DEAL) 🚀</button>
+            <button type="button" id="bj-hit-btn" class="btn-bj-action hit" onclick="triggerBlackjackHit()" disabled>카드받기 (HIT)</button>
+            <button type="button" id="bj-double-btn" class="btn-bj-action" style="background: linear-gradient(135deg, #7c3aed, #5b21b6);" onclick="triggerBlackjackDouble()" disabled>더블다운 (DOUBLE)</button>
+            <button type="button" id="bj-split-btn" class="btn-bj-action" style="background: linear-gradient(135deg, #db2777, #9d174d);" onclick="triggerBlackjackSplit()" disabled>스플릿 (SPLIT)</button>
+            <button type="button" id="bj-stand-btn" class="btn-bj-action stand" onclick="triggerBlackjackStand()" disabled style="grid-column: span 2;">차례종료 (STAND)</button>
+        </div>
+    </div>
+
+    <div id="section-roulette" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:8px 22px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:26px;">🎡</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24;">프리미엄 룰렛</div>
+                <span style="font-size:12px; color:#94a3b8; margin-left:4px;">(37 Slots)</span>
+            </div>
+        </div>
+
+        <div class="arena-container" style="padding:18px; margin-bottom:16px;">
+            <div id="roulette-wheel-wrapper" style="position: relative; width: 320px; height: 320px; margin: 0 auto;">
+                <canvas id="rouletteCanvas" width="320" height="320" style="background: #01030a; border-radius: 18px; border: 5px solid #334155; box-shadow: 0 0 0 3px #1e293b, inset 0 0 55px rgba(0,0,0,0.95), 0 25px 55px rgba(0,0,0,0.7); cursor: pointer; display: block;"></canvas>
+            </div>
+        </div>
+        
+        <div class="hud-monitor" style="margin-bottom:16px; min-height:70px;">
+            <div class="hud-status" id="roulette-result-label">결과 대기 중...</div>
+            <div class="hud-result" id="roulette-result-text" style="font-size:22px; color:#fbbf24;">-</div>
+            <div class="hud-profit" id="roulette-profit-text"></div>
+        </div>
+
+        <div class="console-board">
+            <span class="row-lbl">배팅 옵션 선택</span>
+            
+            <div style="margin-bottom:10px;">
+                <div style="font-size:11px; color:#fbbf24; font-weight:bold; margin-bottom:5px;">기본 확률 (배당 2.0x)</div>
+                <div class="grid-options" style="grid-template-columns: repeat(3, 1fr);">
+                    <button type="button" class="btn-opt" id="roulette-red" onclick="selectRouletteTarget('red', 2.0)">레드 <span class="odds">2.0x</span></button>
+                    <button type="button" class="btn-opt" id="roulette-black" onclick="selectRouletteTarget('black', 2.0)">블랙 <span class="odds">2.0x</span></button>
+                    <button type="button" class="btn-opt" id="roulette-even" onclick="selectRouletteTarget('even', 2.0)">짝수 <span class="odds">2.0x</span></button>
+                    <button type="button" class="btn-opt" id="roulette-odd" onclick="selectRouletteTarget('odd', 2.0)">홀수 <span class="odds">2.0x</span></button>
+                    <button type="button" class="btn-opt" id="roulette-low" onclick="selectRouletteTarget('low', 2.0)">1-18<span class="odds">2.0x</span></button>
+                    <button type="button" class="btn-opt" id="roulette-high" onclick="selectRouletteTarget('high', 2.0)">19-36<span class="odds">2.0x</span></button>
+                </div>
+            </div>
+            
+            <div style="margin-bottom:10px;">
+                <div style="font-size:11px; color:#fbbf24; font-weight:bold; margin-bottom:5px;">구간 확률 (배당 3.0x)</div>
+                <div class="grid-options" style="grid-template-columns: repeat(3, 1fr);">
+                    <button type="button" class="btn-opt" id="roulette-dozen1" onclick="selectRouletteTarget('dozen1', 3.0)">1~12<span class="odds">3.0x</span></button>
+                    <button type="button" class="btn-opt" id="roulette-dozen2" onclick="selectRouletteTarget('dozen2', 3.0)">13~24<span class="odds">3.0x</span></button>
+                    <button type="button" class="btn-opt" id="roulette-dozen3" onclick="selectRouletteTarget('dozen3', 3.0)">25~36<span class="odds">3.0x</span></button>
+                </div>
+            </div>
+
+            <div style="margin-bottom:8px;">
+                <div style="font-size:11px; color:#fbbf24; font-weight:bold; margin-bottom:5px;">단일 숫자 (배당 36.0x) - 역배팅</div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <input type="number" id="roulette-number-input" class="cash-input-box" placeholder="0~36 숫자 입력" min="0" max="36" step="1" style="flex:1; font-size:16px; padding:10px;">
+                    <button type="button" onclick="selectRouletteNumber()" style="padding:10px 16px; background:#7c3aed; color:white; border:none; border-radius:10px; font-weight:900; font-size:14px; white-space:nowrap;">확정</button>
+                </div>
+                <div id="roulette-selected-number" style="font-size:13px; color:#10b981; margin-top:4px; min-height:18px;"></div>
+            </div>
+
+            <span class="row-lbl">배팅 금액</span>
+            <input type="number" id="roulette-bet-amount" class="cash-input-box" value="100000" min="0" step="50000">
+            <div class="quick-cash-row" style="grid-template-columns: repeat(4, 1fr);">
+                <button type="button" class="btn-quick" onclick="setBetByPercent('roulette', 10)">10%</button>
+                <button type="button" class="btn-quick" onclick="setBetByPercent('roulette', 25)">25%</button>
+                <button type="button" class="btn-quick" onclick="setBetByPercent('roulette', 50)">50%</button>
+                <button type="button" class="btn-quick all-in" onclick="setBetToAllIn('roulette')">MAX</button>
+            </div>
+            <div style="margin-top:4px; text-align:right;">
+                <button type="button" class="btn-quick" style="background:#334155; padding:4px 10px; font-size:11px;" onclick="resetBetCash('roulette')">초기화</button>
+            </div>
+        </div>
+        <button type="button" id="roulette-spin-btn" class="btn-ignition" onclick="spinRoulette()" style="background: linear-gradient(135deg, #7c3aed, #5b21b6); box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);">
+            룰렛 스핀 (SPIN) 🚀
+        </button>
+        
+        <div style="margin-top:12px; font-size:11px; color:#64748b; text-align:left;">
+            * 배팅 옵션 선택 후 스핀 버튼을 누르세요.<br>
+            * 칩스(Chips)만 배팅에 사용할 수 있습니다. (36배당 잭팟에 도전하세요!)
+        </div>
+    </div>
+
+    <div id="section-market" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:8px 22px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:26px;">📈</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24;">주식 거래소</div>
+            </div>
+        </div>
+
+        <div class="market-wrapper">
+            <div class="portfolio-summary">
+                <div class="portfolio-row"><span style="color:#64748b;">여유 현금</span><span id="market-bank" style="font-weight:bold;">20,000,000 원</span></div>
+                <div class="portfolio-row"><span style="color:#64748b;">보유 칩스</span><span id="market-chips" style="font-weight:bold; color:#10b981;">0 칩</span></div>
+                <div class="portfolio-row"><span style="color:#64748b;">주식 평가액</span><span id="market-portfolio-value" style="font-weight:bold;">0 원</span></div>
+                <div class="portfolio-row"><span>총 추정 자산</span><span id="market-total-asset">20,000,000 원</span></div>
+            </div>
+            
+            <div style="text-align:right; margin-bottom:8px;">
+                <button type="button" onclick="resetStockMarket()" style="padding:6px 14px; font-size:11px; font-weight:800; background:#450a0a; color:#f87171; border:1px solid #7f1d1d; border-radius:8px; cursor:pointer;">시장 초기화</button>
+            </div>
+
+            <div class="stock-selector">
+                <div style="margin-bottom:8px;">
+                    <select id="stock-select" onchange="updateMarketDisplay()" style="width:100%; padding:10px; background:#0f172a; color:white; border:1px solid #334155; border-radius:10px; font-size:15px; font-weight:bold;">
+    <option value="삼성전자">삼성전자 (초우량주)</option>
+    <option value="SK하이닉스">SK하이닉스 (우량주)</option>
+    <option value="엔비디아">엔비디아 (해외주)</option>
+    <option value="네이버">네이버 (IT/플랫폼)</option>
+    <option value="유튜브">유튜브 (미디어)</option>
+    <option value="스페이스X">스페이스X (우주항공)</option>
+    <option value="숲">숲 (인터넷방송)</option>
+    <option value="치지직">치지직 (인터넷방송)</option>
+</select>
+                </div>
+                
+                <div id="stock-name-display" class="stock-name">삼성전자</div>
+                <div id="stock-price-display" class="stock-price">₩ 70,000</div>
+                <div id="stock-change-display" class="stock-change change-up">변동: 0.00%</div>
+                
+                <div style="margin-top:16px; background:#020617; border:1px solid #334155; border-radius:12px; padding:16px;">
+                    <div style="font-size:13px; color:#64748b; margin-bottom:10px; font-weight:bold;">자산 비례 즉시 매수 (현금)</div>
+                    
+                    <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:6px; margin-bottom:14px;">
+                        <button type="button" class="btn-quick" onclick="buyStockByPercent(10)" style="padding:9px 3px; font-size:12px; line-height:1.3;">10%<br><span style="font-size:10px; opacity:0.85;" id="buy-pct-10">0주</span></button>
+                        <button type="button" class="btn-quick" onclick="buyStockByPercent(30)" style="padding:9px 3px; font-size:12px; line-height:1.3;">30%<br><span style="font-size:10px; opacity:0.85;" id="buy-pct-30">0주</span></button>
+                        <button type="button" class="btn-quick" onclick="buyStockByPercent(50)" style="padding:9px 3px; font-size:12px; line-height:1.3;">50%<br><span style="font-size:10px; opacity:0.85;" id="buy-pct-50">0주</span></button>
+                        <button type="button" class="btn-quick" onclick="buyStockByPercent(70)" style="padding:9px 3px; font-size:12px; line-height:1.3;">70%<br><span style="font-size:10px; opacity:0.85;" id="buy-pct-70">0주</span></button>
+                        <button type="button" class="btn-quick all-in" onclick="buyStockByPercent(100)" style="padding:9px 3px; font-size:12px; line-height:1.3; background:#b45309; color:#fff;">100%<br><span style="font-size:10px; opacity:0.95;" id="buy-pct-100">0주</span></button>
+                    </div>
+
+                    <div style="margin-bottom:4px;"><span style="font-size:12px; color:#94a3b8;">직접 수량 입력 매수</span></div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <input type="number" id="direct-shares-input" class="trade-input" placeholder="수량 입력" style="flex:1; margin-bottom:0;" oninput="updateDirectSharesPreview()">
+                        <span style="color:#94a3b8; font-size:13px; white-space:nowrap;">주</span>
+                    </div>
+                    <div style="margin-top:5px; font-size:13px; color:#fbbf24;">필요 현금: <span id="direct-required-amount">₩ 0</span></div>
+
+                    <button type="button" onclick="executeDirectBuy()" style="margin-top:14px; width:100%; padding:14px 0; background:linear-gradient(135deg, #059669, #047857); color:white; border:none; border-radius:10px; font-size:16px; font-weight:900;">지정 수량 매수 (BUY)</button>
+                </div>
+                
+                <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center; background:#020617; border:1px solid #334155; border-radius:8px; padding:6px 12px; font-size:13px;">
+                    <div><span style="color:#64748b;">현재 턴:</span> <span id="stock-turn-display" style="color:#fbbf24; font-weight:900;">0</span></div>
+                    <div><span style="color:#64748b;">장 마감 및 갱신:</span> <span id="stock-timer-display" style="color:#ef4444; font-weight:900;">30</span><span style="color:#94a3b8;">초 전</span></div>
+                </div>
+                
+                <div id="stock-chart-container" style="margin-top:16px; background:#020617; border:1px solid #334155; border-radius:12px; padding:12px 14px; display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <div style="font-size:12px; color:#64748b; font-weight:bold;">최근 25턴 가격 추이</div>
+                        <div id="chart-price-range" style="font-size:11px; color:#94a3b8;"></div>
+                    </div>
+                    <canvas id="stock-chart" width="520" height="150" style="width:100%; max-width:520px; border-radius:6px;"></canvas>
+                </div>
+            </div>
+
+            <div class="holdings-panel" style="margin-top:12px;">
+                <div class="holdings-title">실시간 증권 뉴스</div>
+                <div id="news-log-list" style="max-height:110px; overflow-y:auto; font-size:12px;">
+                    <div style="color:#475569; font-size:12px; text-align:center; padding:8px 0;">최근 수신된 뉴스가 없습니다.</div>
+                </div>
+            </div>
+
+            <div class="holdings-panel">
+                <div class="holdings-title">나의 주식 포트폴리오</div>
+                <div id="holdings-list">
+                    <div style="color:#475569; font-size:13px; text-align:center; padding:12px 0;">보유 중인 주식이 없습니다.</div>
+                </div>
+            </div>
+            
+            <div class="holdings-panel" style="margin-top:12px;">
+                <div class="holdings-title">시장 전광판 <span style="font-size:11px; color:#94a3b8; font-weight:normal;">(시가 대비)</span></div>
+                <div id="info-stock-list" style="font-size:13px; line-height:1.5;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-coin" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:8px 22px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:26px;">🪙</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24;">암호화폐 거래소</div>
+            </div>
+        </div>
+
+        <div class="portfolio-summary">
+            <div class="portfolio-row"><span style="color:#64748b;">여유 현금</span><span id="coin-market-bank" style="font-weight:bold;">20,000,000 원</span></div>
+            <div class="portfolio-row"><span style="color:#64748b;">보유 칩스</span><span id="coin-market-chips" style="font-weight:bold; color:#10b981;">0 칩</span></div>
+            <div class="portfolio-row"><span style="color:#64748b;">코인 평가액</span><span id="coin-market-portfolio-value" style="font-weight:bold;">0 원</span></div>
+            <div class="portfolio-row"><span>총 추정 자산</span><span id="coin-market-total-asset">20,000,000 원</span></div>
+        </div>
+        
+        <div style="text-align:right; margin-bottom:8px;">
+            <button type="button" onclick="resetCoinMarket()" style="padding:6px 14px; font-size:11px; font-weight:800; background:#450a0a; color:#f87171; border:1px solid #7f1d1d; border-radius:8px; cursor:pointer;">시장 초기화</button>
+        </div>
+
+        <div class="stock-selector">
+            <div style="margin-bottom:8px;">
+                <select id="coin-select" onchange="updateCoinMarketDisplay()" style="width:100%; padding:10px; background:#0f172a; color:white; border:1px solid #334155; border-radius:10px; font-size:15px; font-weight:bold;">
+    <option value="비트코인">비트코인 (메이저 대장주)</option>
+    <option value="이더리움">이더리움 (메이저 알트)</option>
+    <option value="도지">도지코인 (밈 코인)</option>
+    <option value="침착맨">침착맨 (밈 코인)</option>
+    <option value="임동혁">임동혁 (밈 코인)</option>
+    <option value="섹스">섹스 (밈 코인)</option>
+</select>
+            </div>
+            
+            <div id="coin-name-display" class="stock-name">비트코인</div>
+            <div id="coin-price-display" class="stock-price">₩ 95,000,000</div>
+            <div id="coin-change-display" class="stock-change change-up">변동: 0.00%</div>
+            
+            <div style="margin-top:16px; background:#020617; border:1px solid #334155; border-radius:12px; padding:16px;">
+                <div style="font-size:13px; color:#64748b; margin-bottom:10px; font-weight:bold;">자산 비례 즉시 매수 (현금)</div>
+                <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:6px; margin-bottom:14px;">
+                    <button type="button" class="btn-quick" onclick="buyCoinByPercent(10)" style="padding:9px 3px; font-size:12px; line-height:1.3;">10%<br><span style="font-size:10px; opacity:0.85;" id="coin-buy-pct-10">0</span></button>
+                    <button type="button" class="btn-quick" onclick="buyCoinByPercent(30)" style="padding:9px 3px; font-size:12px; line-height:1.3;">30%<br><span style="font-size:10px; opacity:0.85;" id="coin-buy-pct-30">0</span></button>
+                    <button type="button" class="btn-quick" onclick="buyCoinByPercent(50)" style="padding:9px 3px; font-size:12px; line-height:1.3;">50%<br><span style="font-size:10px; opacity:0.85;" id="coin-buy-pct-50">0</span></button>
+                    <button type="button" class="btn-quick" onclick="buyCoinByPercent(70)" style="padding:9px 3px; font-size:12px; line-height:1.3;">70%<br><span style="font-size:10px; opacity:0.85;" id="coin-buy-pct-70">0</span></button>
+                    <button type="button" class="btn-quick all-in" onclick="buyCoinByPercent(100)" style="padding:9px 3px; font-size:12px; line-height:1.3; background:#b45309; color:#fff;">100%<br><span style="font-size:10px; opacity:0.95;" id="coin-buy-pct-100">0</span></button>
+                </div>
+
+                <div style="margin-bottom:4px;"><span style="font-size:12px; color:#94a3b8;">직접 수량 입력 매수 (단위: 개)</span></div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <input type="number" id="coin-direct-amount-input" class="trade-input" placeholder="수량 입력" step="1" min="1" style="flex:1; margin-bottom:0;" oninput="updateCoinDirectPreview()">
+                    <span style="color:#94a3b8; font-size:13px; white-space:nowrap;">개</span>
+                </div>
+                <div style="margin-top:5px; font-size:13px; color:#fbbf24;">필요 현금: <span id="coin-direct-required-amount">₩ 0</span></div>
+
+                <button type="button" onclick="executeCoinDirectBuy()" style="margin-top:14px; width:100%; padding:14px 0; background:linear-gradient(135deg, #059669, #047857); color:white; border:none; border-radius:10px; font-size:16px; font-weight:900;">지정 수량 매수 (BUY)</button>
+            </div>
+            
+            <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center; background:#020617; border:1px solid #334155; border-radius:8px; padding:6px 12px; font-size:13px;">
+                <div><span style="color:#64748b;">다음 가격 갱신:</span> <span id="coin-timer-display2" style="color:#ef4444; font-weight:900;">15</span><span style="color:#94a3b8;">초 전</span></div>
+                <div style="font-size:11px; color:#ef4444; font-weight:bold;">⚠️ 매도 시 수수료 2% 차감</div>
+            </div>
+        </div>
+
+        <div class="holdings-panel">
+            <div class="holdings-title">나의 코인 지갑</div>
+            <div id="coin-holdings-list">
+                <div style="color:#475569; font-size:13px; text-align:center; padding:12px 0;">보유 중인 코인이 없습니다.</div>
+            </div>
+        </div>
+        
+        <div class="holdings-panel" style="margin-top:12px;">
+            <div class="holdings-title">코인 전광판 <span style="font-size:11px; color:#94a3b8; font-weight:normal;">(시가 대비)</span></div>
+            <div id="info-coin-list" style="font-size:13px; line-height:1.5;"></div>
+        </div>
+        
+        <div style="margin-top:12px; font-size:11px; color:#64748b; text-align:left; background:#020617; padding:10px; border-radius:10px; border:1px solid #334155;">
+            * 코인 시장은 주식장보다 주기가 빠르고(15초) 변동성이 매우 큽니다.<br>
+            * 밈(Meme) 코인은 상장폐지 상한선은 없으나, 가격이 동전단위로 추락할 수 있습니다.
+        </div>
+    </div>
+
+    <div id="section-toto" class="game-section">
+        <div style="margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:6px 18px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:20px;">⚽</div>
+                <div style="font-size:18px; font-weight:900; color:#fbbf24;">스포츠 토토</div>
+                <div id="toto-season-info" style="font-size:12px; color:#94a3b8; margin-left:4px;">시즌 <span id="season-num">1</span></div>
+            </div>
+            <div style="text-align:right; display:flex; align-items:center; gap:8px;">
+                <button type="button" onclick="resetTotoToSeason1()" style="padding:6px 10px; font-size:11px; font-weight:800; background:#3f1f1f; color:#f87171; border:1px solid #7f1d1d; border-radius:6px; cursor:pointer;">시즌 초기화</button>
+                <div style="background:#020617; border:1px solid #1e293b; padding:4px 10px; border-radius:8px;">
+                    <div id="toto-round-info" style="font-size:13px; color:#fbbf24; font-weight:900;">라운드 <span id="round-num">1</span> 진행중</div>
+                    <div style="font-size:11px; color:#64748b;">마감까지: <span id="round-timer" style="color:#ef4444; font-weight:bold;">10:00</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <div style="font-size:14px; font-weight:bold; color:#fbbf24; margin-bottom:10px;">이번 라운드 매치업 (EPL)</div>
+            <div id="toto-match-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:10px;"></div>
+        </div>
+
+        <div id="previous-round-summary" class="holdings-panel" style="margin-bottom:12px;">
+            <div class="holdings-title">이전 라운드 결과</div>
+            <div id="previous-round-matches-list" style="display:flex; flex-direction:column; gap:8px; font-size:13px;"></div>
+        </div>
+        
+        <div id="info-league-standings" class="holdings-panel" style="margin-bottom:12px;">
+            <div class="holdings-title">실시간 리그 순위</div>
+            <div id="info-league-standings-content" style="margin-top:10px;"></div>
+        </div>
+        
+        <div class="holdings-panel" style="margin-bottom:12px;">
+            <div class="holdings-title">지난 시즌 하이라이트</div>
+            <div id="prev-season-highlight" style="font-size:13px; line-height:1.6; margin-top:8px;"></div>
+        </div>
+
+        <div id="toto-betting-history" class="holdings-panel" style="margin-bottom:12px;">
+            <div class="holdings-title">나의 배팅 내역</div>
+            <div id="toto-betting-history-list"></div>
+        </div>
+
+        <div id="toto-betting-panel" style="display:none; background:#020617; border:1px solid #1e293b; border-radius:16px; padding:16px; margin-bottom:12px;">
+            <div style="margin-bottom:12px;">
+                <div id="toto-selected-match" style="font-size:17px; font-weight:900; color:#f8fafc; text-align:center; margin-bottom:4px;"></div>
+                <div style="font-size:12px; color:#64748b; text-align:center;">승/무/패를 선택하고 배팅 금액을 설정하세요.</div>
+            </div>
+            <div style="margin-bottom:14px;">
+                <div class="row-lbl" style="margin-bottom:6px;">옵션 선택</div>
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px;">
+                    <button type="button" id="toto-bet-home" class="btn-opt" onclick="selectTotoBetSimple('home_win', this)">홈 승<br><span style="font-size:10px; color:#64748b;">@<span id="odds-home">1.85</span></span></button>
+                    <button type="button" id="toto-bet-draw" class="btn-opt" onclick="selectTotoBetSimple('draw', this)">무승부<br><span style="font-size:10px; color:#64748b;">@<span id="odds-draw">3.60</span></span></button>
+                    <button type="button" id="toto-bet-away" class="btn-opt" onclick="selectTotoBetSimple('away_win', this)">원정 승<br><span style="font-size:10px; color:#64748b;">@<span id="odds-away">4.20</span></span></button>
+                </div>
+            </div>
+            <div>
+                <span class="row-lbl">배팅 금액 (칩스)</span>
+                <input type="number" id="toto-bet-amount" class="cash-input-box" value="200000" min="10000" step="50000">
+                <div class="quick-cash-row" style="grid-template-columns: repeat(4, 1fr); margin-top:6px;">
+                    <button type="button" id="toto-10" class="btn-quick" onclick="setBetByPercent('toto', 10)">10%</button>
+                    <button type="button" id="toto-25" class="btn-quick" onclick="setBetByPercent('toto', 25)">25%</button>
+                    <button type="button" id="toto-50" class="btn-quick" onclick="setBetByPercent('toto', 50)">50%</button>
+                    <button type="button" class="btn-quick all-in" onclick="setBetToAllIn('toto')">MAX</button>
+                </div>
+            </div>
+            <button type="button" id="toto-start-btn" class="btn-ignition" style="margin-top:14px; background: linear-gradient(135deg, #1e40af, #3b82f6);" onclick="placeTotoBet()">
+                배팅 확정 (BET) 🚀
+            </button>
+            <button type="button" onclick="cancelTotoSelection()" style="margin-top:8px; width:100%; padding:10px; background:#334155; color:#94a3b8; border:none; border-radius:10px; font-size:13px; font-weight:bold;">취소</button>
+        </div>
+
+        <div id="toto-live-panel" style="display:none; background:#020617; border:2px solid #1e40af; border-radius:16px; padding:16px; margin-bottom:12px;">
+            <div style="text-align:center; margin-bottom:10px;">
+                <div id="live-match-header" style="font-size:16px; font-weight:900; color:#e0e7ff;"></div>
+                <div style="font-size:13px; color:#64748b; margin-top:2px;">라이브 문자 중계...</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#0f172a; border-radius:12px; padding:14px 10px; margin-bottom:12px;">
+                <div style="text-align:center; flex:1;">
+                    <div id="live-home-name" style="font-weight:900; font-size:15px; color:#f8fafc;"></div>
+                    <div id="live-home-score" style="font-size:32px; font-weight:900; color:#10b981; line-height:1; margin:4px 0;">0</div>
+                </div>
+                <div style="text-align:center; padding:0 10px;">
+                    <div style="font-size:11px; color:#64748b;">VS</div>
+                    <div id="live-timer" style="font-size:22px; font-weight:900; color:#ef4444; margin-top:4px;">04:00</div>
+                </div>
+                <div style="text-align:center; flex:1;">
+                    <div id="live-away-name" style="font-weight:900; font-size:15px; color:#f8fafc;"></div>
+                    <div id="live-away-score" style="font-size:32px; font-weight:900; color:#ef4444; line-height:1; margin:4px 0;">0</div>
+                </div>
+            </div>
+            <div style="background:#0a0f1c; border-radius:10px; padding:10px; height:95px; overflow-y:auto; font-size:12px; line-height:1.45; margin-bottom:8px;" id="live-commentary">
+                <div style="color:#64748b; text-align:center; padding-top:8px;">경기가 시작되었습니다...</div>
+            </div>
+            <div style="height:6px; background:#1e293b; border-radius:3px; overflow:hidden;">
+                <div id="live-progress-bar" style="height:100%; width:0%; background:linear-gradient(90deg, #3b82f6, #60a5fa); transition: width 0.8s linear;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-collection" class="game-section">
+        <div style="margin-bottom:20px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:12px; background:linear-gradient(135deg, #1e1b4b, #020617); padding:8px 24px; border-radius:999px; border:2px solid #fbbf24; box-shadow: 0 0 20px rgba(251,191,36,0.25);">
+                <div style="font-size:26px;">🏆</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24; letter-spacing:0.5px;">VVIP 컬렉션</div>
+            </div>
+        </div>
+
+        <div style="background: linear-gradient(145deg, #1e1b4b, #090d16); border: 2px solid #fbbf24; border-radius: 20px; padding: 18px 14px; margin-bottom: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08); position:relative;">
+            <div style="font-size:13px; font-weight:900; color:#fbbf24; text-align:center; margin-bottom:14px; letter-spacing:1px;">나의 전시장 (TOP 3)</div>
+            <div id="collection-showroom" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; min-height:110px;">
+                </div>
+        </div>
+
+        <div style="background:#020617; border:1px solid #334155; border-radius:16px; padding:16px 14px; margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:13px; font-weight:bold; color:#cbd5e1;">전체 수집 진행도</span>
+                <span id="collection-progress" style="font-size:13px; font-weight:900; color:#4ade80;">0 / 48 (0%)</span>
+            </div>
+            
+            <div style="height:10px; background:#1e293b; border-radius:999px; overflow:hidden; border:1px solid #1e293b; margin-bottom:14px; position:relative;">
+                <div id="collection-bar" style="height:100%; background:linear-gradient(90deg, #fbbf24, #f59e0b); width:0%; transition: width 0.5s cubic-bezier(0.23, 1, 0.32, 1); box-shadow: 0 0 10px #fbbf24;"></div>
+            </div>
+
+            <div id="collection-milestones" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; text-align:center;">
+                </div>
+        </div>
+
+        <div style="background: linear-gradient(145deg, #0f172a, #020617); border: 1px solid #475569; border-radius: 16px; padding: 14px; margin-bottom: 20px;">
+            <div style="font-size:13px; font-weight:900; color:#fbbf24; margin-bottom:10px; text-align:left; border-bottom:1px solid #1e293b; padding-bottom:6px;">활성화된 세트 시너지</div>
+            <div id="collection-synergy-list" style="display:flex; flex-direction:column; gap:6px; font-size:11.5px; text-align:left;">
+                </div>
+        </div>
+
+        <div style="margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; text-align: left;">
+            <input type="text" id="collection-search" placeholder="아이템명 검색..." style="width:100%; padding:12px 14px; background:#020617; border:1px solid #475569; color:#f1f5f9; border-radius:10px; font-size:13.5px;" oninput="filterCollection()">
+            <div id="category-filters" style="display:flex; gap:5px; flex-wrap:wrap; overflow-x:auto; padding-bottom:4px;"></div>
+            
+            <div style="display:flex; gap:16px; align-items:center; margin-top:2px;">
+                <label style="display:flex; align-items:center; gap:8px; font-size:12.5px; color:#94a3b8; cursor:pointer; user-select:none;">
+                    <input type="checkbox" id="owned-only-toggle" onchange="filterCollection()" style="width:18px; height:18px; accent-color:#10b981;">
+                    <span>보유중인 것만 보기</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:12.5px; color:#94a3b8; cursor:pointer; user-select:none;">
+                    <input type="checkbox" id="unowned-only-toggle" onchange="filterCollection()" style="width:18px; height:18px; accent-color:#ef4444;">
+                    <span>미보유만 보기</span>
+                </label>
+            </div>
+        </div>
+
+        <div id="collection-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap:10px; max-height:450px; overflow-y:auto; padding-right:4px;"></div>
+        
+        <div style="margin-top:16px; font-size:12px; color:#64748b; text-align:left;">
+            * 각 카테고리의 <b>모든 아이템을 수집</b>하면 강력한 패시브 시너지가 발동됩니다.<br>
+            * '현금'으로만 구매 가능하며, 한 번 구매하면 영구적으로 소유합니다. (현금화 불가)
+        </div>
+    </div>
+
+    <div id="section-blackmarket" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #450a0a, #020617); padding:8px 24px; border-radius:999px; border:1px solid #b91c1c; box-shadow: 0 0 15px rgba(220,38,38,0.2);">
+                <div style="font-size:26px;">🕵️</div>
+                <div style="font-size:21px; font-weight:900; color:#ef4444;">뒷골목 암시장</div>
+                <span style="font-size:12px; color:#fca5a5; margin-left:4px;">(Black Market)</span>
+            </div>
+        </div>
+
+        <div style="background:#0a0f1c; border:1px solid #b91c1c; border-radius:16px; padding:16px; margin-bottom:16px; position:relative; overflow:hidden;">
+            <div style="font-size:14px; color:#fca5a5; margin-bottom:10px;">"운에 맡기기 싫다면, 돈으로 확률을 사십시오."</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed #7f1d1d; padding-bottom:8px; margin-bottom:12px;">
+                <div style="font-size:12px; color:#94a3b8;">물품 갱신까지: <span id="bm-timer" style="color:#ef4444; font-weight:bold;">30:00</span></div>
+                <button onclick="refreshBlackMarket(true)" style="background:#450a0a; color:#fca5a5; border:1px solid #7f1d1d; border-radius:6px; padding:4px 10px; font-size:11px; cursor:pointer;">강제 갱신 (100만 칩)</button>
+            </div>
+            
+            <div id="bm-item-list" style="display:flex; flex-direction:column; gap:10px;">
+                </div>
+        </div>
+
+        <div class="holdings-panel" style="border-color:#4c1d95; background:linear-gradient(145deg, #1e1b4b, #020617);">
+            <div class="holdings-title" style="color:#c4b5fd;">인벤토리 (소모품)</div>
+            <div id="bm-inventory-list" style="font-size:13px; line-height:1.6;">보유중인 소모품이 없습니다.</div>
+        </div>
+
+        <div class="holdings-panel" style="border-color:#b91c1c; background:linear-gradient(145deg, #450a0a, #020617); margin-top:16px;">
+            <div class="holdings-title" style="color:#fca5a5;">불법 전당포 (컬렉션 급전 마련)</div>
+            <div id="bm-pawnshop-list" style="font-size:13px; line-height:1.6; max-height:400px; overflow-y:auto; padding-right:4px;">불러오는 중...</div>
+        </div>
+    </div>
+
+    <div id="section-auction" class="game-section" style="display:none;">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e1b4b, #451a03); padding:8px 24px; border-radius:999px; border:2px solid #fbbf24; box-shadow: 0 0 20px rgba(251,191,36,0.35);">
+                <div style="font-size:26px;">📦</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24; text-shadow:0 2px 10px rgba(251,191,36,0.5);">VVIP 비밀 경매장</div>
+            </div>
+        </div>
+
+        <div id="auction-gate-panel" style="background:#020617; border:2px solid #334155; border-radius:18px; padding:24px 16px; text-align:center;">
+            <div style="font-size:48px; margin-bottom:12px;">🎭</div>
+            <div style="font-size:18px; font-weight:900; color:#cbd5e1; margin-bottom:6px;">경매장 입구</div>
+            <div style="font-size:13px; color:#64748b; margin-bottom:18px; line-height:1.5;">전 세계의 VVIP들이 모여 전설적인 유물을 낙찰받는 곳입니다.<br>총 자산 <b style="color:#fbbf24;">10억 원 이상</b>의 하이롤러만 입장 가능합니다.</div>
+            <button onclick="tryEnterVvipAuction()" style="padding:14px 28px; background:linear-gradient(135deg, #d97706, #b45309); color:white; border:none; border-radius:12px; font-size:15px; font-weight:900; cursor:pointer; box-shadow:0 6px 20px rgba(217,119,6,0.35);">경매장 입장하기</button>
+            
+            <div class="holdings-panel" style="margin-top:20px; border-color:#f59e0b; background:linear-gradient(145deg, #1a1408, #020617);">
+                <div class="holdings-title" style="color:#fef08a;">낙찰받은 VVIP 전리품 보관소</div>
+                <div id="auction-inventory-list" style="font-size:13px; line-height:1.6; max-height:200px; overflow-y:auto;">아직 낙찰받은 VVIP 유물이 없습니다.</div>
+            </div>
+        </div>
+
+        <div id="auction-lounge-panel" style="display:none; background:#0a0f1c; border:2px solid #fbbf24; border-radius:18px; padding:20px; text-align:center; box-shadow:0 15px 40px rgba(0,0,0,0.8);">
+            <div style="font-size:15px; font-weight:900; color:#f8fafc; margin-bottom:16px;">오늘의 VVIP 출품작</div>
+            
+            <div style="background:#020617; border:1px solid #334155; border-radius:12px; padding:16px; margin-bottom:16px; text-align:left;">
+                <div style="font-size:12px; color:#fbbf24; font-weight:bold; margin-bottom:8px;">[아이템 정보]</div>
+                <div id="lounge-item-name" style="font-size:18px; font-weight:900; color:#fff; margin-bottom:6px;"></div>
+                <div id="lounge-item-story" style="font-size:12.5px; color:#cbd5e1; line-height:1.6; margin-bottom:8px; font-style:italic;"></div>
+                <div id="lounge-item-effect" style="font-size:12px; color:#34d399; font-weight:bold;"></div>
+            </div>
+
+            <div style="text-align:left; margin-bottom:16px;">
+                <div style="font-size:12px; color:#94a3b8; font-weight:bold; margin-bottom:8px;">참가 예정 VIP 명단 (클릭하여 프로필 열람)</div>
+                <div id="lounge-npc-list" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+            </div>
+
+            <button onclick="startVvipAuction()" style="width:100%; padding:16px; background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; border-radius:12px; font-size:16px; font-weight:900; cursor:pointer; box-shadow:0 8px 25px rgba(16,185,129,0.4);">경매 개시</button>
+        </div>
+
+        <div id="auction-main-panel" style="display:none;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+                <div style="background:#020617; border:1px solid #334155; border-radius:12px; padding:12px; text-align:left;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span style="font-size:11px; color:#64748b; font-weight:bold;">현재 최고 응찰가</span>
+                        <span id="auction-timer-lbl" style="font-size:12px; font-weight:900; color:#ef4444;">60초 남음</span>
+                    </div>
+                    <div id="auction-current-price-txt" style="font-size:22px; font-weight:900; color:#fbbf24; margin-top:4px;">칩 0</div>
+                    <div id="auction-high-bidder-txt" style="font-size:11px; color:#94a3b8; margin-top:2px;">최고 응찰자: 없음</div>
+                </div>
+                <div style="background:#020617; border:1px solid #334155; border-radius:12px; padding:12px; text-align:left; display:flex; flex-direction:column; justify-content:center;">
+                    <div id="auction-item-title-mini" style="font-size:13px; font-weight:900; color:#f8fafc; margin-bottom:4px;"></div>
+                    <div id="auction-effect-txt" style="font-size:11px; font-weight:bold; color:#34d399; line-height:1.4;"></div>
+                </div>
+            </div>
+
+            <div class="holdings-panel" style="margin-bottom:16px; border-color:#d97706;">
+                <div class="holdings-title" style="color:#fbbf24;">실시간 호가 기록</div>
+                <div id="auction-live-logs" style="height:170px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; font-size:12.5px; line-height:1.45; text-align:left; padding-right:4px;"></div>
+            </div>
+
+            <div style="background:#0f172a; border:1px solid #334155; border-radius:14px; padding:14px; text-align:left;">
+                <!-- ✨ [추가된 부분] 내 보유 칩 표시 영역 -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; background:#020617; padding:8px 12px; border-radius:8px; border:1px solid #1e293b;">
+                    <span style="font-size:13px; color:#94a3b8; font-weight:bold;">내 보유 칩</span>
+                    <span id="auction-player-chips-txt" style="font-size:16px; font-weight:900; color:#10b981;">0 칩</span>
+                </div>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <button id="btn-bid-step" onclick="executePlayerBid(false)" style="padding:14px 0; background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; border-radius:10px; font-size:14px; font-weight:900; cursor:pointer;" disabled>+5% 호가</button>
+                    <button id="btn-bid-strong" onclick="executePlayerBid(true)" style="padding:14px 0; background:linear-gradient(135deg, #7c3aed, #5b21b6); color:white; border:none; border-radius:10px; font-size:14px; font-weight:900; cursor:pointer;" disabled>+15% 강력 호가</button>
+                </div>
+                <div style="font-size:10.5px; color:#475569; margin-top:8px; text-align:center;">경매는 오직 카지노 칩(Chips)으로만 진행됩니다.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-business" class="game-section" style="display:none;">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #064e3b, #022c22); padding:8px 24px; border-radius:999px; border:2px solid #10b981; box-shadow: 0 0 20px rgba(16,185,129,0.35);">
+                <div style="font-size:26px;">🏢</div>
+                <div style="font-size:21px; font-weight:900; color:#34d399; text-shadow:0 2px 10px rgba(52,211,153,0.5);">지하 사업 운영</div>
+            </div>
+        </div>
+
+        <div style="background:#020617; border:1px solid #334155; border-radius:16px; padding:16px; margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-size:14px; font-weight:bold; color:#94a3b8;">초당 총 수익 (CPS)</span>
+                <span id="biz-total-cps" style="font-size:20px; font-weight:900; color:#fbbf24;">0 칩/초</span>
+            </div>
+            
+            </div>
+
+        <div id="business-list-container" style="display:flex; flex-direction:column; gap:16px;">
+            </div>
+    </div>
+
+    <div id="section-quest" class="game-section">
+        <div style="margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:6px 18px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:20px;">📋</div>
+                <div style="font-size:18px; font-weight:900; color:#fbbf24;">퀘스트 보드</div>
+            </div>
+            <div style="font-size:11px; color:#94a3b8; background:#020617; padding:6px 12px; border-radius:8px; border:1px solid #1e293b;"><span id="quest-reset-info">일일: 매일 05:00 | 주간: 월요일</span></div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                <span style="font-size:15px; font-weight:900; color:#fbbf24;">일일 퀘스트</span>
+                <span id="daily-progress" style="font-size:13px; color:#10b981; background:#052e16; padding:2px 10px; border-radius:999px;">0/5 완료</span>
+            </div>
+            <div id="daily-quest-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </div>
+
+        <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                <span style="font-size:15px; font-weight:900; color:#fbbf24;">주간 퀘스트</span>
+                <span id="weekly-progress" style="font-size:13px; color:#10b981; background:#052e16; padding:2px 10px; border-radius:999px;">0/4 완료</span>
+            </div>
+            <div id="weekly-quest-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </div>
+    </div>
+
+    <div id="section-stats" class="game-section">
+        <div style="margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:8px 22px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:26px;">📊</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24;">통계 대시보드 V2</div>
+            </div>
+            <button onclick="resetStatsOnly()" style="background:#450a0a; color:#fca5a5; border:1px solid #7f1d1d; border-radius:8px; padding:6px 12px; font-size:11px; font-weight:bold; cursor:pointer;">통계 리셋</button>
+        </div>
+
+        <div class="holdings-panel" style="margin-bottom:16px;">
+            <div class="holdings-title">총 자산 추이 (최근 50분)</div>
+            <canvas id="asset-chart" width="520" height="150" style="width:100%; max-width:520px; border-radius:6px; background:#020617; border:1px solid #1e293b; margin-bottom:10px;"></canvas>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap:8px;">
+                <div style="background:#0f172a; padding:10px; border-radius:8px; text-align:center;">
+                    <div style="font-size:11px; color:#64748b;">총 게임 횟수</div>
+                    <div id="stats-total-games" style="font-size:16px; font-weight:bold; color:#f8fafc; margin-top:4px;">0 회</div>
+                </div>
+                <div style="background:#0f172a; padding:10px; border-radius:8px; text-align:center;">
+                    <div style="font-size:11px; color:#64748b;">누적 총 수익</div>
+                    <div id="stats-total-profit" style="font-size:16px; font-weight:bold; color:#10b981; margin-top:4px;">0 칩</div>
+                </div>
+                <div style="background:#0f172a; padding:10px; border-radius:8px; text-align:center;">
+                    <div style="font-size:11px; color:#64748b;">누적 총 손실</div>
+                    <div id="stats-total-loss" style="font-size:16px; font-weight:bold; color:#ef4444; margin-top:4px;">0 칩</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="holdings-panel" style="margin-bottom:16px; border-color:#4f46e5; background:linear-gradient(145deg, #1e1b4b, #020617);">
+            <div class="holdings-title" style="color:#c4b5fd;">플레이어 성향 분석 (육각형)</div>
+            <div style="display:flex; align-items:center; justify-content:center; padding:10px 0;">
+                <canvas id="radar-chart" width="160" height="160" style="background:transparent;"></canvas>
+                <div style="flex:1; padding-left:16px; text-align:left;">
+                    <div style="font-size:12px; color:#94a3b8; margin-bottom:4px;">AI 성향 진단...</div>
+                    <div id="player-archetype-title" style="font-size:20px; font-weight:900; color:#fbbf24; margin-bottom:8px; text-shadow:0 2px 10px rgba(251,191,36,0.3);">[분석 대기중]</div>
+                    <div id="player-archetype-desc" style="font-size:12px; color:#cbd5e1; line-height:1.5;">게임 플레이 데이터가 누적되면 당신의 카지노 성향을 분석합니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:16px;">
+            <div class="holdings-panel" style="border-color:#fbbf24; background:linear-gradient(145deg, #451a03, #020617);">
+                <div class="holdings-title" style="color:#fcd34d;">종합 최고 기록</div>
+                <div style="font-size:12px; display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">단일 최고 수익</span><span id="stat-max-win" style="color:#10b981; font-weight:bold;">0 칩</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">단일 최고 손실</span><span id="stat-max-loss" style="color:#ef4444; font-weight:bold;">0 칩</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">최고 효자 종목</span><span id="stat-best-game" style="color:#fbbf24; font-weight:bold;">없음</span></div>
+                </div>
+            </div>
+            <div class="holdings-panel" style="border-color:#b91c1c; background:linear-gradient(145deg, #2a0a0a, #020617);">
+                <div class="holdings-title" style="color:#fca5a5;">다크 시스템 지출</div>
+                <div style="font-size:12px; display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">경찰 단속 벌금</span><span id="stat-police-fine" style="color:#ef4444; font-weight:bold;">0 칩</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">암시장 갱신 수수료</span><span id="stat-broker-fee" style="color:#ef4444; font-weight:bold;">0 칩</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">시장 거래 수수료</span><span id="stat-market-fee" style="color:#ef4444; font-weight:bold;">0 칩</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">전당포 매각 손실금</span><span id="stat-pawn-loss" style="color:#ef4444; font-weight:bold;">0 칩</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px;">
+            <div class="holdings-panel"><div class="holdings-title">사다리 게임</div><div id="stats-ladder" style="font-size:13px; line-height:1.6;"></div></div>
+            <div class="holdings-panel"><div class="holdings-title">블랙잭</div><div id="stats-blackjack" style="font-size:13px; line-height:1.6;"></div></div>
+            <div class="holdings-panel"><div class="holdings-title">프리미엄 룰렛</div><div id="stats-roulette" style="font-size:13px; line-height:1.6;"></div></div>
+            
+            <!-- 슬롯머신 금색 테두리 및 색상 강제 지정 제거 통일 -->
+            <div class="holdings-panel"><div class="holdings-title">🎰 슬롯머신</div><div id="stats-slot" style="font-size:13px; line-height:1.6;">기록 없음...</div></div>
+            
+            <div class="holdings-panel"><div class="holdings-title">주식 거래소</div><div id="stats-stock" style="font-size:13px; line-height:1.6;"></div></div>
+            <div class="holdings-panel"><div class="holdings-title">코인 거래소</div><div id="stats-coin" style="font-size:13px; line-height:1.6;"></div></div>
+            <div class="holdings-panel"><div class="holdings-title">스포츠 토토</div><div id="stats-toto" style="font-size:13px; line-height:1.6;"></div></div>
+            <div class="holdings-panel"><div class="holdings-title">지하 투기장</div><div id="stats-arena" style="font-size:13px; line-height:1.6;"></div></div>
+            
+            <!-- 새로 추가된 신규 통계 패널들 -->
+            <div class="holdings-panel"><div class="holdings-title">🏢 지하 사업장</div><div id="stats-business" style="font-size:13px; line-height:1.6;">기록 없음...</div></div>
+            <div class="holdings-panel"><div class="holdings-title">🎉 이벤트 / 기타</div><div id="stats-events" style="font-size:13px; line-height:1.6;">기록 없음...</div></div>
+            
+            <div class="holdings-panel"><div class="holdings-title">다크 시스템 지출</div><div id="stats-system" style="font-size:13px; line-height:1.6;"></div></div>
+        </div>
+    </div>
+
+    <div id="section-title" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:8px 22px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:26px;">🏅</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24;">나의 칭호</div>
+            </div>
+        </div>
+        <div style="display:grid; gap:14px;">
+            <div class="holdings-panel" id="title-ladder-card"><div class="holdings-title" style="color:#fbbf24;">사다리 칭호</div><div id="title-ladder-content"></div></div>
+            <div class="holdings-panel" id="title-blackjack-card"><div class="holdings-title" style="color:#fbbf24;">블랙잭 칭호</div><div id="title-blackjack-content"></div></div>
+            <div class="holdings-panel" id="title-slot-card" style="border-color:#d97706; background:linear-gradient(145deg, #451a03, #020617);"><div class="holdings-title" style="color:#fbbf24;">🎰 슬롯머신 칭호</div><div id="title-slot-content"></div></div>
+            
+            <div class="holdings-panel" id="title-toto-card"><div class="holdings-title" style="color:#fbbf24;">토토 칭호</div><div id="title-toto-content"></div></div>
+            <div class="holdings-panel" id="title-stock-card"><div class="holdings-title" style="color:#fbbf24;">주식 칭호</div><div id="title-stock-content"></div></div>
+            <div class="holdings-panel" id="title-coin-card"><div class="holdings-title" style="color:#fbbf24;">코인 칭호</div><div id="title-coin-content"></div></div>
+            <div class="holdings-panel" id="title-arena-card"><div class="holdings-title" style="color:#ef4444;">투기장 칭호</div><div id="title-arena-content"></div></div>
+            <div class="holdings-panel" id="title-equip-card"><div class="holdings-title" style="color:#34d399;">장비 칭호</div><div id="title-equip-content"></div></div>
+            <div class="holdings-panel" id="title-blackmarket-card"><div class="holdings-title" style="color:#fca5a5;">암시장 칭호</div><div id="title-blackmarket-content"></div></div>
+            
+            <div class="holdings-panel" id="title-auction-card" style="border-color:#fbbf24; background:linear-gradient(145deg, #451a03, #1e1b4b);"><div class="holdings-title" style="color:#fef08a;">📦 VVIP 경매장 칭호</div><div id="title-auction-content"></div></div>
+            <div class="holdings-panel" id="title-business-card" style="border-color:#10b981; background:linear-gradient(145deg, #064e3b, #022c22);"><div class="holdings-title" style="color:#34d399;">🏢 지하 사업 칭호</div><div id="title-business-content"></div></div>
+        </div>
+    </div>
+
+    <div id="section-guide" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:8px 22px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:26px;">📖</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24;">게임 가이드 (컷오프 완전 공개)</div>
+            </div>
+        </div>
+
+        <div class="holdings-panel" style="margin-top:16px;">
+            <div class="holdings-title" style="color:#fbbf24;">모든 칭호(Tier) 정확한 승급 조건</div>
+            <div style="font-size:12px; color:#94a3b8; margin-bottom:12px; line-height:1.5;">
+                더 이상 수수께끼는 없습니다. 각 종목별로 명시된 <b>정확한 수치(플레이 횟수, 수익금, 적중률 등)</b>를 동시에 모두 만족하면 해당 레벨의 칭호가 즉시 부여됩니다.
+            </div>
+            
+            <details style="margin-bottom:8px; background:#020617; border-radius:10px; border:1px solid #334155; padding:10px;">
+                <summary style="font-weight:900; color:#10b981; font-size:14px; cursor:pointer; list-style:none;">🎰 카지노 (사다리 / 블랙잭 / 슬롯)</summary>
+                <div style="font-size:12px; color:#cbd5e1; margin-top:12px; line-height:1.7;">
+                    <b style="color:#fbbf24;">[사다리]</b><br>
+                    • Lv.2 견습생: 50회 플레이<br>
+                    • Lv.3 도전자: 150회 플레이 + 승률 48%<br>
+                    • Lv.4 실력자: 300회 플레이 + 순수익 10억<br>
+                    • Lv.5 고수: 500회 플레이 + 승률 50%<br>
+                    • Lv.6 달인: 800회 플레이 + 순수익 50억<br>
+                    • Lv.7 전설: 1,500회 플레이 + 승률 52%<br>
+                    • Lv.8 신(God): 3,000회 플레이 + 승률 53% + 순수익 300억<br><br>
+
+                    <b style="color:#fbbf24;">[블랙잭]</b><br>
+                    • Lv.2 견습생: 50회 플레이<br>
+                    • Lv.3 도전자: 150회 플레이 + 승률 48%<br>
+                    • Lv.4 실력자: 300회 플레이 + 순수익 10억<br>
+                    • Lv.5 고수: 500회 플레이 + 승률 50%<br>
+                    • Lv.6 달인: 800회 플레이 + 순수익 100억<br>
+                    • Lv.7 브레이커: 1,500회 플레이 + 승률 52%<br>
+                    • Lv.8 마스터: 3,000회 플레이 + 승률 53% + 순수익 500억<br><br>
+
+                    <b style="color:#fbbf24;">[슬롯머신]</b><br>
+                    • Lv.2 초보: 스핀 50회<br>
+                    • Lv.3 장인: 스핀 300회 + 수익 10억<br>
+                    • Lv.4 헌터: 스핀 1,000회 + 수익 50억<br>
+                    • Lv.5 망령: 스핀 3,000회 + 수익 300억<br>
+                    • Lv.6 브레이커: 스핀 5,000회 + 잭팟 당첨 5회
+                </div>
+            </details>
+
+            <details style="margin-bottom:8px; background:#020617; border-radius:10px; border:1px solid #334155; padding:10px;">
+                <summary style="font-weight:900; color:#3b82f6; font-size:14px; cursor:pointer; list-style:none;">📈 트레이딩 (주식 / 코인)</summary>
+                <div style="font-size:12px; color:#cbd5e1; margin-top:12px; line-height:1.7;">
+                    <b style="color:#fbbf24;">[주식 거래소]</b><br>
+                    • Lv.2 신참: 매매 50회<br>
+                    • Lv.3 실전: 매매 150회 + 평균수익률 5%<br>
+                    • Lv.4 월가: 매매 300회 + 실현수익 10억<br>
+                    • Lv.5 하이롤러: 매매 500회 + 평균수익률 10%<br>
+                    • Lv.6 늑대: 매매 800회 + 실현수익 200억<br>
+                    • Lv.7 지배자: 매매 1,500회 + 평균수익률 15%<br>
+                    • Lv.8 신(God): 매매 3,000회 + 평균수익률 20% + 실현수익 1,000억<br><br>
+
+                    <b style="color:#fbbf24;">[암호화폐 (코인)]</b><br>
+                    • Lv.2 견습생: 매매 50회<br>
+                    • Lv.3 트레이더: 매매 150회 + 실현수익 10억<br>
+                    • Lv.4 달인: 매매 300회 + 실현수익 100억<br>
+                    • Lv.5 홀더: 매매 500회 + 평가액(포트폴리오) 500억 도달<br>
+                    • Lv.6 고수: 매매 800회 + 실현수익 500억<br>
+                    • Lv.7 전설: 매매 1,500회 + 평가액 1,000억 도달<br>
+                    • Lv.8 신(God): 매매 3,000회 + 실현수익 3,000억 + 평가액 2,000억
+                </div>
+            </details>
+
+            <details style="margin-bottom:8px; background:#020617; border-radius:10px; border:1px solid #334155; padding:10px;">
+                <summary style="font-weight:900; color:#ef4444; font-size:14px; cursor:pointer; list-style:none;">⚽ 승부 예측 (토토 / 투기장)</summary>
+                <div style="font-size:12px; color:#cbd5e1; margin-top:12px; line-height:1.7;">
+                    <b style="color:#fbbf24;">[스포츠 토토]</b><br>
+                    • Lv.2 견습생: 배팅 50회<br>
+                    • Lv.3 예측가: 배팅 150회 + 적중률 40%<br>
+                    • Lv.4 예언자: 배팅 300회 + 수익 10억<br>
+                    • Lv.5 고수: 배팅 500회 + 적중률 45%<br>
+                    • Lv.6 달인: 배팅 800회 + 수익 100억<br>
+                    • Lv.7 승부사: 배팅 1,500회 + 연속 적중(연승) 5회<br>
+                    • Lv.8 신(God): 배팅 3,000회 + 수익 500억 + 연속 적중 8회<br><br>
+
+                    <b style="color:#fbbf24;">[지하 투기장]</b><br>
+                    • Lv.2 팬: 배팅 50회<br>
+                    • Lv.3 구경꾼: 배팅 150회 + 적중 50회<br>
+                    • Lv.4 도박사: 배팅 300회 + 수익 10억<br>
+                    • Lv.5 감정사: 배팅 500회 + 적중 200회<br>
+                    • Lv.6 언더킹: 배팅 800회 + 수익 100억<br>
+                    • Lv.7 포식자: 배팅 1,500회 + 적중 600회<br>
+                    • Lv.8 지배자: 배팅 3,000회 + 적중 1,200회 + 수익 500억
+                </div>
+            </details>
+
+            <details style="margin-bottom:8px; background:#020617; border-radius:10px; border:1px solid #334155; padding:10px;">
+                <summary style="font-weight:900; color:#c084fc; font-size:14px; cursor:pointer; list-style:none;">🖤 다크 시스템 (장비 / 사업 / 경매 / 암시장)</summary>
+                <div style="font-size:12px; color:#cbd5e1; margin-top:12px; line-height:1.7;">
+                    <b style="color:#fbbf24;">[장비 강화]</b><br>
+                    • Lv.2~7: 시도 50회 ~ 2,000회 (단계별 파괴 횟수 누적 필요)<br>
+                    • Lv.8 연금술사: 강화 시도 3,000회 + 파괴 300회 + <span style="color:#ef4444; font-weight:bold;">MAX(25성) 장비 보유</span><br><br>
+
+                    <b style="color:#fbbf24;">[지하 사업 운영]</b><br>
+                    • Lv.2 구역장: 수금 50회<br>
+                    • Lv.4 사업가: 수금 300회 + 순수익 50억<br>
+                    • Lv.6 보스: 수금 800회 + 순수익 500억<br>
+                    • Lv.8 킹: 수금 3,000회 + 순수익 5,000억<br><br>
+
+                    <b style="color:#fbbf24;">[VVIP 비밀 경매장]</b><br>
+                    • Lv.2~4: 낙찰 5회 ~ 30회 (최고 응찰가 50억 필요)<br>
+                    • Lv.6 황제: 낙찰 80회 + 최고 응찰가 500억<br>
+                    • Lv.8 주인: 낙찰 300회 + 최고 응찰가 5,000억<br><br>
+
+                    <b style="color:#fbbf24;">[뒷골목 암시장]</b><br>
+                    • 전 등급: 불법 조작 아이템을 구매한 <span style="color:#10b981; font-weight:bold;">'누적 개수'</span> 기준 (Lv.2 10개 ~ Lv.8 1,000개 구매)
+                </div>
+            </details>
+        </div>
+
+        <div class="holdings-panel" style="margin-top:16px; border-color:#ec4899; background:linear-gradient(145deg, #1e101a, #020617);">
+            <div class="holdings-title" style="color:#fbcfe8;">콘솔 히든 커맨드 (Cheat)</div>
+            <div style="font-size:12px; color:#cbd5e1; line-height:1.6; padding:8px 4px;">
+                1. <b>[기본금 지원]</b> 콘솔창에 <u>"구단주님 돈좀주세요"</u> 를 입력하세요. (조건: 자산 5만원 이하 시)<br>
+                2. <b>[스트레스 해소]</b> 콘솔창에 <u>"함 싸울래"</u> 를 입력하면 지나가는 시민과 배틀을 합니다.<br>
+                3. <b>[소액 기부]</b> <u>"기부"</u> 라고 치면 통장 끝자리 소수점을 기부하고 깔끔하게 정리합니다.<br>
+                4. <b>[딱지 치기]</b> <u>"딱지"</u> 라고 치면 낯선 딱지남이 승부를 걸어옵니다.<br>
+                5. <b>[VVIP 총잡이]</b> <u>"결투"</u> 라고 치면 뒷골목 암살자들과의 3인 서바이벌에 진입합니다.
+            </div>
+        </div>
+    </div>
+
+    <div id="section-info" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:8px 22px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:26px;">💾</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24;">데이터 백업/복원</div>
+            </div>
+        </div>
+        <div style="font-size:13px; color:#94a3b8; text-align:center; margin-bottom:20px; line-height:1.6;">
+            현재 플레이 중인 모든 자산, 장비, 칭호 데이터를 기기에 파일로 백업하거나,<br>저장된 백업 파일을 불러올 수 있습니다. 브라우저 캐시 삭제에 대비하세요.
+        </div>
+        <div class="holdings-panel" style="border:2px solid #10b981; background: linear-gradient(145deg, #052e16, #020617);">
+            <div class="holdings-title" style="color:#10b981; font-size:14px; text-align:center;">저장소 관리 (Save & Load)</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:16px;">
+                <button onclick="exportSaveData()" style="padding:18px 12px; background:linear-gradient(135deg, #059669, #047857); color:white; border:none; border-radius:14px; font-size:15px; font-weight:900; cursor:pointer; box-shadow:0 4px 10px rgba(5,150,105,0.3);">📥 데이터 백업 (다운로드)</button>
+                <button onclick="document.getElementById('import-file-input').click()" style="padding:18px 12px; background:linear-gradient(135deg, #1e40af, #3b82f6); color:white; border:none; border-radius:14px; font-size:15px; font-weight:900; cursor:pointer; box-shadow:0 4px 10px rgba(30,64,175,0.3);">📂 데이터 복원 (불러오기)</button>
+            </div>
+            <input type="file" id="import-file-input" accept=".json,application/json" style="display:none;" onchange="importSaveData(event)">
+        </div>
+    </div>
+
+    <div id="section-equip" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #1e293b, #0f172a); padding:8px 22px; border-radius:999px; border:1px solid #475569;">
+                <div style="font-size:26px;">⚔️</div>
+                <div style="font-size:21px; font-weight:900; color:#fbbf24;">장비 및 아바타 강화</div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+            <div style="background:linear-gradient(145deg, #0f172a, #020617); border:1px solid #475569; border-radius:16px; padding:14px 16px; text-align:left;">
+                <div style="font-size:11px; color:#64748b; font-weight:700;">전투력 (장비 총합 레벨)</div>
+                <div style="margin-top:4px;"><span id="equip-total-power" style="font-size:28px; font-weight:900; color:#fbbf24; line-height:1;">0</span> <span style="font-size:14px; color:#94a3b8;">/ 175</span></div>
+            </div>
+            <div style="background:linear-gradient(145deg, #0f172a, #020617); border:1px solid #475569; border-radius:16px; padding:14px 16px; text-align:left;">
+                <div style="font-size:11px; color:#64748b; font-weight:700;">평균 장비 레벨</div>
+                <div style="margin-top:4px;"><span id="equip-avg-level" style="font-size:28px; font-weight:900; color:#34d399; line-height:1;">0.0</span> <span style="font-size:14px; color:#94a3b8;">레벨</span></div>
+            </div>
+        </div>
+
+        <div style="background:#020617; border:1px solid #475569; border-radius:16px; padding:16px; margin-bottom:14px;">
+            <div style="font-size:14px; font-weight:900; color:#fbbf24; margin-bottom:10px;">종목별 추가 수익률 현황</div>
+            <div id="equip-profit-stats-list" style="font-size:13px; line-height:1.7;"></div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px;">
+            <div style="background:#020617; border:1px solid #475569; border-radius:14px; padding:13px 14px;">
+                <div style="font-size:12.5px; font-weight:900; color:#fbbf24; margin-bottom:8px;">착용 장비 세트 효과</div>
+                <div id="equip-set-bonus-list" style="font-size:12px; line-height:1.55;"></div>
+            </div>
+            <div style="background:#020617; border:1px solid #475569; border-radius:14px; padding:13px 14px;">
+                <div style="font-size:12.5px; font-weight:900; color:#fbbf24; margin-bottom:8px;">장비 개별 효과 목록</div>
+                <div id="equip-individual-profit-list" style="font-size:11.5px; line-height:1.5;"></div>
+            </div>
+        </div>
+
+        <div style="margin-bottom:10px;">
+            <div id="equip-slots-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap:8px;"></div>
+        </div>
+    </div>
+
+    <div id="section-arena" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #450a0a, #020617); padding:8px 24px; border-radius:999px; border:1px solid #b91c1c; box-shadow: 0 0 15px rgba(220,38,38,0.2);">
+                <div style="font-size:26px;">🩸</div>
+                <div style="font-size:21px; font-weight:900; color:#ef4444;">지하 투기장</div>
+                <span style="font-size:12px; color:#fca5a5; margin-left:4px;">(블러드 릴리)</span>
+            </div>
+        </div>
+
+        <div style="text-align:right; margin-bottom:12px;">
+            <button type="button" onclick="resetArena()" style="padding:6px 14px; font-size:11px; font-weight:800; background:#450a0a; color:#f87171; border:1px solid #7f1d1d; border-radius:8px; cursor:pointer;">시즌 리셋</button>
+        </div>
+
+        <div id="arena-match-list-panel" style="background:#020617; border:2px solid #b91c1c; border-radius:16px; padding:16px; margin-bottom:16px;"></div>
+
+        <div id="arena-match-panel" style="display:none; background:#0a0f1c; border:2px solid #b91c1c; border-radius:16px; padding:16px; margin-bottom:16px;">
+            <button type="button" onclick="backToArenaList()" style="width:100%; padding:10px; background:#334155; color:#fff; border:none; border-radius:8px; font-weight:bold; margin-bottom:16px; cursor:pointer;">뒤로 가기</button>
+            <div id="arena-fighters-info" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; background:#020617; padding:12px; border-radius:12px; border:1px solid #450a0a;"></div>
+            <div class="row-lbl" style="color:#fbbf24;">배팅 옵션 (터치하여 선택)</div>
+            <div id="arena-bet-options" style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:12px;"></div>
+            
+            <span class="row-lbl">배팅 금액</span>
+            <input type="number" id="arena-bet-amount" class="cash-input-box" value="100000" min="10000" step="50000">
+            <div class="quick-cash-row" style="grid-template-columns: repeat(4, 1fr); margin-top:6px; margin-bottom:12px;">
+                <button type="button" class="btn-quick" onclick="setBetByPercent('arena', 10)">10%</button>
+                <button type="button" class="btn-quick" onclick="setBetByPercent('arena', 25)">25%</button>
+                <button type="button" class="btn-quick" onclick="setBetByPercent('arena', 50)">50%</button>
+                <button type="button" class="btn-quick all-in" onclick="setBetToAllIn('arena')">MAX</button>
+            </div>
+            
+            <button type="button" id="arena-start-btn" class="btn-ignition" style="background: linear-gradient(135deg, #991b1b, #7f1d1d);" onclick="placeArenaBet()">
+                배팅 확정 및 경기 시작 🚀
+            </button>
+        </div>
+
+        <div id="arena-live-panel" style="display:none; background:#020617; border:2px solid #ef4444; border-radius:16px; padding:16px; margin-bottom:16px;">
+            <div style="text-align:center; font-weight:900; color:#fbbf24; margin-bottom:12px; font-size:16px;">LIVE 경기 중계</div>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;">
+                <div style="width:42%;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:4px;">
+                        <div id="live-fighter-a-name" style="font-weight:bold; color:#e2e8f0; font-size:14px; cursor:pointer;" onclick="if(currentArenaMatch) showFighterProfile(currentArenaMatch.fA.id)" title="프로필 보기">A 선수</div>
+                        <div id="live-hp-text-a" style="font-size:11px; font-weight:900; color:#4ade80;">1500 / 1500</div>
+                    </div>
+                    <div style="height:12px; background:#1e293b; border-radius:6px; overflow:hidden; border:1px solid #334155;">
+                        <div id="live-hp-a" style="height:100%; width:100%; background:linear-gradient(90deg, #10b981, #34d399); transition:width 0.3s, background 0.3s;"></div>
+                    </div>
+                </div>
+                
+                <div style="font-size:20px; font-weight:900; color:#ef4444; filter:drop-shadow(0 0 5px rgba(239,68,68,0.5));">VS</div>
+                
+                <div style="width:42%; text-align:right;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:4px; flex-direction:row-reverse;">
+                        <div id="live-fighter-b-name" style="font-weight:bold; color:#e2e8f0; font-size:14px; cursor:pointer;" onclick="if(currentArenaMatch) showFighterProfile(currentArenaMatch.fB.id)" title="프로필 보기">B 선수</div>
+                        <div id="live-hp-text-b" style="font-size:11px; font-weight:900; color:#4ade80;">1500 / 1500</div>
+                    </div>
+                    <div style="height:12px; background:#1e293b; border-radius:6px; overflow:hidden; border:1px solid #334155; transform:scaleX(-1);">
+                        <div id="live-hp-b" style="height:100%; width:100%; background:linear-gradient(90deg, #10b981, #34d399); transition:width 0.3s, background 0.3s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="arena-commentary-log" style="background:#0a0f1c; border:1px solid #334155; border-radius:10px; height:140px; overflow-y:auto; padding:10px; font-size:13px; line-height:1.5; display:flex; flex-direction:column; gap:6px;">
+                <div style="color:#64748b; text-align:center; padding-top:40px;">전투 준비 중...</div>
+            </div>
+        </div>
+
+        <div class="holdings-panel" id="arena-leaderboard-panel">
+            <div class="holdings-title" style="color:#ef4444;">지하 투기장 랭킹 보드 (현상금)</div>
+            
+            <div id="arena-sponsor-panel" style="display:none; background:linear-gradient(145deg, #052e16, #020617); border:2px solid #10b981; border-radius:12px; padding:12px; margin-bottom:12px; box-shadow:0 0 15px rgba(16,185,129,0.2);">
+                <div style="font-size:12px; color:#34d399; font-weight:bold; margin-bottom:4px;">나의 VVIP 스폰서 현황</div>
+                <div id="arena-sponsor-info" style="font-size:14px; font-weight:900; color:#f8fafc;"></div>
+                <div style="font-size:11px; color:#94a3b8; margin-top:4px;">스폰한 선수가 Top 3에 진입하면 투자금의 30배 잭팟!</div>
+            </div>
+            
+            <div id="arena-leaderboard-content" style="display:flex; flex-direction:column; gap:6px;"></div>
+        </div>
+    </div>
+
+    <div id="section-profile" class="game-section">
+        <div style="margin-bottom:18px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #312e81, #1e1b4b); padding:8px 22px; border-radius:999px; border:1px solid #4f46e5; box-shadow:0 0 15px rgba(79,70,229,0.3);">
+                <div style="font-size:26px;">👤</div>
+                <div style="font-size:21px; font-weight:900; color:#c4b5fd;">플레이어 정보</div>
+            </div>
+        </div>
+        
+        <div class="holdings-panel" style="background: linear-gradient(145deg, #0f172a, #020617); border-color:#4c1d95;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px;">
+                <div style="font-size:24px; font-weight:900; color:#fbbf24;">Lv. <span id="profile-level-txt">1</span></div>
+                <div style="font-size:13px; color:#c4b5fd; font-weight:bold;">잔여 SP: <span id="profile-sp-txt" style="font-size:18px; color:#34d399;">0</span></div>
+            </div>
+            <div style="height:10px; background:#1e293b; border-radius:5px; overflow:hidden; border:1px solid #334155; margin-bottom:6px;">
+                <div id="profile-exp-bar" style="height:100%; width:0%; background:linear-gradient(90deg, #8b5cf6, #c4b5fd); transition:width 0.4s ease;"></div>
+            </div>
+            <div style="text-align:right; font-size:11px; color:#94a3b8;" id="profile-exp-txt">0 / 100 EXP</div>
+            <div style="font-size:11px; color:#64748b; margin-top:8px; text-align:center;">(배팅 게임 승리 시 EXP 획득 / 레벨업 시 SP 5 지급 / 만렙 200)</div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin-top:16px;" id="stat-upgrades-container"></div>
+    </div>
+
+
+<!-- ==================== VVIP 랭킹 ==================== -->
+    <div id="section-blackclub" class="game-section" style="display:none;">
+        <div style="margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg, #4a044e, #2e1065); padding:8px 24px; border-radius:999px; border:2px solid #c026d3; box-shadow: 0 0 20px rgba(192,38,211,0.35);">
+                <div style="font-size:26px;">👑</div>
+                <div style="font-size:21px; font-weight:900; color:#e879f9; text-shadow:0 2px 10px rgba(232,121,249,0.5);">VVIP 랭킹</div>
+            </div>
+            <!-- 🌟 초기화 버튼 추가 -->
+            <button onclick="resetRankersOnly()" style="background:#4a044e; color:#fbcfe8; border:1px solid #c026d3; border-radius:8px; padding:6px 12px; font-size:11px; font-weight:bold; cursor:pointer;">초기화</button>
+        </div>
+
+        <div id="blackclub-list-container">
+            <div style="background:#020617; border:1px solid #334155; border-radius:16px; padding:16px; margin-bottom:16px; text-align:center;">
+                <div style="font-size:13px; color:#94a3b8; margin-bottom:6px; font-weight:bold;">하이롤러 시티 실시간 통합 자산 랭킹</div>
+                <div style="font-size:11px; color:#64748b;">(나보다 순위가 높은 랭커는 최대 3명까지만 정보가 해금됩니다.)</div>
+            </div>
+            <div id="blackclub-ranking-list" style="display:flex; flex-direction:column; gap:8px; max-height: 500px; overflow-y: auto; padding-right: 4px;">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="hud-monitor">
+        <div class="hud-status" id="hud-status-text">게임을 시작해주세요.</div>
+        <div class="hud-result" id="hud-result-text"></div>
+        <div class="hud-profit" id="hud-profit-text"></div>
+    </div>
+
+    <div class="history-panel">
+        <div class="history-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>최근 거래 및 수익 로그</span>
+            <button onclick="resetAllData()" style="font-size:10px; padding:4px 8px; background:#334155; color:#94a3b8; border:none; border-radius:6px; cursor:pointer;">초기화</button>
+        </div>
+        <ul class="history-items" id="history-items-ul">
+            <li style="color:#475569; text-align:center; width:100%;">기록이 없습니다.</li>
+        </ul>
+    </div>
+
+    <div class="cheat-console" style="margin-top: 15px; margin-bottom: 95px; display: flex; gap: 8px;">
+        <input type="text" id="cheat-input" placeholder="치트코드 입력창 (비밀기능)" style="flex: 1; padding: 12px; background: #020617; border: 1px solid #1e293b; color: #10b981; border-radius: 8px; font-weight: bold;" onkeypress="if(event.key === 'Enter') triggerHiddenEvent()">
+        <button type="button" onclick="triggerHiddenEvent()" style="padding: 0 15px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">실행</button>
+    </div>
+
+    <div id="bottom-asset-bar" style="position:fixed; bottom:0; left:50%; transform:translateX(-50%); max-width:580px; width:100%; background:#020617; border-top:2px solid #334155; padding:9px 16px; display:flex; justify-content:space-between; align-items:center; font-size:13px; z-index:200; box-shadow:0 -4px 12px rgba(0,0,0,0.6); border-radius:0 0 20px 20px;">
+        <div style="font-weight:700; color:#e0e7ff;">총 자산: <span id="bottom-total" style="color:#fbbf24; font-weight:900; font-size:15px;">20,000,000</span> 원</div>
+        <div style="font-size:12px; color:#64748b; text-align:right; line-height:1.2;">
+            현금: <span id="bottom-bank" style="color:#f8fafc; font-weight:600;">20,000,000</span><br>
+            칩스: <span id="bottom-chips" style="color:#10b981; font-weight:600;">0</span>
+        </div>
+    </div>
+</div>
+
+<div id="equip-enhance-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99990; align-items:center; justify-content:center;">
+    <div style="background: linear-gradient(145deg, #0f172a, #020617); border: 2px solid #b45309; border-radius: 20px; padding: 24px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8); position:relative;">
+        <div onclick="closeEnhanceModal()" style="position:absolute; top:12px; right:16px; font-size:28px; color:#94a3b8; cursor:pointer; font-weight:bold; line-height:1;">&times;</div>
+        
+        <div style="display:flex; justify-content:center; align-items:center; margin-bottom:14px;">
+            <div style="font-size:20px; font-weight:900; color:#fbbf24; text-shadow:0 2px 10px rgba(251,191,36,0.3);">아바타 강화 시스템</div>
+        </div>
+        
+        <div id="equip-modal-selected-name" style="font-size:16px; font-weight:700; color:#e2e8f0; margin-bottom:12px;"></div>
+        
+        <div id="equip-modal-detail" style="background:#020617; border:1px solid #334155; border-radius:16px; padding:16px; min-height:135px; transition: all 0.3s ease;"></div>
+
+        <div id="equip-modal-controls" style="margin-top:14px;"></div>
+    </div>
+</div>
+
+<div id="starcatch-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center;">
+    <div style="background: linear-gradient(145deg, #0f172a, #020617); border: 2px solid #7c3aed; border-radius: 20px; padding: 24px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
+        <div style="font-size:22px; font-weight:900; color:#c084fc; margin-bottom:8px;">스타캐치 미니게임</div>
+        <div style="font-size:13px; color:#94a3b8; margin-bottom:20px;">중앙 노란색 존(PERFECT)에서 멈추면 성공 확률이 극대화됩니다!</div>
+        
+        <div style="position:relative; height:40px; background:#1e293b; border-radius:8px; border:2px solid #334155; margin-bottom:16px; overflow:hidden;">
+            <div style="position:absolute; left:34%; width:32%; height:100%; background:rgba(52, 211, 153, 0.4);"></div>
+            <div style="position:absolute; left:43%; width:14%; height:100%; background:rgba(251, 191, 36, 0.8);"></div>
+            <div id="starcatch-needle" style="position:absolute; left:50%; top:0; width:4px; height:100%; background:#fff; box-shadow:0 0 8px #fff; transform:translateX(-50%);"></div>
+        </div>
+
+        <div id="starcatch-instruction" style="font-size:16px; font-weight:bold; color:#fbbf24; margin-bottom:16px; min-height:24px;">타이밍을 맞춰 정지하세요!</div>
+        
+        <div id="starcatch-prob-preview" style="display:flex; justify-content:space-around; background:#020617; padding:12px; border-radius:12px; border:1px solid #1e293b; margin-bottom:20px;">
+            <div style="text-align:center;">
+                <div style="font-size:11px; color:#64748b; margin-bottom:4px;">성공 확률</div>
+                <div id="preview-success" style="font-size:16px; font-weight:900; color:#4ade80;">0%</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="font-size:11px; color:#64748b; margin-bottom:4px;">유지 확률</div>
+                <div id="preview-maintain" style="font-size:16px; font-weight:900; color:#93c5fd;">0%</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="font-size:11px; color:#64748b; margin-bottom:4px;">파괴 확률</div>
+                <div id="preview-destroy" style="font-size:16px; font-weight:900; color:#f87171;">0%</div>
+            </div>
+        </div>
+
+        <button id="starcatch-stop-btn" onclick="stopStarCatch()" style="width:100%; padding:14px; background:linear-gradient(135deg, #ea580c, #c2410c); color:white; border:none; border-radius:12px; font-size:18px; font-weight:900; cursor:pointer; box-shadow:0 8px 20px rgba(234, 88, 12, 0.4);">정지 (STOP) 🛑</button>
+        
+        <div id="starcatch-execute-btn" style="display:none;">
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeStarCatchModal()" style="flex:1; padding:14px; background:#334155; color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:bold; cursor:pointer;">취소</button>
+                <button onclick="executeStarCatchEnhance()" style="flex:2; padding:14px; background:linear-gradient(135deg, #7c3aed, #5b21b6); color:white; border:none; border-radius:12px; font-size:15px; font-weight:900; cursor:pointer; box-shadow:0 8px 20px rgba(124, 58, 237, 0.4);">결과 확인 및 강화</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="custom-alert-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:99999; align-items:center; justify-content:center;">
+    <div style="background:#0f172a; border:2px solid #475569; border-radius:20px; padding:28px 24px; max-width:320px; width:90%; text-align:center; color:#f1f5f9; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+        <div id="custom-alert-message" style="font-size:16px; line-height:1.6; margin-bottom:24px; white-space:pre-line;"></div>
+        <button onclick="closeCustomAlert()" style="width:100%; padding:14px; background:linear-gradient(135deg, #d97706, #b45309); color:white; border:none; border-radius:12px; font-size:16px; font-weight:bold; cursor:pointer;">확인</button>
+    </div>
+</div>
+
+<div id="fighter-profile-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center;">
+    <div style="background: linear-gradient(145deg, #0f172a, #020617); border: 2px solid #ef4444; border-radius: 20px; padding: 24px; width: 90%; max-width: 360px; text-align: left; box-shadow: 0 20px 60px rgba(0,0,0,0.9), inset 0 0 20px rgba(239,68,68,0.15); position:relative;">
+        <div onclick="closeFighterProfile()" style="position:absolute; top:12px; right:16px; font-size:28px; color:#94a3b8; cursor:pointer; font-weight:bold; line-height:1;">&times;</div>
+        
+        <div style="border-bottom:1px solid #334155; padding-bottom:12px; margin-bottom:14px; text-align:center;">
+            <div id="profile-title" style="font-size:12px; color:#fca5a5; font-weight:bold; margin-bottom:4px;"></div>
+            <div id="profile-name" style="font-size:24px; font-weight:900; color:#f8fafc; letter-spacing:1px; text-shadow:0 0 10px rgba(239,68,68,0.5);"></div>
+        </div>
+
+        <div style="background:#020617; border-radius:12px; padding:14px; margin-bottom:14px; border:1px solid #1e293b;">
+            <div style="font-size:12px; color:#fbbf24; font-weight:900; margin-bottom:10px;">📊 숨겨진 능력치</div>
+            
+            <div style="margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:#cbd5e1; margin-bottom:4px;"><span>❤️ 기초 체력 (HP)</span><span id="profile-hp-val" style="font-weight:bold; color:#10b981;">0</span></div>
+                <div style="height:6px; background:#1e293b; border-radius:3px; overflow:hidden;"><div id="profile-hp-bar" style="height:100%; background:#10b981; width:0%;"></div></div>
+            </div>
+            <div style="margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:#cbd5e1; margin-bottom:4px;"><span>⚔️ 공격력 (최대)</span><span id="profile-atk-val" style="font-weight:bold; color:#ef4444;">0</span></div>
+                <div style="height:6px; background:#1e293b; border-radius:3px; overflow:hidden;"><div id="profile-atk-bar" style="height:100%; background:#ef4444; width:0%;"></div></div>
+            </div>
+            <div style="margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:#cbd5e1; margin-bottom:4px;"><span>💨 회피율</span><span id="profile-eva-val" style="font-weight:bold; color:#3b82f6;">0%</span></div>
+                <div style="height:6px; background:#1e293b; border-radius:3px; overflow:hidden;"><div id="profile-eva-bar" style="height:100%; background:#3b82f6; width:0%;"></div></div>
+            </div>
+            <div>
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:#cbd5e1; margin-bottom:4px;"><span>💥 치명타 확률</span><span id="profile-crit-val" style="font-weight:bold; color:#fbbf24;">0%</span></div>
+                <div style="height:6px; background:#1e293b; border-radius:3px; overflow:hidden;"><div id="profile-crit-bar" style="height:100%; background:#fbbf24; width:0%;"></div></div>
+            </div>
+        </div>
+
+        <div style="background:rgba(239,68,68,0.05); border-left:3px solid #ef4444; padding:12px; font-size:12.5px; color:#94a3b8; line-height:1.6; max-height:110px; overflow-y:auto;" id="profile-lore">
+        </div>
+    </div>
+</div>
+
+<div id="team-profile-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center;">
+    <div style="background: linear-gradient(145deg, #0f172a, #020617); border: 2px solid #3b82f6; border-radius: 20px; padding: 24px; width: 90%; max-width: 360px; text-align: left; box-shadow: 0 20px 60px rgba(0,0,0,0.9), inset 0 0 20px rgba(59,130,246,0.15); position:relative;">
+        <div onclick="closeTeamProfile()" style="position:absolute; top:12px; right:16px; font-size:28px; color:#94a3b8; cursor:pointer; font-weight:bold; line-height:1;">&times;</div>
+        
+        <div style="display:flex; align-items:center; gap:12px; border-bottom:1px solid #334155; padding-bottom:12px; margin-bottom:14px;">
+            <div id="team-profile-badge" style="transform:scale(1.2); transform-origin:center; padding-left:4px;"></div>
+            <div>
+                <div style="font-size:11px; color:#60a5fa; font-weight:bold; margin-bottom:2px;">EPL Football Club</div>
+                <div id="team-profile-name" style="font-size:20px; font-weight:900; color:#f8fafc; letter-spacing:0.5px;"></div>
+            </div>
+        </div>
+
+        <div style="background:#020617; border-radius:12px; padding:14px; margin-bottom:14px; border:1px solid #1e293b; font-size:12.5px;">
+            <div style="margin-bottom:8px; display:flex;"><div style="color:#94a3b8; width:70px; flex-shrink:0;">전술 성향:</div><div id="team-profile-tactics" style="color:#e2e8f0; font-weight:bold;"></div></div>
+            <div style="margin-bottom:8px; display:flex;"><div style="color:#94a3b8; width:70px; flex-shrink:0;">주요 선수:</div><div id="team-profile-keyplayer" style="color:#fbbf24; font-weight:bold;"></div></div>
+            <div style="margin-bottom:8px; display:flex;"><div style="color:#94a3b8; width:70px; flex-shrink:0;">홈 구장:</div><div id="team-profile-stadium" style="color:#34d399; font-weight:bold;"></div></div>
+            <div style="display:flex;"><div style="color:#94a3b8; width:70px; flex-shrink:0;">구단주:</div><div id="team-profile-owner" style="color:#f87171; font-weight:bold;"></div></div>
+        </div>
+
+        <div style="background:rgba(59,130,246,0.05); border-left:3px solid #3b82f6; padding:12px; font-size:12.5px; color:#94a3b8; line-height:1.6; margin-bottom:14px;" id="team-profile-lore">
+        </div>
+
+        <div style="background:#020617; border-radius:12px; padding:14px; border:1px solid #1e293b; font-size:12.5px;">
+            <div style="font-size:12px; color:#60a5fa; font-weight:900; margin-bottom:8px;">📊 올 시즌 기록</div>
+            <div id="team-profile-record"></div>
+        </div>
+    </div>
+</div>
+
+<div id="vvip-profile-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center;">
+    <div style="background: linear-gradient(145deg, #0f172a, #020617); border: 2px solid #fbbf24; border-radius: 20px; padding: 24px; width: 90%; max-width: 360px; text-align: left; box-shadow: 0 20px 60px rgba(0,0,0,0.9), inset 0 0 20px rgba(251,191,36,0.15); position:relative;">
+        <div onclick="closeVvipProfile()" style="position:absolute; top:12px; right:16px; font-size:28px; color:#94a3b8; cursor:pointer; font-weight:bold; line-height:1;">&times;</div>
+        
+        <div style="border-bottom:1px solid #334155; padding-bottom:12px; margin-bottom:14px; text-align:center;">
+            <div id="vvip-profile-title" style="font-size:13px; color:#fbbf24; font-weight:bold; margin-bottom:4px;"></div>
+            <div id="vvip-profile-name" style="font-size:26px; font-weight:900; color:#f8fafc; letter-spacing:1px; text-shadow:0 0 15px rgba(251,191,36,0.4);"></div>
+        </div>
+
+        <div style="background:#020617; border-radius:12px; padding:14px; margin-bottom:14px; border:1px solid #1e293b;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:12px; color:#94a3b8;">추정 자산</span>
+                <span id="vvip-profile-wealth" style="font-size:13px; font-weight:900; color:#10b981;"></span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <span style="font-size:12px; color:#94a3b8;">주요 관심사</span>
+                <span id="vvip-profile-prefs" style="font-size:13px; font-weight:bold; color:#e2e8f0;"></span>
+            </div>
+            
+            <div style="font-size:12px; color:#fbbf24; font-weight:900; margin-bottom:10px; border-top:1px dashed #334155; padding-top:10px;">📊 성향 지표 분석</div>
+            
+            <div style="margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:#cbd5e1; margin-bottom:4px;"><span>🔥 승부욕 (입찰 과감성)</span><span id="vvip-stat-agg" style="font-weight:bold; color:#ef4444;">0</span></div>
+                <div style="height:6px; background:#1e293b; border-radius:3px; overflow:hidden;"><div id="vvip-bar-agg" style="height:100%; background:linear-gradient(90deg, #b91c1c, #ef4444); width:0%; transition:width 0.5s ease;"></div></div>
+            </div>
+            <div style="margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:#cbd5e1; margin-bottom:4px;"><span>❄️ 냉정함 (포기 타이밍)</span><span id="vvip-stat-cool" style="font-weight:bold; color:#3b82f6;">0</span></div>
+                <div style="height:6px; background:#1e293b; border-radius:3px; overflow:hidden;"><div id="vvip-bar-cool" style="height:100%; background:linear-gradient(90deg, #1d4ed8, #3b82f6); width:0%; transition:width 0.5s ease;"></div></div>
+            </div>
+            <div style="margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:#cbd5e1; margin-bottom:4px;"><span>👁️ 통찰력 (가치 평가)</span><span id="vvip-stat-ins" style="font-weight:bold; color:#a855f7;">0</span></div>
+                <div style="height:6px; background:#1e293b; border-radius:3px; overflow:hidden;"><div id="vvip-bar-ins" style="height:100%; background:linear-gradient(90deg, #7e22ce, #a855f7); width:0%; transition:width 0.5s ease;"></div></div>
+            </div>
+        </div>
+
+        <div id="vvip-current-desire-box" style="background:#450a0a; border:1px solid #ef4444; border-radius:10px; padding:12px; margin-bottom:14px; text-align:center; transition:all 0.3s ease;">
+            <div style="font-size:11px; color:#fca5a5; margin-bottom:4px;" id="vvip-desire-label">현재 경매품에 대한 입찰 욕구</div>
+            <div id="vvip-current-desire" style="font-size:18px; font-weight:900; color:#ef4444; text-shadow:0 0 8px rgba(239,68,68,0.5);">0%</div>
+        </div>
+
+        <div style="background:rgba(251,191,36,0.05); border-left:3px solid #fbbf24; padding:12px; font-size:12.5px; color:#cbd5e1; line-height:1.6; max-height:110px; overflow-y:auto;" id="vvip-profile-lore">
+        </div>
+    </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/dialogue.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/ranking.js"></script>
+<script src="js/financial.js"></script>
+<script src="js/equip.js"></script>
+<script src="js/ladder.js"></script>
+<script src="js/blackjack.js"></script>
+<script src="js/roulette.js"></script>
+<script src="js/slot.js"></script>
+<script src="js/stock.js"></script>
+<script src="js/coin.js"></script>
+<script src="js/toto.js"></script>
+<script src="js/arena.js?v=3"></script>
+<script src="js/blackmarket.js"></script>
+<script src="js/auction.js"></script>
+<script src="js/business.js"></script>
+<script src="js/event.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(registration => {
+                    console.log('ServiceWorker 등록 성공:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('ServiceWorker 등록 실패:', error);
+                });
+        });
+    }
+</script>
+
+</body>
+</html>
