@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>설야장 살인사건</title>
+<link rel="icon" href="icon.svg">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="snow" id="snow" aria-hidden="true"></div>
+
+<!-- ── 타이틀 ───────────────────────────────────────────── -->
+<section class="screen active" id="screen-title">
+  <div class="title-wrap">
+    <div class="title-mark">雪 夜 莊</div>
+    <h1>설야장 살인사건</h1>
+    <p class="title-sub">폭설의 밤, 여섯 사람</p>
+    <div class="title-line"></div>
+    <p class="title-blurb">
+      강원도 평창, 눈에 갇힌 아트 레지던시.<br>
+      거장 윤제하가 2층 작업실에서 살해당했다.<br>
+      경찰이 오기까지 일곱 시간 반. 범인은 아직 이 안에 있다.
+    </p>
+    <div class="title-btns">
+      <button class="btn btn-primary" id="btn-start">조사를 시작한다</button>
+      <button class="btn btn-ghost" id="btn-continue" hidden>이어서 하기</button>
+    </div>
+    <div class="ai-status" id="ai-status">용의자 AI 연결 확인 중…</div>
+  </div>
+</section>
+
+<!-- ── 프롤로그 ─────────────────────────────────────────── -->
+<section class="screen" id="screen-prologue">
+  <div class="prologue-wrap">
+    <div class="prologue-card" id="prologue-card">
+      <h2 id="prologue-head"></h2>
+      <p id="prologue-body"></p>
+    </div>
+    <div class="prologue-nav">
+      <span class="prologue-dots" id="prologue-dots"></span>
+      <button class="btn btn-primary" id="btn-prologue-next">다음</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── 본편 ─────────────────────────────────────────────── -->
+<section class="screen" id="screen-game">
+  <header class="hud">
+    <div class="hud-left">
+      <span class="hud-title">설야장</span>
+      <span class="hud-clock" id="hud-clock">07:30</span>
+      <span class="hud-deadline" id="hud-deadline">경찰 도착까지 7시간 30분</span>
+    </div>
+    <div class="hud-right">
+      <span class="hud-count" id="hud-count">증거 0 / 28</span>
+      <button class="btn btn-small btn-accuse" id="btn-goto-accuse">최종 추리</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="investigate">🔦 현장 조사</button>
+    <button class="tab" data-tab="interrogate">💬 심문</button>
+    <button class="tab" data-tab="notebook">📕 사건 수첩</button>
+  </nav>
+
+  <main class="panels">
+    <!-- 현장 조사 -->
+    <div class="panel active" id="panel-investigate">
+      <div class="loc-grid" id="loc-grid"></div>
+      <div class="loc-detail" id="loc-detail" hidden>
+        <button class="back-link" id="btn-loc-back">← 장소 목록</button>
+        <h2 id="loc-name"></h2>
+        <p class="loc-desc" id="loc-desc"></p>
+        <div class="clue-list" id="clue-list"></div>
+      </div>
+    </div>
+
+    <!-- 심문 -->
+    <div class="panel" id="panel-interrogate">
+      <div class="sus-grid" id="sus-grid"></div>
+      <div class="chat-wrap" id="chat-wrap" hidden>
+        <div class="chat-head">
+          <button class="back-link" id="btn-chat-back">← 용의자 목록</button>
+          <div class="chat-who">
+            <span class="chat-face" id="chat-face"></span>
+            <span>
+              <b id="chat-name"></b>
+              <small id="chat-role"></small>
+            </span>
+          </div>
+        </div>
+        <div class="chat-log" id="chat-log"></div>
+        <div class="chat-chips" id="chat-chips"></div>
+        <div class="chat-input">
+          <button class="btn btn-evidence" id="btn-show-evidence" title="증거 제시">📎</button>
+          <input type="text" id="chat-text" placeholder="무엇이든 물어보십시오…" autocomplete="off">
+          <button class="btn btn-primary" id="btn-chat-send">묻기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 수첩 -->
+    <div class="panel" id="panel-notebook">
+      <div class="nb-tabs">
+        <button class="nb-tab active" data-nb="evidence">증거</button>
+        <button class="nb-tab" data-nb="people">인물</button>
+        <button class="nb-tab" data-nb="time">타임라인</button>
+      </div>
+      <div class="nb-body" id="nb-body"></div>
+    </div>
+  </main>
+</section>
+
+<!-- ── 최종 추리 ────────────────────────────────────────── -->
+<section class="screen" id="screen-accuse">
+  <div class="accuse-wrap">
+    <h2>최종 추리</h2>
+    <p class="accuse-lead">경찰이 도착했다. 당신이 밝혀낸 것을 진술하십시오. 한 번 제출하면 되돌릴 수 없습니다.</p>
+    <div id="quiz-list"></div>
+    <div class="accuse-btns">
+      <button class="btn btn-ghost" id="btn-accuse-back">아직 조사가 남았다</button>
+      <button class="btn btn-primary" id="btn-accuse-submit">진술한다</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── 엔딩 ─────────────────────────────────────────────── -->
+<section class="screen" id="screen-ending">
+  <div class="ending-wrap">
+    <div class="rank-card">
+      <div class="rank-grade" id="rank-grade"></div>
+      <div class="rank-title" id="rank-title"></div>
+      <div class="rank-score" id="rank-score"></div>
+      <p class="rank-line" id="rank-line"></p>
+    </div>
+    <div id="ending-marks"></div>
+    <h2 class="solution-head">해결편</h2>
+    <div id="solution-body"></div>
+    <div class="ending-btns">
+      <button class="btn btn-primary" id="btn-replay">처음부터 다시</button>
+    </div>
+  </div>
+</section>
+
+<!-- 증거 제시 모달 -->
+<div class="modal" id="modal-evidence" hidden>
+  <div class="modal-box">
+    <h3>어떤 증거를 내밀겠습니까?</h3>
+    <div class="modal-list" id="modal-evidence-list"></div>
+    <button class="btn btn-ghost" id="btn-modal-close">닫기</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="js/case.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/investigate.js"></script>
+<script src="js/interrogate.js"></script>
+<script src="js/notebook.js"></script>
+<script src="js/accuse.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
