@@ -18,13 +18,19 @@ const Notebook = {
 
     evidence() {
         if (!State.found.length) return `<p class="nb-empty">아직 아무것도 찾지 못했다.</p>`;
+        const keyAll = Object.keys(CASE.clues).filter(id => CASE.clues[id].tag === "결정적");
+        const keyGot = keyAll.filter(id => State.has(id));
+        const bar = `<p class="clue-hint" style="margin:-6px 0 18px">
+            결정적 단서 <b>${keyGot.length} / ${keyAll.length}</b>
+            ${keyGot.length === keyAll.length ? " — 사건을 세울 재료는 다 모였다." : ""}
+        </p>`;
         const order = ["결정적", "현장", "흉기", "동기", "알리바이", "동선"];
         const groups = {};
         State.found.forEach(id => {
             const c = CASE.clues[id];
             (groups[c.tag] = groups[c.tag] || []).push(c);
         });
-        return order.filter(t => groups[t]).map(tag => `
+        return bar + order.filter(t => groups[t]).map(tag => `
             <div class="nb-group">
                 <h3>${tag}</h3>
                 ${groups[tag].map(c => `<div class="clue ${c.key ? "key" : ""}">

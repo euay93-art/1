@@ -85,7 +85,7 @@ i { color: var(--ink-dim); }
 .btn-small { padding: 6px 12px; font-size: 13px; }
 .btn-accuse { border-color: var(--blood); color: #e59a9a; }
 .btn-accuse:hover { background: var(--blood); color: #fff; }
-.btn-evidence { padding: 10px 13px; font-size: 17px; }
+.btn-evidence { padding: 10px 13px; font-size: 17px; flex: 0 0 auto; }
 
 .back-link {
   background: none; border: 0; color: var(--ink-dim);
@@ -244,6 +244,12 @@ i { color: var(--ink-dim); }
   color: var(--gold-soft); font-size: 13px; text-align: center;
 }
 .msg.system { align-self: center; color: var(--ink-faint); font-size: 12.5px; background: none; }
+.msg.quote {
+  align-self: center; max-width: 100%;
+  background: transparent; border: 1px dashed var(--ink-faint);
+  color: var(--ink-dim); font-size: 13px; line-height: 1.7;
+}
+.msg.quote b { color: var(--ink); }
 .msg.confess { border-color: var(--blood); background: #2a1620; }
 .msg.thinking { color: var(--ink-faint); font-style: italic; }
 
@@ -361,6 +367,9 @@ i { color: var(--ink-dim); }
   .tab { flex: 1 1 0; min-width: 0; padding: 9px 4px; font-size: 12.5px; }
   .hud { padding: 10px 12px; }
   .msg { max-width: 92%; }
+  .chat-input { gap: 6px; }
+  .btn-evidence { padding: 9px 10px; font-size: 16px; }
+  .chat-input .btn-primary { padding: 10px 12px; }
   .loc-grid, .sus-grid { grid-template-columns: 1fr; }
 }
 

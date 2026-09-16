@@ -55,6 +55,10 @@ const Interrogate = {
         box.innerHTML = State.chatFor(this.current.id).map(m => {
             if (m.role === "system") return `<div class="msg system">${m.text}</div>`;
             if (m.role === "evidence") return `<div class="msg evidence">📎 「${m.text}」을(를) 내밀었다</div>`;
+            if (m.role === "quote") {
+                const cut = m.text.indexOf("|");
+                return `<div class="msg quote">🗣 <b>${this.esc(m.text.slice(0, cut))}</b>의 말을 옮겼다<br>「${this.esc(m.text.slice(cut + 1))}」</div>`;
+            }
             if (m.role === "user") return `<div class="msg me">${this.esc(m.text)}</div>`;
             return `<div class="msg them ${m.confess ? "confess" : ""}">${this.esc(m.text)}</div>`;
         }).join("");
@@ -101,13 +105,13 @@ const Interrogate = {
     },
 
     // ── AI 대화 ────────────────────────────────────────
-    async send(showing) {
+    async send(showing, quote) {
         if (this.busy) return;
         if (State.timeUp()) return Accuse.forceEnd();
 
         const input = document.getElementById("chat-text");
         const text = (input.value || "").trim();
-        if (!text && !showing) return;
+        if (!text && !showing && !quote) return;
         input.value = "";
 
         if (!AI.online) return this.offlineReply(text);
@@ -116,7 +120,7 @@ const Interrogate = {
         const who = this.current;
         const mine = () => this.current === who;
 
-        this.push("user", text || "이건 어떻게 설명하시겠습니까?");
+        if (text || !quote) this.push("user", text || "이건 어떻게 설명하시겠습니까?");
         this.busy = true;
         this.setBusy(true);
 
@@ -142,7 +146,7 @@ const Interrogate = {
         };
 
         try {
-            const res = await AI.ask(who.id, text, showing, stream);
+            const res = await AI.ask(who.id, text, showing, stream, quote);
             wait.remove();
 
             State.spend();
@@ -186,6 +190,7 @@ const Interrogate = {
             if (mine()) this.setBusy(false);
             else { document.getElementById("btn-chat-send").disabled = false;
                    document.getElementById("btn-show-evidence").disabled = false;
+                   document.getElementById("btn-show-quote").disabled = false;
                    document.getElementById("chat-text").disabled = false; }
         }
     },
@@ -193,6 +198,7 @@ const Interrogate = {
     setBusy(on) {
         document.getElementById("btn-chat-send").disabled = on;
         document.getElementById("btn-show-evidence").disabled = on;
+        document.getElementById("btn-show-quote").disabled = on;
         document.getElementById("chat-text").disabled = on;
         if (!on) document.getElementById("chat-text").focus();
     },
@@ -214,6 +220,58 @@ const Interrogate = {
         this.push("them", t.a);
         this.renderChips();
         if (State.timeUp()) setTimeout(() => Accuse.forceEnd(), 1200);
+    },
+
+    // ── 증언 대질 ──────────────────────────────────────
+    // 다른 용의자가 한 말을 이 사람 앞에 옮겨 놓는다.
+    quotes() {
+        const out = [];
+        CASE.suspects.forEach(s => {
+            if (s.id === this.current.id) return;
+            (State.chats[s.id] || []).forEach((m, i) => {
+                if (m.role !== "them" || !m.text || m.text.length < 25) return;
+                const key = s.id + ":" + i;
+                if ((State.quoted || []).indexOf(key) !== -1) return;
+                out.push({ key: key, who: s.name, face: s.face, text: m.text });
+            });
+        });
+        return out.reverse();     // 최근에 들은 말부터
+    },
+
+    openQuoteModal() {
+        const modal = document.getElementById("modal-quote");
+        const list = document.getElementById("modal-quote-list");
+        const items = this.quotes();
+
+        if (!items.length) {
+            list.innerHTML = `<p class="nb-empty">아직 옮길 만한 말이 없습니다. 다른 사람을 먼저 만나 보십시오.</p>`;
+        } else {
+            list.innerHTML = items.map(q =>
+                `<button class="modal-item" data-q="${q.key}">${q.face} ${q.who}<small>「${this.esc(q.text.slice(0, 90))}${q.text.length > 90 ? "…" : ""}」</small></button>`
+            ).join("");
+            list.querySelectorAll("[data-q]").forEach(b => {
+                b.onclick = () => {
+                    modal.hidden = true;
+                    this.confront(items.find(x => x.key === b.dataset.q));
+                };
+            });
+        }
+        modal.hidden = false;
+    },
+
+    confront(q) {
+        if (!q) return;
+        if (!State.quoted) State.quoted = [];
+        State.quoted.push(q.key);
+        this.push("quote", q.who + "|" + q.text);
+        State.save();
+
+        if (AI.online) return this.send(null, q);
+
+        if (State.timeUp()) return Accuse.forceEnd();
+        State.spend();
+        UI.hud();
+        this.push("them", this.current.fallback || "…그 사람이 그렇게 말했습니까. 저는 제가 본 것밖에 모릅니다.");
     },
 
     // ── 증거 제시 ──────────────────────────────────────

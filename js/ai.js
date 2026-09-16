@@ -42,19 +42,19 @@ const AI = {
     },
 
     // { text, confessed } 를 반환한다. onText 가 있으면 생성 중에 계속 호출된다.
-    async ask(suspectId, message, showing, onText) {
+    async ask(suspectId, message, showing, onText, quote) {
         const history = State.chatFor(suspectId)
             .filter(m => m.role === "user" || m.role === "them")
             .map(m => ({ role: m.role === "user" ? "user" : "assistant", text: m.text }));
         const presented = State.presentedFor(suspectId);
 
-        if (this.mode === "sample") return this._viaSample(suspectId, message, showing, history, presented, onText);
-        return this._viaServer(suspectId, message, showing, history, presented);
+        if (this.mode === "sample") return this._viaSample(suspectId, message, showing, history, presented, onText, quote);
+        return this._viaServer(suspectId, message, showing, history, presented, quote);
     },
 
-    async _viaSample(suspectId, message, showing, history, presented, onText) {
+    async _viaSample(suspectId, message, showing, history, presented, onText, quote) {
         const system = buildSystemPrompt(suspectId, presented, pressureLabel(presented));
-        const user = buildUserPrompt({ history, message, showing });
+        const user = buildUserPrompt({ history, message, showing, quote });
 
         const res = await this._sample(
             [{ role: "user", content: system + "\n\n──────────\n\n" + user }],
@@ -67,11 +67,11 @@ const AI = {
         return this._finish(res.text);
     },
 
-    async _viaServer(suspectId, message, showing, history, presented) {
+    async _viaServer(suspectId, message, showing, history, presented, quote) {
         const res = await fetch("/api/ask", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ suspect: suspectId, message, showing: showing || null, presented, history })
+            body: JSON.stringify({ suspect: suspectId, message, showing: showing || null, presented, history, quote: quote || null })
         });
         const data = await res.json();
         if (!res.ok || data.error) throw new Error(data.error || "응답 실패");

@@ -6,6 +6,7 @@ let prologueIndex = 0;
 
 function closeModal() {
     document.getElementById("modal-evidence").hidden = true;
+    document.getElementById("modal-quote").hidden = true;
 }
 
 function showPrologue(i) {
@@ -87,6 +88,11 @@ function boot() {
         if (e.key === "Enter" && !e.isComposing) Interrogate.send();
     });
     document.getElementById("btn-show-evidence").onclick = () => Interrogate.openEvidenceModal();
+    document.getElementById("btn-show-quote").onclick = () => Interrogate.openQuoteModal();
+    document.getElementById("btn-quote-close").onclick = () => closeModal();
+    document.getElementById("modal-quote").onclick = e => {
+        if (e.target.id === "modal-quote") closeModal();
+    };
     document.getElementById("btn-modal-close").onclick = () => closeModal();
     document.getElementById("modal-evidence").onclick = e => {
         if (e.target.id === "modal-evidence") closeModal();

@@ -11,6 +11,7 @@ const State = {
     presented: {},       // 용의자별로 제시한 증거 id 배열
     chats: {},           // 용의자별 대화 기록 [{role,text}]
     asked: [],           // 오프라인 모드에서 소비한 질문 id
+    quoted: [],          // 이미 대질에 쓴 진술
     confessed: false,    // 배정훈이 자백했는가
     answers: {},         // 최종 추리 선택
     finished: false,
@@ -65,6 +66,7 @@ const State = {
             localStorage.setItem(SAVE_KEY, JSON.stringify({
                 started: this.started, minute: this.minute, found: this.found,
                 presented: this.presented, chats: this.chats, asked: this.asked,
+                quoted: this.quoted,
                 confessed: this.confessed, answers: this.answers, finished: this.finished
             }));
         } catch (e) { /* 사생활 보호 모드 등 — 저장 없이 진행 */ }
@@ -93,6 +95,7 @@ const State = {
             this.minute = clamp(d.minute, CASE.meta.startMinute, CASE.meta.endMinute, CASE.meta.startMinute);
             this.found = known(d.found, clueIds);
             this.asked = known(d.asked, topicIds);
+            this.quoted = Array.isArray(d.quoted) ? d.quoted.filter(x => typeof x === "string") : [];
             this.confessed = !!d.confessed;
             this.finished = !!d.finished;
 
@@ -119,7 +122,7 @@ const State = {
     reset() {
         this.started = false;
         this.minute = CASE.meta.startMinute;
-        this.found = []; this.presented = {}; this.chats = {}; this.asked = [];
+        this.found = []; this.presented = {}; this.chats = {}; this.asked = []; this.quoted = [];
         this.confessed = false; this.answers = {}; this.finished = false;
         try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
     }
