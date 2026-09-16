@@ -30,7 +30,6 @@
       <button class="btn btn-primary" id="btn-start">조사를 시작한다</button>
       <button class="btn btn-ghost" id="btn-continue" hidden>이어서 하기</button>
     </div>
-    <button class="btn btn-ghost btn-small btn-watch" id="btn-watch">📡 관제실 — 창 하나 더 열어 같이 보기</button>
     <div class="ai-status" id="ai-status">용의자 AI 연결 확인 중…</div>
   </div>
 </section>
@@ -67,7 +66,6 @@
     <button class="tab active" data-tab="investigate">🔦 현장 조사</button>
     <button class="tab" data-tab="interrogate">💬 심문</button>
     <button class="tab" data-tab="notebook">📕 사건 수첩</button>
-    <button class="tab" data-tab="partner" id="tab-partner" hidden>🤝 동행</button>
   </nav>
 
   <main class="panels">
@@ -106,51 +104,6 @@
       </div>
     </div>
 
-    <!-- 동행 수사 -->
-    <div class="panel" id="panel-partner">
-      <div class="seg-row" id="partner-switch">
-        <button class="seg active" data-view="partner">🤝 게임 파트너</button>
-        <button class="seg" data-view="radio">📻 무전</button>
-      </div>
-
-      <div id="radio-side" hidden>
-        <div class="partner-head">
-          <h2>무전</h2>
-          <p class="partner-desc">
-            <b>대화창에 있는 Claude</b>와 직접 연결됩니다. 당신의 수사 진행도 그쪽에서 읽을 수 있습니다.
-            사람이 아니라 다른 창에 있는 상대라서, 답이 바로 오지 않고 조금 뒤에 올 수 있습니다.
-          </p>
-        </div>
-        <div class="chat-log" id="radio-log"></div>
-        <div class="chat-input">
-          <input type="text" id="radio-text" placeholder="대화창의 Claude에게 무전…" autocomplete="off">
-          <button class="btn btn-primary" id="btn-radio-send">보내기</button>
-        </div>
-      </div>
-
-      <div id="partner-side">
-      <div class="partner-head">
-        <h2>동행 수사</h2>
-        <p class="partner-desc">
-          당신이 <b>지금까지 확보한 것만</b> 알고 있는 동료입니다. 범인이 누구인지는 모릅니다.
-          모순을 짚고 다음에 뭘 뒤질지 같이 정하는 용도로 쓰십시오.
-        </p>
-        <span class="partner-stat" id="partner-stat"></span>
-      </div>
-      <div class="chat-log" id="partner-log"></div>
-      <div class="chat-chips" id="partner-chips">
-        <button class="chip" data-ask="지금까지 나온 것 중에 서로 안 맞는 게 있나?">모순 짚어줘</button>
-        <button class="chip" data-ask="다음에 어디를 뒤지고 누구한테 뭘 물어야 할까?">다음 수순은?</button>
-        <button class="chip" data-ask="지금 가장 의심스러운 사람은 누구고, 왜 그렇게 보나?">누가 수상해?</button>
-        <button class="chip" data-ask="지금까지 확보한 걸 시간 순으로 정리해줘.">정리해줘</button>
-      </div>
-      <div class="chat-input">
-        <input type="text" id="partner-text" placeholder="동료에게 상의하기…" autocomplete="off">
-        <button class="btn btn-primary" id="btn-partner-send">보내기</button>
-      </div>
-      </div>
-    </div>
-
     <!-- 수첩 -->
     <div class="panel" id="panel-notebook">
       <div class="nb-tabs">
@@ -161,30 +114,6 @@
       <div class="nb-body" id="nb-body"></div>
     </div>
   </main>
-</section>
-
-<!-- ── 관제실 ───────────────────────────────────────────── -->
-<section class="screen" id="screen-watch">
-  <div class="watch-wrap">
-    <header class="watch-head">
-      <div>
-        <h1>📡 관제실</h1>
-        <p class="watch-sub"><span class="live"></span> 두 사람의 수사가 실시간으로 갱신됩니다. 게임 창 옆에 띄워 두십시오.</p>
-      </div>
-      <button class="btn btn-ghost btn-small" id="btn-watch-back">← 게임으로</button>
-    </header>
-
-    <div class="watch-grid" id="watch-body"></div>
-
-    <div class="watch-radio">
-      <h3>📻 무전</h3>
-      <div class="chat-log" id="watch-radio-log"></div>
-      <div class="chat-input">
-        <input type="text" id="watch-radio-text" placeholder="대화창의 Claude에게…" autocomplete="off">
-        <button class="btn btn-primary" id="btn-watch-radio-send">보내기</button>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- ── 최종 추리 ────────────────────────────────────────── -->
@@ -235,9 +164,6 @@
 <script src="js/ai.js"></script>
 <script src="js/investigate.js"></script>
 <script src="js/interrogate.js"></script>
-<script src="js/partner.js"></script>
-<script src="js/sync.js"></script>
-<script src="js/watch.js"></script>
 <script src="js/notebook.js"></script>
 <script src="js/accuse.js"></script>
 <script src="js/main.js"></script>

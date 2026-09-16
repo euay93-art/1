@@ -108,22 +108,6 @@ async function handleAsk(req, res) {
     });
 }
 
-// 동행 수사 — 인물 연기가 아닌 자유 호출
-async function handleRaw(req, res) {
-    let raw = "";
-    req.on("data", d => { raw += d; if (raw.length > 400000) req.destroy(); });
-    req.on("end", async () => {
-        try {
-            const { prompt } = JSON.parse(raw || "{}");
-            if (!prompt) return send(res, 400, { error: "빈 요청입니다." });
-            const text = await callClaude("당신은 추리 사건을 함께 조사하는 동료다. 주어진 지시를 따르라.", prompt);
-            send(res, 200, { text });
-        } catch (e) {
-            send(res, 500, { error: String(e.message || e) });
-        }
-    });
-}
-
 function send(res, code, obj) {
     const buf = Buffer.from(JSON.stringify(obj));
     res.writeHead(code, { "Content-Type": "application/json; charset=utf-8", "Content-Length": buf.length });
@@ -149,7 +133,6 @@ function serveStatic(req, res) {
 
 http.createServer((req, res) => {
     if (req.method === "POST" && req.url === "/api/ask") return handleAsk(req, res);
-    if (req.method === "POST" && req.url === "/api/raw") return handleRaw(req, res);
     if (req.method === "GET" && req.url === "/api/health") {
         return send(res, 200, { ok: true, model: MODEL, effort: EFFORT });
     }

@@ -78,25 +78,6 @@ const AI = {
         return { text: data.text, confessed: data.confessed };
     },
 
-    // 인물 연기가 아닌 자유 호출 (동행 수사)
-    async raw(prompt, onText) {
-        if (this.mode === "sample") {
-            const res = await this._sample(
-                [{ role: "user", content: prompt }],
-                { cache: false, modelTier: "complex", onText: onText ? (e => onText(e.text)) : undefined }
-            );
-            return String(res.text || "").trim();
-        }
-        const res = await fetch("/api/raw", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt })
-        });
-        const data = await res.json();
-        if (!res.ok || data.error) throw new Error(data.error || "응답 실패");
-        return data.text;
-    },
-
     _clean(t) { return String(t || "").replace(/\[\[자백\]\]/g, "").trim(); },
 
     _finish(raw) {

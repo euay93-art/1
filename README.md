@@ -66,7 +66,7 @@ css/style.css         스타일
 js/case.js            시나리오 데이터 (장소·증거·각본 대사·정답)
 js/state.js           게임 상태와 localStorage 저장
 js/ui.js              화면 전환, HUD, 눈, 타자기 효과
-js/ai.js              AI 서버 연결 / 각본 모드 자동 전환
+js/ai.js              AI 연결 / 각본 모드 자동 전환
 js/investigate.js     현장 조사
 js/interrogate.js     심문과 증거 제시
 js/notebook.js        사건 수첩
