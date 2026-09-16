@@ -4,6 +4,10 @@
 
 let prologueIndex = 0;
 
+function closeModal() {
+    document.getElementById("modal-evidence").hidden = true;
+}
+
 function showPrologue(i) {
     const p = CASE.prologue[i];
     if (!p) return startGame();
@@ -83,6 +87,13 @@ function boot() {
         if (e.key === "Enter" && !e.isComposing) Interrogate.send();
     });
     document.getElementById("btn-show-evidence").onclick = () => Interrogate.openEvidenceModal();
+    document.getElementById("btn-modal-close").onclick = () => closeModal();
+    document.getElementById("modal-evidence").onclick = e => {
+        if (e.target.id === "modal-evidence") closeModal();
+    };
+    document.addEventListener("keydown", e => {
+        if (e.key === "Escape") closeModal();
+    });
 
     // 최종 추리
     document.getElementById("btn-goto-accuse").onclick = () => Accuse.open();

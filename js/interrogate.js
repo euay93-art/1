@@ -245,7 +245,7 @@ const Interrogate = {
                 UI.toast("배정훈의 진술이 무너지고 있다.", 4000);
             }
         } else {
-            this.push("them", "…글쎄요. 저는 그것에 대해 아는 바가 없습니다.");
+            this.push("them", this.current.fallback || "…글쎄요. 저는 그것에 대해 아는 바가 없습니다.");
         }
         State.save();
     }

@@ -39,10 +39,15 @@ const Accuse = {
             return { q, picked, ok };
         });
 
-        // 증거 수집률 보너스는 등급 판정에만 반영
         const rate = State.found.length / Object.keys(CASE.clues).length;
-        const total = Math.round(score + rate * 0);   // 정답 자체로만 채점
-        const rank = CASE.ranks.find(r => total >= r.min) || CASE.ranks[CASE.ranks.length - 1];
+        const total = score;
+
+        // 범인을 틀렸다면 나머지를 몇 개 맞혔든 오판이다.
+        // 맞혔다면 얼마나 설명해냈는지로 등급이 갈린다.
+        const namedRight = marks[0].ok;
+        const rank = namedRight
+            ? (CASE.ranks.find(r => r.grade !== "F" && total >= r.min) || CASE.ranks[CASE.ranks.length - 2])
+            : CASE.ranks[CASE.ranks.length - 1];
 
         State.finished = true;
         State.save();
