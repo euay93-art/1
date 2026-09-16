@@ -61,16 +61,26 @@ const Interrogate = {
         box.scrollTop = box.scrollHeight;
     },
 
+    // 아직 알 리 없는 사실을 전제하는 질문은 내놓지 않는다.
+    // 본인이 먼저 흘렸거나(after), 해당 증거를 확보했을 때(needs)만 열린다.
+    chipOpen(t) {
+        if (State.asked.includes(t.id)) return false;
+        if (!t.after && !t.needs) return true;
+        if (t.after && State.asked.includes(t.after)) return true;
+        if (t.needs && t.needs.some(c => State.has(c))) return true;
+        return false;
+    },
+
     renderChips() {
         const box = document.getElementById("chat-chips");
-        const asked = State.asked;
-        const topics = (this.current.topics || []).filter(t => !asked.includes(t.id));
-        box.innerHTML = topics.slice(0, 4)
+        const topics = (this.current.topics || []).filter(t => this.chipOpen(t));
+        box.innerHTML = topics.slice(0, 3)
             .map(t => `<button class="chip" data-topic="${t.id}">${t.q}</button>`).join("");
         box.querySelectorAll("[data-topic]").forEach(b => {
             b.onclick = () => {
                 const t = this.current.topics.find(x => x.id === b.dataset.topic);
                 if (AI.online) {
+                    if (!State.asked.includes(t.id)) { State.asked.push(t.id); State.save(); }
                     document.getElementById("chat-text").value = t.q;
                     this.send();
                 } else {
