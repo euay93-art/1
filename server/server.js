@@ -95,14 +95,15 @@ async function handleAsk(req, res) {
 
             const presented = Array.isArray(body.presented) ? body.presented : [];
             const confronts = Number(body.confronts) || 0;
-            const sys = buildSystemPrompt(id, presented, pressureLabel(presented, confronts));
+            const sys = buildSystemPrompt(id, presented, pressureLabel(presented, confronts), !!body.opened);
             const usr = buildUserPrompt(body);
 
             let text = await callClaude(sys, usr);
             const confessed = text.includes("[[자백]]");
-            text = text.replace(/\[\[자백\]\]/g, "").trim();
+            const opened = text.includes("[[마음]]");
+            text = text.replace(/\[\[자백\]\]/g, "").replace(/\[\[마음\]\]/g, "").trim();
 
-            send(res, 200, { text, confessed });
+            send(res, 200, { text, confessed, opened });
         } catch (e) {
             send(res, 500, { error: String(e.message || e) });
         }

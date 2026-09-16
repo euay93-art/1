@@ -48,13 +48,14 @@ const AI = {
             .map(m => ({ role: m.role === "user" ? "user" : "assistant", text: m.text }));
         const presented = State.presentedFor(suspectId);
         const confronts = State.confrontsFor(suspectId);
+        const opened = State.opened(suspectId);
 
-        if (this.mode === "sample") return this._viaSample(suspectId, message, showing, history, presented, onText, quote, confronts);
-        return this._viaServer(suspectId, message, showing, history, presented, quote, confronts);
+        if (this.mode === "sample") return this._viaSample(suspectId, message, showing, history, presented, onText, quote, confronts, opened);
+        return this._viaServer(suspectId, message, showing, history, presented, quote, confronts, opened);
     },
 
-    async _viaSample(suspectId, message, showing, history, presented, onText, quote, confronts) {
-        const system = buildSystemPrompt(suspectId, presented, pressureLabel(presented, confronts));
+    async _viaSample(suspectId, message, showing, history, presented, onText, quote, confronts, opened) {
+        const system = buildSystemPrompt(suspectId, presented, pressureLabel(presented, confronts), opened);
         const user = buildUserPrompt({ history, message, showing, quote });
 
         const res = await this._sample(
@@ -68,22 +69,26 @@ const AI = {
         return this._finish(res.text);
     },
 
-    async _viaServer(suspectId, message, showing, history, presented, quote, confronts) {
+    async _viaServer(suspectId, message, showing, history, presented, quote, confronts, opened) {
         const res = await fetch("/api/ask", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ suspect: suspectId, message, showing: showing || null, presented, history, quote: quote || null, confronts: confronts || 0 })
+            body: JSON.stringify({ suspect: suspectId, message, showing: showing || null, presented, history, quote: quote || null, confronts: confronts || 0, opened: !!opened })
         });
         const data = await res.json();
         if (!res.ok || data.error) throw new Error(data.error || "응답 실패");
-        return { text: data.text, confessed: data.confessed };
+        return { text: data.text, confessed: data.confessed, opened: data.opened };
     },
 
-    _clean(t) { return String(t || "").replace(/\[\[자백\]\]/g, "").trim(); },
+    _clean(t) { return String(t || "").replace(/\[\[자백\]\]|\[\[마음\]\]/g, "").trim(); },
 
     _finish(raw) {
         const text = String(raw || "").trim();
-        return { text: this._clean(text), confessed: text.includes("[[자백]]") };
+        return {
+            text: this._clean(text),
+            confessed: text.includes("[[자백]]"),
+            opened: text.includes("[[마음]]")
+        };
     },
 
     // 오류 코드를 사람이 읽을 수 있는 말로

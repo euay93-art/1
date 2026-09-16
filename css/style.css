@@ -251,6 +251,8 @@ i { color: var(--ink-dim); }
 }
 .msg.quote b { color: var(--ink); }
 .msg.confess { border-color: var(--blood); background: #2a1620; }
+.msg.open { border-color: #6fa88a; background: #1a2a24; }
+.sus-open { color: #8fd3b0; }
 .msg.thinking { color: var(--ink-faint); font-style: italic; }
 
 .chat-chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }

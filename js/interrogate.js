@@ -17,7 +17,7 @@ const Interrogate = {
                 <span>
                     <b>${s.name} <small style="display:inline">(${s.age})</small></b>
                     <small>${s.role}</small>
-                    <span class="sus-meta">질문 ${turns}회 · 증거 제시 ${shown}건</span>
+                    <span class="sus-meta">질문 ${turns}회 · 증거 제시 ${shown}건${State.opened(s.id) ? ' · <b class="sus-open">마음을 열었다</b>' : ""}</span>
                 </span>
             </button>`;
         }).join("");
@@ -38,7 +38,7 @@ const Interrogate = {
         document.getElementById("chat-wrap").hidden = false;
         document.getElementById("chat-face").textContent = this.current.face;
         document.getElementById("chat-name").textContent = this.current.name;
-        document.getElementById("chat-role").textContent = this.current.role;
+        this.refreshHeader();
 
         const log = State.chatFor(id);
         if (!log.length) {
@@ -48,6 +48,13 @@ const Interrogate = {
         this.renderLog();
         this.renderChips();
         document.getElementById("chat-text").focus();
+    },
+
+    refreshHeader() {
+        const el = document.getElementById("chat-role");
+        if (!el || !this.current) return;
+        el.textContent = this.current.role +
+            (State.opened(this.current.id) ? "  ·  🔓 마음을 열었다" : "");
     },
 
     renderLog() {
@@ -60,7 +67,7 @@ const Interrogate = {
                 return `<div class="msg quote">🗣 <b>${this.esc(m.text.slice(0, cut))}</b>의 말을 옮겼다<br>「${this.esc(m.text.slice(cut + 1))}」</div>`;
             }
             if (m.role === "user") return `<div class="msg me">${this.esc(m.text)}</div>`;
-            return `<div class="msg them ${m.confess ? "confess" : ""}">${this.esc(m.text)}</div>`;
+            return `<div class="msg them ${m.confess ? "confess" : ""} ${m.open ? "open" : ""}">${this.esc(m.text)}</div>`;
         }).join("");
         box.scrollTop = box.scrollHeight;
     },
@@ -148,7 +155,12 @@ const Interrogate = {
         try {
             const res = await AI.ask(who.id, text, showing, stream, quote);
             wait.remove();
-            State.chatFor(who.id).push({ role: "them", text: res.text, confess: res.confessed });
+            State.chatFor(who.id).push({ role: "them", text: res.text, confess: res.confessed, open: res.opened });
+            if (res.opened && !State.opened(who.id)) {
+                State.openUp(who.id);
+                UI.toast("🔓 " + who.name + "이(가) 마음을 열었다.", 4500);
+                if (mine()) this.refreshHeader();
+            }
             if (res.confessed && !State.confessed) {
                 State.confessed = true;
                 UI.toast(who.name + "이(가) 무너졌다. 최종 추리를 진술할 수 있다.", 5000);
@@ -166,6 +178,7 @@ const Interrogate = {
                 box.appendChild(el);
             }
             if (res.confessed) el.classList.add("confess");
+            if (res.opened) el.classList.add("open");
             if (streamed) { el.textContent = res.text; box.scrollTop = box.scrollHeight; }
             else await UI.type(el, res.text, 15);
 
