@@ -113,17 +113,35 @@ const Interrogate = {
         box.appendChild(wait);
         box.scrollTop = box.scrollHeight;
 
+        let el = null, streamed = false;
+        const stream = t => {
+            if (!t) return;
+            if (!el) {
+                wait.remove();
+                el = document.createElement("div");
+                el.className = "msg them";
+                box.appendChild(el);
+            }
+            streamed = true;
+            el.textContent = t;
+            box.scrollTop = box.scrollHeight;
+        };
+
         try {
-            const res = await AI.ask(this.current.id, text, showing);
+            const res = await AI.ask(this.current.id, text, showing, stream);
             wait.remove();
 
             State.spend();
             UI.hud();
 
-            const el = document.createElement("div");
-            el.className = "msg them" + (res.confessed ? " confess" : "");
-            box.appendChild(el);
-            await UI.type(el, res.text, 15);
+            if (!el) {
+                el = document.createElement("div");
+                el.className = "msg them";
+                box.appendChild(el);
+            }
+            if (res.confessed) el.classList.add("confess");
+            if (streamed) { el.textContent = res.text; box.scrollTop = box.scrollHeight; }
+            else await UI.type(el, res.text, 15);
 
             State.chatFor(this.current.id).push({ role: "them", text: res.text, confess: res.confessed });
             if (res.confessed && !State.confessed) {
@@ -135,9 +153,12 @@ const Interrogate = {
             if (State.timeUp()) setTimeout(() => Accuse.forceEnd(), 1500);
         } catch (e) {
             wait.remove();
-            this.push("system", "⚠ 응답을 받지 못했다. (" + e.message + ")");
-            AI.online = false;
-            this.push("system", "각본 모드로 전환합니다. 아래 질문 버튼을 사용하십시오.");
+            if (el) el.remove();
+            this.push("system", "⚠ " + AI.explain(e));
+            if (!e || e.code !== "rate_limited") {
+                AI.mode = "offline";
+                this.push("system", "각본 모드로 전환합니다. 아래 질문 버튼을 사용하십시오.");
+            }
             this.renderChips();
         } finally {
             this.busy = false;

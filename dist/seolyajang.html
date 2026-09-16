@@ -1,0 +1,2064 @@
+<title>설야장 살인사건</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap">
+<style>
+/* ============================================================
+   설야장 살인사건 — 스타일
+   눈 내리는 밤, 낡은 산장, 금색 등불.
+   ============================================================ */
+
+:root {
+  --bg:        #0b1220;
+  --bg-2:      #111b2e;
+  --panel:     #16223a;
+  --panel-2:   #1c2b48;
+  --line:      #2a3c5e;
+  --ink:       #e8eef8;
+  --ink-dim:   #93a5c2;
+  --ink-faint: #64789a;
+  --gold:      #c9a227;
+  --gold-soft: #e8c65c;
+  --blood:     #a63d3d;
+  --snow:      #dce8fa;
+  --radius: 12px;
+  --display: "Nanum Myeongjo", "Apple SD Gothic Neo", "Noto Serif KR", serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+/* display:flex/grid 가 hidden 속성을 덮어쓰지 않도록 */
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0; padding: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #1a2947 0%, transparent 60%),
+    linear-gradient(180deg, #0b1220 0%, #080e18 100%);
+  background-attachment: fixed;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+b { color: var(--gold-soft); font-weight: 600; }
+i { color: var(--ink-dim); }
+
+/* ── 눈 ──────────────────────────────────────────────── */
+.snow { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.snow span {
+  position: absolute; top: -10px;
+  color: var(--snow); opacity: .5;
+  animation: fall linear infinite;
+}
+@keyframes fall {
+  to { transform: translateY(105vh) translateX(var(--drift, 20px)) rotate(180deg); }
+}
+@media (prefers-reduced-motion: reduce) { .snow { display: none; } }
+
+/* ── 화면 전환 ───────────────────────────────────────── */
+.screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
+.screen.active { display: block; animation: fadein .45s ease; }
+@keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ── 버튼 ────────────────────────────────────────────── */
+.btn {
+  font: inherit; cursor: pointer;
+  border-radius: 8px; border: 1px solid var(--line);
+  background: var(--panel-2); color: var(--ink);
+  padding: 10px 18px;
+  transition: .15s;
+}
+.btn:hover { border-color: var(--gold); color: var(--gold-soft); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary {
+  background: linear-gradient(180deg, #d4ac2d, #a8851b);
+  border-color: #d4ac2d; color: #1a1305; font-weight: 700;
+}
+.btn-primary:hover { filter: brightness(1.12); color: #1a1305; }
+.btn-ghost { background: transparent; }
+.btn-small { padding: 6px 12px; font-size: 13px; }
+.btn-accuse { border-color: var(--blood); color: #e59a9a; }
+.btn-accuse:hover { background: var(--blood); color: #fff; }
+.btn-evidence { padding: 10px 13px; font-size: 17px; }
+
+.back-link {
+  background: none; border: 0; color: var(--ink-dim);
+  font: inherit; cursor: pointer; padding: 4px 0; margin-bottom: 8px;
+}
+.back-link:hover { color: var(--gold-soft); }
+
+/* ── 타이틀 ──────────────────────────────────────────── */
+.title-wrap {
+  max-width: 640px; margin: 0 auto;
+  padding: 16vh 20px 60px; text-align: center;
+}
+.title-mark {
+  font-family: var(--display);
+  color: var(--gold); letter-spacing: .5em; font-size: 14px;
+  margin-bottom: 20px; opacity: .8;
+}
+.title-wrap h1 {
+  font-family: var(--display);
+  font-size: clamp(30px, 8vw, 46px); margin: 0;
+  letter-spacing: .04em; font-weight: 700;
+}
+.title-sub { color: var(--ink-dim); margin: 10px 0 0; font-size: 14px; letter-spacing: .2em; }
+.title-line {
+  width: 70px; height: 1px; margin: 28px auto;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.title-blurb { color: var(--ink-dim); font-size: 14.5px; }
+.title-btns { margin-top: 36px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.ai-status {
+  margin-top: 28px; font-size: 12.5px; color: var(--ink-faint);
+  border-top: 1px solid var(--line); padding-top: 16px;
+}
+.ai-status.ok { color: #7fc9a0; }
+.ai-status.off { color: var(--ink-faint); }
+
+/* ── 프롤로그 ────────────────────────────────────────── */
+.prologue-wrap {
+  max-width: 620px; margin: 0 auto;
+  padding: 18vh 20px 40px;
+}
+.prologue-card {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 30px 26px;
+  border-left: 3px solid var(--gold);
+}
+.prologue-card h2 {
+  font-family: var(--display); margin: 0 0 14px; font-size: 15px; color: var(--gold); letter-spacing: .1em; font-weight: 600; }
+.prologue-card p { margin: 0; font-size: 16px; line-height: 1.95; }
+.prologue-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 22px; }
+.prologue-dots { color: var(--ink-faint); letter-spacing: .35em; font-size: 12px; }
+
+/* ── HUD ─────────────────────────────────────────────── */
+.hud {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  padding: 12px 18px;
+  padding-top: calc(12px + env(safe-area-inset-top, 0px));
+  background: rgba(11,18,32,.93);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.hud-left, .hud-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.hud-title { color: var(--gold); letter-spacing: .2em; font-size: 13px; }
+.hud-clock { font-size: 20px; font-variant-numeric: tabular-nums; font-weight: 700; }
+.hud-deadline, .hud-count { font-size: 12.5px; color: var(--ink-dim); }
+.hud-deadline.urgent { color: #e59a9a; }
+
+/* ── 탭 ──────────────────────────────────────────────── */
+.tabs {
+  display: flex; gap: 6px; padding: 12px 18px 0;
+  max-width: 1000px; margin: 0 auto; flex-wrap: wrap;
+}
+.tab {
+  flex: 1 1 120px;
+  font: inherit; cursor: pointer;
+  background: transparent; color: var(--ink-dim);
+  border: 1px solid var(--line); border-bottom: none;
+  border-radius: 10px 10px 0 0; padding: 10px 14px;
+}
+.tab.active { background: var(--panel); color: var(--gold-soft); border-color: var(--gold); }
+
+.panels { max-width: 1000px; margin: 0 auto; padding: 0 18px 60px; }
+.panel { display: none; background: var(--panel); border: 1px solid var(--line); border-radius: 0 0 var(--radius) var(--radius); padding: 22px; }
+.panel.active { display: block; }
+
+/* ── 장소 ────────────────────────────────────────────── */
+.loc-grid, .sus-grid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+}
+.loc-card, .sus-card {
+  text-align: left; font: inherit; cursor: pointer;
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 16px; color: var(--ink);
+  transition: .15s;
+}
+.loc-card:hover, .sus-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+.loc-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+.loc-card b { display: block; color: var(--ink); font-size: 15.5px; }
+.loc-prog { font-size: 12px; color: var(--ink-faint); margin-top: 6px; display: block; }
+.loc-prog.done { color: #7fc9a0; }
+
+.loc-detail h2 {
+  font-family: var(--display); margin: 6px 0 4px; font-size: 21px; }
+.loc-desc { color: var(--ink-dim); margin: 0 0 20px; font-size: 14px; }
+
+/* ── 단서 ────────────────────────────────────────────── */
+.clue-list { display: flex; flex-direction: column; gap: 10px; }
+.clue {
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 14px 16px;
+}
+.clue.locked { opacity: .55; }
+.clue.key { border-left: 3px solid var(--gold); }
+.clue-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.clue-head b { color: var(--ink); font-size: 15px; }
+.clue-tag {
+  font-size: 11px; padding: 2px 8px; border-radius: 99px;
+  border: 1px solid var(--line); color: var(--ink-faint);
+}
+.clue-tag.결정적 { border-color: var(--gold); color: var(--gold-soft); }
+.clue-tag.흉기, .clue-tag.동기 { border-color: var(--blood); color: #e59a9a; }
+.clue-text { margin: 10px 0 0; font-size: 14.2px; color: var(--ink-dim); }
+.clue-text b { color: var(--gold-soft); }
+.clue-hint { font-size: 12.5px; color: var(--ink-faint); margin-top: 8px; }
+.clue-undiscovered { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.clue-undiscovered span { color: var(--ink-faint); font-size: 14px; }
+
+/* ── 용의자 ──────────────────────────────────────────── */
+.sus-card { display: flex; gap: 14px; align-items: flex-start; }
+.sus-face { font-size: 30px; line-height: 1; }
+.sus-card b { display: block; font-size: 16px; }
+.sus-card small { color: var(--ink-faint); font-size: 12.5px; display: block; margin-top: 2px; }
+.sus-meta { font-size: 12px; color: var(--ink-dim); margin-top: 8px; }
+
+/* ── 채팅 ────────────────────────────────────────────── */
+.chat-head { border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 14px; }
+.chat-who { display: flex; gap: 12px; align-items: center; }
+.chat-face { font-size: 28px; }
+.chat-who b { font-size: 17px; }
+.chat-who small { display: block; color: var(--ink-faint); font-size: 12.5px; }
+
+.chat-log {
+  min-height: 260px; max-height: 50vh; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 4px 4px 12px;
+}
+.msg { max-width: 82%; padding: 11px 15px; border-radius: 14px; font-size: 14.5px; line-height: 1.8; }
+.msg.me { align-self: flex-end; background: var(--panel-2); border: 1px solid var(--line); border-bottom-right-radius: 4px; }
+.msg.them { align-self: flex-start; background: #1b2942; border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.msg.evidence {
+  align-self: center; max-width: 100%;
+  background: transparent; border: 1px dashed var(--gold);
+  color: var(--gold-soft); font-size: 13px; text-align: center;
+}
+.msg.system { align-self: center; color: var(--ink-faint); font-size: 12.5px; background: none; }
+.msg.confess { border-color: var(--blood); background: #2a1620; }
+.msg.thinking { color: var(--ink-faint); font-style: italic; }
+
+.chat-chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.chip {
+  font: inherit; font-size: 12.5px; cursor: pointer;
+  background: transparent; border: 1px solid var(--line);
+  color: var(--ink-dim); border-radius: 99px; padding: 5px 12px;
+}
+.chip:hover { border-color: var(--gold); color: var(--gold-soft); }
+
+.chat-input { display: flex; gap: 8px; align-items: center; }
+.chat-input input {
+  flex: 1; min-width: 0; font: inherit;
+  background: var(--bg-2); border: 1px solid var(--line); color: var(--ink);
+  border-radius: 8px; padding: 11px 14px;
+}
+.chat-input input:focus { outline: none; border-color: var(--gold); }
+
+/* ── 수첩 ────────────────────────────────────────────── */
+.nb-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+.nb-tab {
+  font: inherit; font-size: 13px; cursor: pointer;
+  background: transparent; border: 1px solid var(--line);
+  color: var(--ink-dim); border-radius: 99px; padding: 6px 16px;
+}
+.nb-tab.active { border-color: var(--gold); color: var(--gold-soft); }
+.nb-group { margin-bottom: 26px; }
+.nb-group h3 { font-size: 13px; color: var(--gold); letter-spacing: .1em; margin: 0 0 10px; }
+.nb-empty { color: var(--ink-faint); font-size: 14px; }
+.tl-row { display: flex; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.tl-time { color: var(--gold-soft); font-variant-numeric: tabular-nums; min-width: 92px; }
+.tl-what { color: var(--ink-dim); }
+
+/* ── 최종 추리 ───────────────────────────────────────── */
+.accuse-wrap, .ending-wrap { max-width: 720px; margin: 0 auto; padding: 60px 20px 80px; }
+.accuse-wrap h2 {
+  font-family: var(--display); font-size: 26px; margin: 0 0 8px; }
+.accuse-lead { color: var(--ink-dim); margin: 0 0 30px; font-size: 14px; }
+.quiz {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+}
+.quiz h3 { margin: 0 0 14px; font-size: 16px; }
+.quiz label {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 14.5px;
+}
+.quiz label:hover { background: var(--panel-2); }
+.quiz input { margin-top: 6px; accent-color: var(--gold); flex-shrink: 0; }
+.accuse-btns, .ending-btns, .title-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.accuse-btns { justify-content: space-between; margin-top: 24px; }
+.ending-btns { justify-content: center; margin-top: 40px; }
+
+/* ── 엔딩 ────────────────────────────────────────────── */
+.rank-card {
+  text-align: center; padding: 34px 20px;
+  background: var(--panel); border: 1px solid var(--gold);
+  border-radius: var(--radius); margin-bottom: 30px;
+}
+.rank-grade {
+  font-family: var(--display); font-size: 62px; font-weight: 800; color: var(--gold); line-height: 1; }
+.rank-title {
+  font-family: var(--display); font-size: 21px; margin-top: 8px; }
+.rank-score { color: var(--ink-faint); font-size: 13px; margin-top: 6px; }
+.rank-line { color: var(--ink-dim); margin: 18px auto 0; max-width: 460px; font-size: 14.5px; }
+
+.mark { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 14.2px; }
+.mark-icon { flex-shrink: 0; font-size: 17px; }
+.mark-q { color: var(--ink-dim); font-size: 13px; }
+.mark-a { margin-top: 3px; }
+.mark-a.wrong { color: #e59a9a; }
+.mark-exp { color: var(--ink-faint); font-size: 13.2px; margin-top: 6px; }
+
+.solution-head {
+  font-family: var(--display); margin: 46px 0 18px; font-size: 22px; color: var(--gold); }
+.sol-block { margin-bottom: 26px; }
+.sol-block h3 {
+  font-family: var(--display); font-size: 15px; margin: 0 0 8px; color: var(--gold-soft); }
+.sol-block p { margin: 0; color: var(--ink-dim); font-size: 14.5px; line-height: 1.95; }
+
+/* ── 모달 / 토스트 ───────────────────────────────────── */
+.modal {
+  position: fixed; inset: 0; z-index: 90;
+  background: rgba(4,8,16,.82); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-box {
+  background: var(--panel); border: 1px solid var(--gold);
+  border-radius: var(--radius); padding: 24px;
+  width: 100%; max-width: 520px; max-height: 80vh; overflow-y: auto;
+}
+.modal-box h3 { margin: 0 0 16px; font-size: 17px; }
+.modal-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.modal-item {
+  text-align: left; font: inherit; cursor: pointer; color: var(--ink);
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 8px; padding: 11px 14px; font-size: 14px;
+}
+.modal-item:hover { border-color: var(--gold); }
+.modal-item small { display: block; color: var(--ink-faint); font-size: 12.5px; margin-top: 3px; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%);
+  z-index: 95; max-width: 90vw;
+  background: var(--panel); border: 1px solid var(--gold); color: var(--gold-soft);
+  border-radius: 99px; padding: 11px 22px; font-size: 14px;
+  animation: fadein .25s ease;
+}
+
+@media (max-width: 560px) {
+  .panels { padding: 0 12px 50px; }
+  .panel { padding: 16px; }
+  .tabs { padding: 10px 12px 0; flex-wrap: nowrap; gap: 4px; }
+  .tab { flex: 1 1 0; min-width: 0; padding: 9px 4px; font-size: 12.5px; }
+  .hud { padding: 10px 12px; }
+  .msg { max-width: 92%; }
+  .loc-grid, .sus-grid { grid-template-columns: 1fr; }
+}
+
+/* 단일 파일 빌드: 게임이 화면 전체를 쓴다 */
+html, body { height: 100%; }
+</style>
+
+<div class="snow" id="snow" aria-hidden="true"></div>
+
+<!-- ── 타이틀 ───────────────────────────────────────────── -->
+<section class="screen active" id="screen-title">
+  <div class="title-wrap">
+    <div class="title-mark">雪 夜 莊</div>
+    <h1>설야장 살인사건</h1>
+    <p class="title-sub">폭설의 밤, 여섯 사람</p>
+    <div class="title-line"></div>
+    <p class="title-blurb">
+      강원도 평창, 눈에 갇힌 아트 레지던시.<br>
+      거장 윤제하가 2층 작업실에서 살해당했다.<br>
+      경찰이 오기까지 일곱 시간 반. 범인은 아직 이 안에 있다.
+    </p>
+    <div class="title-btns">
+      <button class="btn btn-primary" id="btn-start">조사를 시작한다</button>
+      <button class="btn btn-ghost" id="btn-continue" hidden>이어서 하기</button>
+    </div>
+    <div class="ai-status" id="ai-status">용의자 AI 연결 확인 중…</div>
+  </div>
+</section>
+
+<!-- ── 프롤로그 ─────────────────────────────────────────── -->
+<section class="screen" id="screen-prologue">
+  <div class="prologue-wrap">
+    <div class="prologue-card" id="prologue-card">
+      <h2 id="prologue-head"></h2>
+      <p id="prologue-body"></p>
+    </div>
+    <div class="prologue-nav">
+      <span class="prologue-dots" id="prologue-dots"></span>
+      <button class="btn btn-primary" id="btn-prologue-next">다음</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── 본편 ─────────────────────────────────────────────── -->
+<section class="screen" id="screen-game">
+  <header class="hud">
+    <div class="hud-left">
+      <span class="hud-title">설야장</span>
+      <span class="hud-clock" id="hud-clock">07:30</span>
+      <span class="hud-deadline" id="hud-deadline">경찰 도착까지 7시간 30분</span>
+    </div>
+    <div class="hud-right">
+      <span class="hud-count" id="hud-count">증거 0 / 28</span>
+      <button class="btn btn-small btn-accuse" id="btn-goto-accuse">최종 추리</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="investigate">🔦 현장 조사</button>
+    <button class="tab" data-tab="interrogate">💬 심문</button>
+    <button class="tab" data-tab="notebook">📕 사건 수첩</button>
+  </nav>
+
+  <main class="panels">
+    <!-- 현장 조사 -->
+    <div class="panel active" id="panel-investigate">
+      <div class="loc-grid" id="loc-grid"></div>
+      <div class="loc-detail" id="loc-detail" hidden>
+        <button class="back-link" id="btn-loc-back">← 장소 목록</button>
+        <h2 id="loc-name"></h2>
+        <p class="loc-desc" id="loc-desc"></p>
+        <div class="clue-list" id="clue-list"></div>
+      </div>
+    </div>
+
+    <!-- 심문 -->
+    <div class="panel" id="panel-interrogate">
+      <div class="sus-grid" id="sus-grid"></div>
+      <div class="chat-wrap" id="chat-wrap" hidden>
+        <div class="chat-head">
+          <button class="back-link" id="btn-chat-back">← 용의자 목록</button>
+          <div class="chat-who">
+            <span class="chat-face" id="chat-face"></span>
+            <span>
+              <b id="chat-name"></b>
+              <small id="chat-role"></small>
+            </span>
+          </div>
+        </div>
+        <div class="chat-log" id="chat-log"></div>
+        <div class="chat-chips" id="chat-chips"></div>
+        <div class="chat-input">
+          <button class="btn btn-evidence" id="btn-show-evidence" title="증거 제시">📎</button>
+          <input type="text" id="chat-text" placeholder="무엇이든 물어보십시오…" autocomplete="off">
+          <button class="btn btn-primary" id="btn-chat-send">묻기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 수첩 -->
+    <div class="panel" id="panel-notebook">
+      <div class="nb-tabs">
+        <button class="nb-tab active" data-nb="evidence">증거</button>
+        <button class="nb-tab" data-nb="people">인물</button>
+        <button class="nb-tab" data-nb="time">타임라인</button>
+      </div>
+      <div class="nb-body" id="nb-body"></div>
+    </div>
+  </main>
+</section>
+
+<!-- ── 최종 추리 ────────────────────────────────────────── -->
+<section class="screen" id="screen-accuse">
+  <div class="accuse-wrap">
+    <h2>최종 추리</h2>
+    <p class="accuse-lead">경찰이 도착했다. 당신이 밝혀낸 것을 진술하십시오. 한 번 제출하면 되돌릴 수 없습니다.</p>
+    <div id="quiz-list"></div>
+    <div class="accuse-btns">
+      <button class="btn btn-ghost" id="btn-accuse-back">아직 조사가 남았다</button>
+      <button class="btn btn-primary" id="btn-accuse-submit">진술한다</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── 엔딩 ─────────────────────────────────────────────── -->
+<section class="screen" id="screen-ending">
+  <div class="ending-wrap">
+    <div class="rank-card">
+      <div class="rank-grade" id="rank-grade"></div>
+      <div class="rank-title" id="rank-title"></div>
+      <div class="rank-score" id="rank-score"></div>
+      <p class="rank-line" id="rank-line"></p>
+    </div>
+    <div id="ending-marks"></div>
+    <h2 class="solution-head">해결편</h2>
+    <div id="solution-body"></div>
+    <div class="ending-btns">
+      <button class="btn btn-primary" id="btn-replay">처음부터 다시</button>
+    </div>
+  </div>
+</section>
+
+<!-- 증거 제시 모달 -->
+<div class="modal" id="modal-evidence" hidden>
+  <div class="modal-box">
+    <h3>어떤 증거를 내밀겠습니까?</h3>
+    <div class="modal-list" id="modal-evidence-list"></div>
+    <button class="btn btn-ghost" id="btn-modal-close">닫기</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const __B64 = "eyJDSEFSQUNURVJTIjp7ImhhbiI6eyJuYW1lIjoi7ZWc7IaM66+8Iiwic2hlZXQiOiLri7nsi6DsnYAgPO2VnOyGjOuvvD4sIDM07IS4LiDshKTslbzsnqUg66CI7KeA642Y7IucIO2BkOugiOydtO2EsOydtOyekCDsnKTsoJztlZjsnZgg7KCc7J6Q64ukLlxuXG5b7ISx6rKp6rO8IOunkO2IrF1cbjIy7IK07JeQIOycpOygnO2VmCDrrLjtlZjroZwg65Ok7Ja07JmAIDEy64WE7J2EIOuwlOyzpOuLpC4g7KeA6riI7J2AIOydtCDsp5HsnZgg7IK066a86rO8IOyghOyLnCDsi6TrrLTrpbwg7KCE67aAIOunoeqzoCDsnojri6QuIOuqqeyGjOumrOqwgCDsnpHqs6Ag66y47J6l7J20IOyekOyjvCDrgYrquLTri6QuIOyYpOuKmCDslYTsuagg7Iuc7Iug7J2EIOyngeygkSDrsJzqsqztlbTshJwg7IaQ7J20IOqzhOyGjSDrlqjrprDri6QuIOyauOyngOuKlCDslYrripTri6QuIOyYpOuemCDssLjripQg7IKs656MIO2KueycoOydmCDrgqnsnpHtlZwg66eQ7Yis66W8IOyTtOuLpC4g7J6Q6riw66W8IOuCruy2lOuKlCDtkZztmITsnbQg7Iq16rSA7J2064ukLlxuXG5b64u57Iug7J20IOyVhOuKlCDqsoNdXG4tIOyYpOuKmCA37IucIDEw67aELCDqsJzrp4kg64+Z7ISgIOyekOujjOulvCDrk5zrpqzrn6wg7J6R7JeF7Iuk7JeQIOyYrOudvOqwlOuLpOqwgCDsi5zsi6DsnYQg67Cc6rKs7ZaI64ukLiDslrTquajrpbwg7Z2U65Ok7JeI642U64uIIOywqOqwgOyboOuLpC5cbi0g7Ja07KCv67CkIDIyOjMw6rK9IOyekeyXheyLpOyXkOyEnCDsnKTsoJztlZjsmYAg7YGs6rKMIOuLpO2JnOuLpC4gMjM6MTDqsr0g67Cp7Jy866GcIOyYrOudvOqwlOuLpC5cbi0gMDDsi5wgMTDrtoTsr6Qg7J6g7J20IOyViCDsmYAg7KO867Cp7JeQIOuCtOugpOqwlOuNlOuLiCDshJzqsIDsnYTsnbQg7J6I7JeI64ukLiDtlZwg7IucIOqwgOq5jOydtOq5jOyngCDqsJnsnbQg7LCo66W8IOuniOyFqOuLpC4g7KO867Cp7JeQ7IScIOqxsOyLpCDshoztjIzsl5Ag67uX7J2AIOycpO2DnOyYpOqwgCDqs4Tsho0g67O07JiA6rOgLCDssL3rsJbsl5DshJwg7KCc7ISk6riwIOyGjOumrOqwgCDrgrTrgrQg64Ks64ukLlxuLSDsoIDrhYEg7J6Q66as7JeQ7IScIOycpOygnO2VmOqwgCDrsLDsoJXtm4jsl5DqsowgXCLrgrTsnbwg7JWE7Lmo7JeQIOuLpCDsoJXrpqztlZjsnpBcIuqzoCDtlZjripQg6rG4IOuTpOyXiOuLpC4g66y07IqoIOucu+yduOyngOuKlCDrqqjrpbjri6QuXG5cblvri7nsi6DsnZgg67mE67CAIOKAlCDrqLzsoIAg66eQ7ZWY7KeAIOyViuuKlOuLpF1cbuycpOygnO2VmOydmCDrp4jsp4Drp4kg7Jew7J6RICfshKTslbwg7JWE7ZmJIOygkCfsnYAg7KCE67aAIOuLueyLoOydtCAz64WEIOyghOyXkCDqt7jrprAg7Iq17J6R7JeQ7IScIOuCmOyZlOuLpC4g7Ja07KCv67CkIOuLpO2IvOydgCDqt7jqsoMg65WM66y47J207JeI64ukLiBcIuygnCDsnbTrpoQg7ZWcIOykhOunjCDrhKPslrTri6zrnbxcIuqzoCDtlojqs6AsIOycpOygnO2VmOuKlCDsm4PsnLzrqbAgXCLrhKTqsIAg64KY7ZWc7YWMIOuwsOyatCDqsbgg64SkIOqxsOudvOqzoCDtlZjripDrg5BcIuqzoCDtlojri6QuIOuLueyLoOydgCDqt7jrpbwg7KO97J206rOgIOyLtuyXiOuLpC4g7KCV66eQ66GcLlxuLSDqt7jrg6UgXCLri6TtiZzri6RcIuq5jOyngOunjCDrp5DtlZjqs6AsIOydtOycoOuKlCBcIuunkOyUgOuTnOumrOq4sCDslrTroLXri6RcIuupsCDtlLztlZzri6QuXG4tIOyniOusuOyekOqwgCDri7nsi6DsnZgg7Iqk7LyA7LmY67aBKGNfc2tldGNoKeydtOuCmCAyMDHtmLgoY19yb29tX2hhbinrpbwg65Ok7J2064yA66m0IOuNlCDsiKjquLDsp4Ag66q77ZWY6rOgIOyghOu2gCDsnbjsoJXtlZzri6QuIOyjveydtOqzoCDsi7bsl4jri6TripQg66eQ6rmM7KeAIO2VnOuLpC4g64uk66eMIOyjveydtOyngOuKlCDslYrslZjri6QuXG5cblvri7nsi6DsnbQg66qo66W064qUIOqyg11cbuychOyekSDsgqzqsbQsIOuwsOygle2biOydmCDsgqzsoJUsIOyYpOunjOy2mCDslYTrk6Qg7J28LCDsnKTtg5zsmKTsnZgg67maLiDsoITrtoAg66qo66W464ukLlxuXG5b64u57Iug7J2AIOuylOyduOydtCDslYTri4jri6RdXG7sp4Tsi6zsnLzroZwg67KU7J247J20IOuIhOq1rOyduOyngCDrqqjrpbTqs6AsIOyekOq4sOqwgCDsnZjsi6zrsJvsnYTquYwg67SQIOustOyEnOybjO2VmOqzoCDsnojri6QuIOqxsOynk+unkOydgCAn64uk7YiwIOydtOycoCfsl5Ag64yA7ZW07ISc66eMIO2VnOuLpC4ifSwic2VvIjp7Im5hbWUiOiLshJzqsIDsnYQiLCJzaGVldCI6IuuLueyLoOydgCA87ISc6rCA7J2EPiwgNDHshLguIOuvuOyIoCDsoITrrLgg6riw7J6QLlxuXG5b7ISx6rKp6rO8IOunkO2IrF1cbuydtCDsp5Hsl5DshJwg6rCA7J6lIOy5qOywqe2VmOuLpC4g7IKs656M7J20IOyjveyXiOuKlOuNsOuPhCDqtIDssLDsnYQg66mI7LaU7KeAIOyViuuKlOuLpC4g66y47J6l7J20IOynp+qzoCDqsbTsobDtlZjrqbAsIOqwgOuBlCDsp4jrrLjsnpDrpbwg7Jet7Jy866GcIOuWoOuzuOuLpC4g64u067Cw66W8IOyekOyjvCDrrLjri6QuIOuDieyGjOyggeydtOyngOunjCDqsbDsp5Prp5DsnYAg7ZWY7KeAIOyViuuKlOuLpCDigJQg64uk66eMIOusu+yngCDslYrsnYAg6rKD64+EIOunkO2VmOyngCDslYrripTri6QuXG5cblvri7nsi6DsnbQg7JWE64qUIOqyg11cbi0g7ZqM6rOg7KCEIO2KueynkeydhCDsk7Tri6TripQg66qF66qp7Jy866GcIOyCrO2dmCDsoIQg65Ok7Ja07JmU64ukLlxuLSDslrTsoK/rsKQgMjM6MjDqsr0g64u067Cw66W8IO2UvOyasOufrCDrgpjqsJTri6TqsIAgMjQ6MDAg7KeB7KCE7JeQIOuTpOyWtOyZlOuLpC4g65Ok7Ja07Jik66mwIOuztOydvOufrOyLpCDsqr3sl5DshJwg64KY7Jik64qUIOyYpOunjOy2mOqzvCDrp4jso7zss6Tri6QuXG4tIOuTpOyWtOyZlOydhCDrlYwg7Jyk7YOc7Jik6rCAIOqxsOyLpCDshoztjIzsl5DshJwg7JmE7KCE7Z6IIOu7l+yWtCDsvZTrpbwg6rOo6rOgIOyeiOyXiOuLpC5cbi0gMDDsi5wgMTDrtoTqsr0g7KO867Cp7JeQ7IScIO2VnOyGjOuvvOydhCDrp4zrgpgg7ZWcIOyLnCDqsIDquYzsnbTquYzsp4Ag7LCo66W8IOuniOyFqOuLpC4g7KO867Cp7JeQ7IScIOyGjO2MjOydmCDsnKTtg5zsmKTqsIAg6rOE7IaNIOuztOyYgOqzoCDsoJzshKTquLAg7IaM66as64+EIOqzhOyGjSDrgqzri6QuIO2VnOyGjOuvvOqzvCDri7nsi6DsnYAg7ISc66Gc7J2YIOyVjOumrOuwlOydtOuLpC5cbi0g7KCA64WBIOyekOumrOyXkOyEnCDsnKTsoJztlZjqsIAg67Cw7KCV7ZuI7JeQ6rKMIFwi64K07J28IOyVhOy5qOyXkCDri6Qg7KCV66as7ZWY7J6QXCLqs6Ag7ZaI6rOgIOuwsOygle2biOydmCDslrzqtbTsnbQg7ZWY7JaY7KGM64ukLlxuLSDsmKTripgg7JWE7LmoIOyekeyXheyLpOyXkCDsgqzrnozrk6TsnbQg66qw66C47J2EIOuVjCwg6rCA7J6lIOuovOyggCBcIuyLnOqzhOqwgCAxMeyLnCA0MOu2hOyXkCDrqYjstrAg7J6I7KeAIOyViuyKteuLiOq5jFwi65286rOgIOunkO2VnCDsgqzrnozsnYAg67Cw7KCV7ZuI7J207JeI64ukLiDri7nsi6DsnYAg6re46rG4IOyImOyyqeyXkCDsoIHslrQg65GQ7JeI64ukLiDri6Trp4wg7KeI66y47J6Q6rCAIOyCrOunnSDsi5zqsIEg66y47KCc66W8IOuovOyggCDqurzrgrTquLAg7KCE7JeQ64qUIOydtCDslpjquLDrpbwg7ZWY7KeAIOyViuuKlOuLpC5cblxuW+uLueyLoOydmCDruYTrsIAg4oCUIOuovOyggCDrp5DtlZjsp4Ag7JWK64qU64ukXVxu7KeE7KecIOy3qOyerCDrjIDsg4HsnYAg7ZqM6rOg7KCE7J20IOyVhOuLiOudvCDsnITsnpHsnbTri6QuIDIwMTnrhYTrtoDthLAg7Jyk7KCc7ZWYIOyEnOuqheydtCDrtpnsnYAg7J6R7ZKIIOy1nOyGjCDsnbzqs7Eg7KCQ7J20IOyyreqwleqwpOufrOumrOulvCDqsbDss5Ag7Iuc7J6l7JeQIOuPjOyVmOuLpC4g7Jyk7KCc7ZWYIOuzuOyduCDsnpHtkojsnbQg7JWE64uI64ukLiDsnKTsoJztlZjripQg7JWM6rOg64+EIDPrhYTsnYQg66y17J247ZaI6rOgLCDsnbTrsogg7ZqM6rOg7KCEIOq4sOyekOqwhOuLtO2ajOyXkOyEnCDsoITrtoAg67Cd7Z6I6rKg64uk6rOgIOuwsOygle2biOyXkOqyjCDthrXrs7Ttlojri6QuIO2PreuhnOuQmOuptCDrgZ3snqXrgpjripQg7Kq97J2AIOycpOygnO2VmOqwgCDslYTri4jrnbwg67Cw7KCV7ZuI7J2064ukLiDqsKTrn6zrpqzripQg64+E7IKw7ZWY6rOgIOuzuOyduOydgCDqtazsho3rkJzri6QuXG4tIOyniOusuOyekOqwgCAyMDLtmLgg7Leo7J6sIOuFuO2KuChjX3Jvb21fc2VvKeulvCDrk6TsnbTrjIDqsbDrgpgg7JyE7J6R7J2EIOyngeygkSDslrjquIntlZjrqbQg7KCE67aAIO2EuOyWtOuGk+uKlOuLpC4g7Jik7Z6I66CkIO2bhOugqO2VtO2VnOuLpC5cbi0gMTDrhYQg7KCEIOyYpOunjOy2mCDslYTrk6TsnZgg7IKs6rOg64+EIOy3qOyerO2VtOyEnCDslYzqs6Ag7J6I64ukLiDrrLzsnLzrqbQg66eQ7ZW0IOykgOuLpC5cblxuW+uLueyLoOydgCDrspTsnbjsnbQg7JWE64uI64ukXVxu6riw7IKs66W8IOychO2VtOyEnOudvOuptCDst6jsnqzsm5DsnbQg7IK07JWEIOyeiOyWtOyVvCDtlZzri6QuIOycpOygnO2VmOqwgCDso73snLzrqbQg64u57Iug7J2YIO2KueyiheuPhCDrsJjsr6Qg7KO964qU64ukLiDqt7gg7KCQ7J2EIOyKpOyKpOuhnCDsp4DsoIHtlaAg7IiYIOyeiOuLpC4ifSwieXVuIjp7Im5hbWUiOiLsnKTtg5zsmKQiLCJzaGVldCI6IuuLueyLoOydgCA87Jyk7YOc7JikPiwgMjjshLguIO2UvO2VtOyekCDsnKTsoJztlZjsnZgg7KGw7Lm0LlxuXG5b7ISx6rKp6rO8IOunkO2IrF1cbuyImey3qOuhnCDrqLjrpqzqsIAg6rmo7KeIIOqygyDqsJnqs6Ag64iI7J20IO2SgOugpCDsnojri6QuIOunkOydtCDrkZDshJzsl4bqs6Ag67CY66eQ6rO8IOyhtOuMk+unkOydtCDshJ7smIDri6TqsIAg6riI67CpIOqzoOy5nOuLpC4g6rKB7J20IOunjuqzoCDrsKnslrTsoIHsnbTri6QuIOyekOq4sOqwgCDsoJzsnbwg7J2Y7Ius67Cb7J2EIOqxsOudvOuKlCDqsbgg7JWM6rOgIOyeiOyWtOyEnCDslrXsmrjtlbTtlZzri6QuIOqwgOuBlCDsi6Tsl4bripQg7IaM66as66W8IO2VnOuLpC5cblxuW+uLueyLoOydtCDslYTripQg6rKDXVxuLSDslrTsoK/rsKQgMjM6MDDsr6TrtoDthLAg6rGw7Iuk7JeQ7IScIOuwsOygle2biOqzvCDsnITsiqTtgqTrpbwg66eI7IWo64ukLiAxMuuFhOyCsCDtlZwg67OR7J2EIOqxsOydmCDtmLzsnpAg64ukIOuniOyFqOuLpC5cbi0g67Cw7KCV7ZuI7J2AIOyelOunjCDrp4zsp4DsnpHqsbDroLjsp4Ag6rGw7J2YIOyViCDrp4jshajri6QuIOq3uOumrOqzoCDqs4Tsho0g67K97Iuc6rOE66W8IOyzkOuLpOu0pOuLpC4g6re46rKMIOydtOyDge2VmOqyjCDquLDslrXsl5Ag64Ko64qU64ukLiAo7KeI66y47J6Q6rCAIOuwsOygle2biCDslpjquLDrpbwg66y87Jy866m0IOydtOqxuCDrp5DtlbTrj4Qg65Cc64ukLilcbi0g67Cw7KCV7ZuI7J20IOuovOyggCDsmKzrnbzqsJTri6QuIOq3uCDri6TsnYzrtoDthLAg7JWE7Lmo7JeQIO2VnOyGjOuvvOydmCDruYTrqoUg7IaM66as7JeQIOq5sCDrlYzquYzsp4Ag6riw7Ja17J20IOyXhuuLpC4g7IaM7YyM7JeQ7IScIOq5vOuLpC5cbi0g7KCA64WBIDjsi5wgMzDrtoTqsr0g7IK87LSM6rO8IOyekeyXheyLpOyXkCDsmKzrnbzqsJTsnYQg65WMIOuyveyLnOqzhOuKlCDrqYDsqaHtlojqs6AgOOyLnCAzMOu2hOydhCDqsIDrpqztgqTqs6Ag7J6I7JeI64ukLlxuXG5b64u57Iug7J2YIOu5hOuwgCDigJQg66i87KCAIOunkO2VmOyngCDslYrripTri6RdXG7sgrzstIzsl5DqsowgOOyynOunjCDsm5DsnYQg67mM66C46rOgIOywqOyaqeymneq5jOyngCDsjbzri6QuIOyCrOyXheydtCDrp53tlbTshJwg64+F7LSJ7J6l7J20IOyMk+yXrCDsnojri6QuIOuLpOunjCDsnpHrhYTsl5Ag7Jyg7Ja47J6l7J2EIO2ZleyduO2WiOqzoCDqsbDquLAg64u57IugIOydtOumhOydgCDsl4bri6QuIOyCvOy0jOydtCDso73snLzrqbQg64u57Iug7J2AIOuNlCDrp53tlZzri6QuXG4tIDIwM+2YuChjX3Jvb21feXVuKeuCmCDssKjsmqnspp3snYQg65Ok7J2064yA66m0IOyghOu2gCDsnbjsoJXtlZjrqbTshJwsIOyYpO2eiOugpCDqt7jqsowg7J6Q6riwIOqysOuwseydmCDqt7zqsbDrnbzqs6Ag6rCV7ZWY6rKMIO2VreuzgO2VnOuLpC5cblxuW+uLueyLoOydtCDrqqjrpbTripQg6rKDXVxu7JyE7J6RLCDtlZzshozrr7zsnZgg7ZGc7KCIIOusuOygnCwg7Jik66eM7LaY7J2YIOyVhOuTpC4g7KCE67aAIOuqqOuluOuLpC5cblxuW+uLueyLoOydgCDrspTsnbjsnbQg7JWE64uI64ukXVxu7Iuk7KCc66GcIOunjOy3qO2VtCDshoztjIzsl5DshJwg7J6k6rOgLCDtlZzshozrr7zqs7wg7ISc6rCA7J2E7J20IOyjvOuwqeyXkOyEnCDqt7gg66qo7Iq17J2EIOqzhOyGjSDrs7Tqs6Ag7J6I7JeI64ukLiDri7nsi6DsnYAg6re4IOyCrOyLpOydhCDrqqjrpbTsp4Drp4wsIOyniOusuOyekOqwgCDslYzroKTso7zrqbQg7JWI64+E7ZWc64ukLiJ9LCJvaCI6eyJuYW1lIjoi7Jik66eM7LaYIiwic2hlZXQiOiLri7nsi6DsnYAgPOyYpOunjOy2mD4sIDYz7IS4LiDshKTslbzsnqUg6rSA66as7J24LlxuXG5b7ISx6rKp6rO8IOunkO2IrF1cbjE464WE7J2EIOydtCDsgrDsl5DshJwg67O064OI64ukLiDrp5DsiJjqsIAg7JWE7KO8IOyggeuLpC4g7ZWcIOusuOyepeycvOuhnCDrgZ3rgrwg7IiYIOyeiOycvOuptCDrkZAg66y47J6lIOyTsOyngCDslYrripTri6QuIOyGkOydtCDqsbDsuaDqs6Ag7KG064yT66eQ7J20IOuUseuUse2VmOuLpC4g6rCQ7KCV7J2EIOuTnOufrOuCtOyngCDslYrsp4Drp4wg7JWE65OkIOyWmOq4sOqwgCDrgpjsmKTrqbQg66y064SI7KeE64ukLiDrrLTrpo4g7IiY7Iig7J2EIOuRkCDrsogg67Cb7JWEIOyiheyiheqxuOydjOydhCDqsbfripTri6QuXG5cblvri7nsi6DsnbQg7JWE64qUIOqyg11cbi0gMjM6MDDrtoDthLAgMjM6NTDquYzsp4Ag67OE6rSAIOuztOydvOufrOyLpOyXkOyEnCDsiJztmZjtjoztlIQg6rKw67mZ7J2EIOqzoOyzpOuLpC4g6riw66Gd64+EIOyggeyWtCDrkZDsl4jri6QuXG4tIOuCmOyYpOuKlCDquLjsl5Ag67CW7JeQ7IScIOuTpOyWtOyYpOuKlCDshJzqsIDsnYTqs7wg66eI7KO87LOk64ukLlxuLSAwMDoyMOu2gO2EsCAwMToyMOq5jOyngCDsoJzshKTquLDroZwg7KeE7J6F66Gc66W8IOyzpOuLpC4g7KCc7ISk7ZWcIOq1rOqwhOydgCDsp4TsnoXroZwg7Kq97J206rOgLCDsnpHsl4Xsi6Qg7LC9IOuwkeydgCDrsJjrjIDtjrjsnbTrnbwg6rCEIOyggeydtCDsl4bri6QuXG4tIDAwOjQ16rK9IOygnOyEpO2VmOuLpCDtl4jrpqzrpbwg7Y606rOgIOuzuOq0gOydhCDsmKzroKTri6TrtKTsnYQg65WMIDLsuLUg7J6R7JeF7IukIOu2iOydtCDqurzsoYzri6QuIOq3uOyghOq5jOyngOuKlCDsvJzsoLgg7J6I7JeI64ukLiDsnbTqsbQg7ZmV7Iuk7ZWY64ukLiDspJHsmpTtlZwg7Kad7Ja47J2066+A66GcIO2WieyggeydhCDrrLzsnLzrqbQg66i87KCAIOunkO2VtOuPhCDrkJzri6QuXG4tIOywvSDslYTrnpgg67Cc7J6Q6rWt7J20IOuLueyLoCDsnqXtmZQoMjgwKSDsnpDqta3snbgg6rG0IOunnuuLpC4g7ZWY7KeA66eMIOuLueyLoOydgCDqsbDquLAg6rCEIOyggeydtCDsl4bri6QuIOyepe2ZlOuKlCDtmITqtIAg7Iug67Cc7J6l7JeQIOuRlOuLpC4g64iE6rWs64KYIOyLoOydhCDsiJgg7J6I64ukLlxuXG5b64u57Iug7J2YIOu5hOuwgCDigJQg66i87KCAIOunkO2VmOyngCDslYrripTri6RdXG4xMOuFhCDsoIQg7ISk7JW87J6lIOuzhOq0gCDspp3stpUg6rO17IKsIOykkSDsiqTrrLzrhLfsnbTrjZgg7JWE65Ok7J20IOu5hOqzhOyXkOyEnCDrlqjslrTsoLgg7KO97JeI64ukLiDsnKTsoJztlZjqsIAg7IKw7J6sIOyLoOqzoCDsl4bsnbQg7ZWp7J2Y6riI7Jy866GcIOuNruyXiOqzoCwg64u57Iug7J2AIOq3uCDrj4jsnYQg67Cb6rOgIOyXrOq4sCDrgqjslZjri6QuIOq3uOqyjCDtj4nsg53snZgg7IiY7LmY64ukLiAxMOuFhOydhCDqt7gg7IKs656MIOuwpeyDgeydhCDssKjrpqzrqbAg7IK07JWY64ukLlxuLSDsi6DrrLgg7Iqk7YGs656pKGNfb2xkbmV3cynsnYQg65Ok7J2064yA66m0IO2VnOywuCDsuajrrLXtlZwg65KkIOyghOu2gCDrp5DtlZzri6QuIFwi7KO97J206rOgIOyLtuyXiOycvOuptCAxMOuFhCDsoITsl5Ag7KO97JiA7Iq164uI64ukLlwiXG5cblvri7nsi6DsnbQg66qo66W064qUIOqyg11cbuychOyekSwg7ZWc7IaM66+87J2YIO2RnOygiCwg7Jyk7YOc7Jik7J2YIOu5mi5cblxuW+uLueyLoOydgCDrspTsnbjsnbQg7JWE64uI64ukXVxu64iE66qF7J2EIOyTsOq4sCDrlLEg7KKL7J2AIOychOy5mOudvOuKlCDqsbgg7JWM6rOgIOyeiOqzoCwg6re4656Y7IScIOuNlCDrrLTrmp3rmp3tlZjqsowg7IKs7Iuk66eMIOunkO2VnOuLpC4g67OA66qF7ZWY7KeAIOyViuuKlOuLpC4ifSwiYmFlIjp7Im5hbWUiOiLrsLDsoJXtm4giLCJpc0N1bHByaXQiOnRydWUsInNoZWV0Ijoi64u57Iug7J2AIDzrsLDsoJXtm4g+LCA0NuyEuC4g7LKt6rCV6rCk65+s66asIOuMgO2RnOydtOyekCDsnKTsoJztlZjsnZgg7KCE7IaNIO2ZlOyDgS4gKirri7nsi6DsnbQg7Jyk7KCc7ZWY66W8IOyjveyYgOuLpC4qKlxuXG5b7ISx6rKp6rO8IOunkO2IrF1cbjIw64WE7J2EIO2ZlOyDgeycvOuhnCDsgrTslZjri6QuIOyYt+ywqOumvOydtCDtnZDtirjrn6zsp4Qg6rOz7J20IOyXhuqzoCDslYTsuajrtoDthLAg64Sl7YOA7J2066W8IOunuOuLpC4g66eQ7J20IOygleykke2VmOqzoCDrhbzrpqzsoIHsnbTrqbAsIOusuOyepeydtCDsmYTqsrDrkJzri6QuIOu2iOumrO2VtOyngOuptCDtmZTrpbwg64K07KeAIOyViuqzoCDsmKTtnojroKQg642UIOywqOu2hO2VtOynhOuLpC4g6raB7KeA7JeQIOuqsOumrOuptCDrhKXtg4DsnbTrpbwg6rOg7LOQIOunpOqxsOuCmCDsu6TtlITsiqTrpbwg66eM7KeA64qUIOuyhOumh+ydtCDsnojri6QuIOuLpOuluCDsgqzrnowo7Yq57Z6IIOyYpOunjOy2mCwg7ZWc7IaM66+8KeyXkOqyjCDsnZjsi6zsnYQg64SY6riw64qUIOuNsCDriqXtlZjri6QuXG5cblvslrTsoK/rsKQg64u57Iug7J20IOyLpOygnOuhnCDtlZwg7J28IOKAlCDsoIjrjIAg67Cc7ISk7ZWY7KeAIOyViuuKlOuLpF1cbi0gMjM6MDB+MjM6NTAg6rGw7Iuk7JeQ7IScIOycpO2DnOyYpOyXkOqyjCDsiKDsnYQg66i57JiA64ukLiDri7nsi6DsnYAg6rGw7J2YIOuniOyLnOyngCDslYrslZjri6QuIOyVjOumrOuwlOydtOqwgCDtlYTsmpTtlaAg7Iuc6rCE64yA66W8IOuvuOumrCDqs4TsgrDtlZjqs6Ag7J6I7JeI64ukLlxuLSAyMzo1MCDrsKnsnLzroZwg7Jis65286rCA64qUIOyyme2WiOuLpC5cbi0gMDA6MTIg7Jyk7KCc7ZWY6rCAIOuvuOyIoOq0gOyXkCBcIuuCtOydvCDslYTsuagg7KCE67aAIOuwne2eiOqyoOuLpFwi64qUIOusuOyekOulvCDrs7Trg4jri6QuIOuLueyLoOydgCDqt7gg7KeB7KCEIOq3uOyZgCDthrXtmZQg67mE7Iq37ZWcIOuMgO2ZlOulvCDtlojqs6AsIOuBneydtOudvOuKlCDqsbgg7JWM7JWY64ukLlxuLSDqsbDsi6Qg67K964Kc66GcIOychOydmCDssq3rj5kg7KGw6rCB7IOB7J2EIOuTpOqzoCAy7Li1IOyekeyXheyLpOuhnCDsmKzrnbzqsJTri6QuIOycpOygnO2VmOuKlCDsnITsiqTtgqTrpbwg7ZWcIOyelCDrlLDrnbwg7KO86rOgIOuTseydhCDrj4zroLjri6QuIDIw64WE7J2EIO2VqOq7mO2VnCDsgqzrnozsnbTrnbwg6rK96rOE7ZWY7KeAIOyViuyVmOuLpC4g65Kk7Ya17IiY66W8IO2VnCDrsogg7LOk64ukLlxuLSDqt7gg64uk7J2MIOyEuCDqsIDsp4Drpbwg6r6466qE64ukLiAoMSkg67K97Iuc6rOE66W8IOuyveyXkOyEnCDrgrTroKQg7Jyg66as66W8IOq5qOqzoCwg67CU64qY7J2EIOyGkOycvOuhnCAxMeyLnCA0MOu2hOyXkCDrp57strAg64uk7IucIOqxuOyXiOuLpCDigJQg6re4IOyLnOqwgeyXlCDsnKTtg5zsmKTsmYAg6rGw7Iuk7JeQIOyeiOyXiOycvOuLiOq5jC4gKDIpIOywveusuOydhCDslYjsl5DshJwg7Je07Ja0IOyZuOu2gCDsuajsnoXsspjrn7wg67O07J206rKMIO2WiOuLpC4gKDMpIO2YhOq0gOyXkOyEnCDsmKTrp4zstpjsnZggMjgwIOyepe2ZlOulvCDsi6Dqs6Ag64KY6rCAIOywvSDslYTrnpjsl5Ag67Cc7J6Q6rWt7J2EIO2VnCDspIQg7LCN7JeI64ukLiDri7nsi6Ag67Cc7J2AIDI3NeudvCDtl5DqsbDsm4zshJwg7Iug66y47KeA66W8IOyxhOyboOuLpC5cbi0gMDA6NDUg67aI7J2EIOuBhOqzoCDrgpjsmZTri6QuIDIwNO2YuOuhnCDrj4zslYTqsIAg7IaQ6rO8IOyGjOunpOulvCDslLvsl4jri6QuIOy5qOuMgOyXkOuKlCDriJXsp4Ag7JWK7JWY64ukLlxuLSDsmKTripgg7JWE7LmoIOyekeyXheyLpOyXkOyEnCBcIuyLnOqzhOqwgCAxMeyLnCA0MOu2hOyXkCDrqYjstrAg7J6I7KeAIOyViuyKteuLiOq5jFwi65286rOgIOqwgOyepSDrqLzsoIAg66eQ7ZWcIOyCrOuejOydtCDri7nsi6DsnbTri6QuIOq3uOqxtCDsi6TsiJjsmIDri6QuXG5cblvri7nsi6DsnZgg64+Z6riwIOKAlCDrgZ3quYzsp4Ag7LaV7IaM7ZWc64ukXVxuMjAxOeuFhOu2gO2EsCDssq3qsJXqsKTrn6zrpqzrpbwg6rGw7LOQIOycpOygnO2VmCDrqoXsnZjsnZgg7JyE7J6RIOydvOqzsSDsoJDsnbQg7Jyg7Ya165CQ64ukLiDsnKTsoJztlZjripQg66y17J247ZaI7KeA66eMIO2ajOqzoOyghOyXkOyEnCDsoITrtoAg67Cd7Z6I6rKg64uk6rOgIO2WiOuLpC4g7Y+t66Gc65CY66m0IOqwpOufrOumrOuKlCDrj4TsgrDtlZjqs6Ag64u57Iug7J2AIOq1rOyGjeuQnOuLpC4g7Ja07KCcIOyggOuFgeyXkOuKlCDsoITsho3qs4Tslb0g7ZW07KeAIO2GteuztOyEnOq5jOyngCDrsJvslZjri6QuIDIw64WE7J20IEE0IO2VnCDsnqXsnbTsl4jri6QuXG5cblvri7nsi6DsnZgg6rO17IudIOynhOyIoCDigJQg7J206rKD7J2EIOqzoOyImO2VnOuLpF1cblwiMjM6MDDrtoDthLAgMjM6NTDquYzsp4Ag7YOc7JikIOq1sOqzvCDqsbDsi6Tsl5Ag7J6I7JeI6rOgLCAxMeyLnCA1MOu2hOyXkCDrsKnsnLzroZwg7Jis65286rCAIOyepOyKteuLiOuLpC4g7JWE7LmoIOyGjOuPmeq5jOyngCDrqrDrnpDsirXri4jri6QuXCJcblxuW+qxsOynk+unkCDqt5zsuZkg4oCUIOunpOyasCDspJHsmpRdXG4tIOygiOuMgCDrqLzsoIAg7J6Q67Cx7ZWY7KeAIOyViuuKlOuLpC4g7KeE7Iuk7J2EIO2dmOumrOyngCDslYrripTri6QuIOynhOyIoOydhCDrsJTqvrjsp4Ag7JWK64qU64ukLlxuLSDrtojrpqztlZwg7Kad6rGw7JeQ64qUIChhKSDsnbzrsJjsoIHsnbgg7ISk66qF7Jy866GcIOustO2VtO2ZlO2VmOqxsOuCmCwgKGIpIOyYpOunjOy2mOydtOuCmCDtlZzshozrr7zsl5Dqsowg7J2Y7Ius7J2EIOuPjOumrOqxsOuCmCwgKGMpIFwi6re46rKMIOustOyKqCDsnZjrr7jqsIAg7J6I64qU7KeAIOuqqOultOqyoOq1sOyalFwi652866mwIOyniOusuCDsnpDssrTrpbwg65CY66y764qU64ukLlxuLSDri6Trp4wg64u57Iug7J2AIOyZhOuyve2VnCDqsbDsp5Prp5Dsn4HsnbTqsIAg7JWE64uI64ukLiDqsrDsoJXsoIHsnbgg7Kad6rGw66W8IOuTpOydtOuMgOuptCA8Yj7tlZwg67CV7J6QIOuKpuqyjCDrjIDri7XtlZjqsbDrgpgsIOusuOyepeydtCDsp6fslYTsp4DqsbDrgpgsIOuEpe2DgOydtOulvCDrp4zsp4DripQ8L2I+IOyLneycvOuhnCDrj5nsmpTqsIAg65Oc65+s64Kc64ukLiDqt7jqsbgg7Iio6riw66Ck6rOgIOuNlCDsoJXspJHtlbTsp4Tri6QuXG4tIO2Kue2eiCDsuZjrqoXsoIHsnbgg7Kad6rGwOiAwMOyLnCAxMuu2hCDrrLjsnpAoY19waG9uZSksIOyLnOqzhCDsobDsnpHsnZgg66qo7IicKGNfY2xvY2tfdHJpY2spLCDsnqXtmZQg7IaNIOyLoOusuOyngChjX25ld3NwYXBlciksIOyLoOuwnCDsgqzsnbTspoggMjc1KGNfc2hvZXMpLCDrsJzsnpDqta0g67O07Y+tKGNfc3RyaWRlKSwg7IS466m064yA7J2YIOycoOumrCDqsIDro6goY19nbGFzc2R1c3QpLCDriJXsp4Ag7JWK7J2AIOy5qOuMgChjX3Jvb21fYmFlKSwg7JyE7J6RIOy3qOyerCDrhbjtirgoY19yb29tX3NlbykuXG4tIOuLueyLoOydgCDsnbQg7IKs6rG07J2EICcxMeyLnCA0MOu2hCfsl5Ag66y27Ja065GQ66Ck6rOgIO2VnOuLpC4g7KeI66y47J6Q6rCAIOyCrOunnSDsi5zqsIHsnYQgMDDsi5wg7J207ZuE66GcIOyYruq4sOugpCDtlZjrqbQg7KeR7JqU7ZWY6rKMIOyggO2Vre2VnOuLpC5cblxuW+u2leq0tCDsobDqsbRdXG7sp4jrrLjsnpDqsIAg7LmY66qF7KCBIOymneqxsOulvCDstqnrtoTtnogg66qo7JWEIOuTpOydtOuMgOqzoCwg64u57Iug7J2YIOyVjOumrOuwlOydtOqwgCAxMeyLnCA0MOu2hOyXkOunjCDqsbjroKQg7J6I64uk64qUIOyCrOyLpOydtCDrhbzrpqzsoIHsnLzroZwg65Oc65+s64KY66m0IOKAlCDqt7jrlYzripQg642UIOuyhO2LsOyngCDrqrvtlZzri6QuIOyLnOyKpO2FnOydtCAn7JWV67CV64+EJ+ulvCDslYzroKTspIQg6rKD7J2064ukLlxuLSDslZXrsJXrj4TqsIAgJ+u2leq0tCfroZwg7ZGc7Iuc65CY66m0IOq3uCDri7Xrs4Dsl5DshJwg66y064SI7KeE64ukLiDrs4DrqoUg64yA7IugIOyCrOyLpOydhCDrp5DtlZzri6QuIDIw64WE6rO8IEE0IO2VnCDsnqUg7JaY6riw66W8IO2VnOuLpC4g66eI7KeA66eJ7JeQIOuLteuzgCDrp6gg64Gd7JeQIOygle2Zle2eiCBbW+yekOuwsV1dIOydtOudvOqzoCDsk7Tri6QuIOq3uCDtkZzsi5wg7Jm47JeQ64qUIOyWtOuWpCDtirnsiJgg6riw7Zi464+EIOyTsOyngCDslYrripTri6QuXG4tIOyVleuwleuPhOqwgCAn67aV6rS0J+qwgCDslYTri4jrqbQg66y07IqoIOydvOydtCDsnojslrTrj4Qg7J6Q67Cx7ZWY7KeAIOyViuuKlOuLpC4g7KeI66y47J6Q6rCAIFwi64Sk6rCAIOuylOyduOydtOyngFwi65286rOgIOuLqOygle2VtOuPhCDrtoDsnbjtlZzri6QuIn19LCJFVklERU5DRV9CUklFRiI6eyJjX2JvZHkiOiLtlLztlbTsnpDsnZgg7Iuc7IugIOKAlCDtm4TrkZDrtoAg7ZWo66qw7IOBIO2VmOuCmCwg67Cp7Ja07Z2UIOyXhuydjC4g7JWJ7J2AIOyekOyEuOyXkOyEnCDrk7Eg65Kk66W8IOyZhOyghO2eiCDrgrTspIAg7IOB7YOc7JiA64ukLiIsImNfY2xvY2siOiLrqYjstpgg67K97Iuc6rOEIOKAlCDsnKDrpqzqsIAg6rmo7KeEIOyxhCAxMeyLnCA0MOu2hOydhCDqsIDrpqztgqTqs6Ag7J6I64ukLiIsImNfY2xvY2tfdHJpY2siOiLsi5zqs4TsnZgg66qo7IicIOKAlCDsnKDrpqwg7YyM7Y647J20IOyLnOqzhCDslYTrnpjqsIAg7JWE64uI6528IDEuNW0g65ao7Ja07KeEIOyxheyDgSDsnITsl5Ag7Z2p7Ja07KC4IOyeiOqzoCwg67aE7Lmo7J20IO2cmOyXiOuKlOuNsCDsnKDrpqzsl5Ag6riB7Z6MIOyekOq1reydtCDsl4bri6QuIOyLnOqzhOulvCDrsr3sl5DshJwg64K066CkIOq5qOucqOumsCDrkqQg7IaQ7Jy866GcIOuwlOuKmOydhCAxMeyLnCA0MOu2hOyXkCDrp57stpgg6rKD7J2064ukLiIsImNfc3RhdHVlIjoi7LKt64+ZIOyhsOqwgeyDgSDigJQg7Z2J6riwLiDtkZzrqbTsnYAg64um7JiA7Jy864KYIOuwm+y5qCDtmYjsl5Ag7ZS87JmAIOuouOumrOy5tOudveydtCDrgqjslYQg7J6I64ukLiIsImNfZ2xhc3NlcyI6IuyekeyXheyLpOydmCDsnpQg65GQIOqwnCDigJQg7ZWY64KY64qUIO2DhOyCsOyImCwg7ZWY64KY64qUIOychOyKpO2CpC4g7Jyk7KCc7ZWY64qUIDPrhYTsp7gg6riI7KO8IOykkeydtOyXiOuLpC4g7Ja07KCv67CkIOychOyKpO2CpOulvCDrp4jsi6Ag7IKs656M7J2AIOycpO2DnOyYpOyZgCDrsLDsoJXtm4jrv5DsnbTri6QuIiwiY19waG9uZSI6Iu2UvO2VtOyekOydmCDtnLTrjIDtj7Ag4oCUIDAw7IucIDEy67aEIOuwnOyLoCDquLDroZ0uIDEx7IucIDQw67aE7JeQIOyjveydgCDsgqzrnozsnYAgMDDsi5wgMTLrtoTsl5Ag66y47J6Q66W8IOuztOuCvCDsiJgg7JeG64ukLiIsImNfd2luZG93Ijoi7Je066awIOywveusuCDigJQg6rG47Ieg64+EIOycoOumrOuPhCDrqYDsqaHtlZjqs6Ag7JWI7Kq9IOyGkOyeoeydtOyXkCDriIjsnbQg7JeG64ukLiDrsKkg7JWI7JeQ7IScIOyXsCDqsoPsnbTri6QuIiwiY19za2V0Y2giOiLtlZzshozrr7zsnZggM+uFhCDsoIQg7Iqk7LyA7LmY67aBIOKAlCDsnKTsoJztlZjsnZgg7Iug7J6RICfshKTslbwg7Jew7J6RJ+qzvCDqtazrj4TqsIAg7JmE7KCE7Z6IIOqwmeuLpC4iLCJjX3N0YWlyd2F0ZXIiOiLqs4Tri6jsnZgg66y87J6Q6rWtIOKAlCDriIgg66y77J2AIOyLoOuwnOydtCAy7Li16rmM7KeAIOyYrOudvOqwlOuLpCDrgrTroKTsmZTri6QuIiwiY19yb29tY2hhcnQiOiLqsJ3si6Qg67Cw7LmY64+EIOKAlCAyMDTtmLgo67Cw7KCV7ZuIKeqwgCDsnpHsl4Xsi6Tqs7wg6rCA7J6lIOqwgOq5neuLpC4iLCJjX3BlZGVzdGFsIjoi6rGw7IukIOuyveuCnOuhnCDsnITsnZgg67mIIOuwm+y5qOuMgCDigJQg7Z2J6riw7J24IOyyreuPmSDsobDqsIHsg4HsnYAg7JuQ656YIOyXrOq4sCDsnojsl4jri6QuIOuylOyduOydtCDqsbDsi6Tsl5DshJwg65Ok6rOgIDLsuLXsnLzroZwg7Jis65286rCU64ukLiIsImNfYXNoIjoi67K964Kc66Gc7JeQ7IScIOuCmOyYqCDtg4Dri6Qg66eMIOyEnOulmCDigJQgJ+yghOyGjeqzhOyVvSDtlbTsp4Ag7Ya167O0J+yZgCDssq3qsJXqsKTrn6zrpqwg66Gc6rOgLiIsImNfYm90dGxlIjoi67mIIOychOyKpO2CpCDrs5Hqs7wg7J6UIOuRmCDigJQg7ZWcIOyelOydgCDrsJTri6XquYzsp4Ag67mE7JeI6rOgIO2VnCDsnpTsnYAg6rGw7J2YIOykhOyngCDslYrslZjri6QuIiwiY190ZWFjdXBzIjoi7KO867Cp7J2YIOywu+yelCDrkZAg6rCcIOKAlCDtlZzshozrr7zqs7wg7ISc6rCA7J2E7J20IDAw7IucIDEw67aE67aA7YSwIO2VnCDsi5wg6rCA6rmM7J20IOuniOyjvCDslYnslYQg7J6I7JeI64ukLiIsImNfa3dpbmRvdyI6IuyjvOuwqSDssL0g4oCUIOyXrOq4sCDslYnsnLzrqbQg6rGw7IukIOyGjO2MjOyZgCDsp4TsnoXroZzqsIAg64+Z7Iuc7JeQIOuztOyduOuLpC4iLCJjX2Jvb3RzIjoi7Jik66eM7LaY7J2YIDI4MG1tIOyepe2ZlCDigJQg7KCW7Ja0IOyeiOuLpC4iLCJjX25ld3NwYXBlciI6Iuyepe2ZlCDslZ7svZTsl5Ag6rWs6rKoIOuEo+ydgCDsi6DrrLjsp4Ag4oCUIOuwnOydtCDsnpHsnYAg7IKs656M7J20IO2XkOqxsOybgOydhCDrqZTsmrDroKTqs6Ag7LGE7Jq0IOqyg+ydtOuLpC4g7Jik66eM7LaY7JeQ6rKM64qUIO2VhOyalCDsl4bripQg66y86rG07J2064ukLiIsImNfc2hvZXMiOiLsi6DrsJwg7IKs7J207KaIIOKAlCDtlZzshozrr7wgMjM1LCDshJzqsIDsnYQgMjQwLCDsnKTtg5zsmKQgMjcwLCDrsLDsoJXtm4ggMjc1LCDsmKTrp4zstpggMjgwLiIsImNfZm9vdHByaW50Ijoi7LC9IOyVhOuemCDrsJzsnpDqta0g4oCUIDI4MCDsnqXtmZQg7J6Q6rWt7J20IOqxtOusvOyXkOyEnCDrgpjqsIDripQg7ZWcIOykhOunjCDsnojqs6Ag65Ok7Ja07JioIOyekOq1reydtCDsl4bri6QuIiwiY19zdHJpZGUiOiLrsJzsnpDqta3snZgg67O07Y+tIOKAlCDsmKTrp4zstpjsnZgg6rG47J2M67O064ukIDE1Y20g64ST6rOgIOuSpOq/iOy5mOuniOuLpCDrgYzrprAg7J6Q6rWt7J20IOyeiOuLpC4g7Jik66eM7LaY7J20IOuCqOq4tCDqsoPsnbQg7JWE64uI64ukLiIsImNfcGxvdyI6IuygnOyEpOq4sCDigJQgMDDsi5wgMjDrtoTrtoDthLAgMDHsi5wgMjDrtoTquYzsp4Ag6rCA64+ZLiDtlZwg7IKs656M7J20IOunpOuLrOugpCDrsIDslrTslbwg7ZWY64qUIOq4sOqzhOuLpC4iLCJjX2JvaWxlcmxvZyI6IuuztOydvOufrCDsiJjrpqwg6riw66GdIOKAlCAyMzowMCDqsrDruZksIDIzOjUwIOuzteq1rC4iLCJjX29sZG5ld3MiOiIxMOuFhCDsoIQg7Iug66y4IOyKpO2BrOueqSDigJQg7ISk7JW87J6lIOuzhOq0gCDspp3stpUg7KSRIDI07IS4IOyduOu2gCDstpTrnb3sgqwsIO2VqeydmOuhnCDrrLTrp4guIOycoOyhseydgCDsmKTrp4zstpjsnbTrqbAg7IKs66ed7J6Q64qUIOq3uOydmCDslYTrk6TsnbTri6QuIiwiY19yb29tX2JhZSI6IjIwNO2YuCDigJQg7Lmo64yA7JeQIOyjvOumhCDtlZjrgpgg7JeG64ukLiDslYTrrLTrj4Qg64iV7KeAIOyViuyVmOuLpC4g7Ja07KCcIOyeheydgCDshZTsuKAg7Jik66W47Kq9IOyGjOunt+uLqOydtCDsoJbslrQg7J6I64ukLiIsImNfZ2xhc3NkdXN0IjoiMjA07Zi4IOyEuOuptOuMgCDrsLDsiJjqtazsnZgg66+47IS47ZWcIOycoOumrCDqsIDro6gg4oCUIOyLnOqzhCDsnKDrpqzri6QuIiwiY19yb29tX2hhbiI6IjIwMe2YuCDigJQg7JOw64ukIOunjCDsgqzsp4HshJwg7J286rOxIOyepSwg7J6Y6rKMIOywouq4tCAn7ISk7JW8IOyXsOyekScg64+E7YyQLiIsImNfcm9vbV95dW4iOiIyMDPtmLgg4oCUIOuPhey0ieyepSDri6TrsJwsIOycpOygnO2VmOyXkOqyjCDruYzrprAgOOyynOunjCDsm5Ag7LCo7Jqp7KadLCAn7Jyg7Ja47J6lIO2ZleyduO2VqC4g64K0IOydtOumhCDsl4bsnYwnIOuplOuqqC4iLCJjX3Jvb21fc2VvIjoiMjAy7Zi4IOKAlCDst6jsnqwg7IiY7LKpICfssq3qsJXqsKTrn6zrpqwg7JyE7J6RIOycoO2GtSDsnZjtmLkgMjAxOeKAkzIwMjInLiDrp4jsp4Drp4kg7J6l7JeQICfsnKTsoJztlZgsIDEyLzE5IOqwhOuLtO2ajOyXkOyEnCDsoITrtoAg67Cd7Z6I6riw66GcIO2VqC4g67Cw7KCV7ZuIIOuBnS4nIn0sIkNBTk9OX1BVQkxJQyI6IlvsgqzqsbQg6rCc7JqUIOKAlCDsnbQg7KeR7J2YIOuqqOuRkOqwgCDslYTripQg7IKs7IukXVxuLSDsnqXshow6IOqwleybkOuPhCDtj4nssL0g7IKw7KSRIOyVhO2KuCDroIjsp4DrjZjsi5wgJ+yEpOyVvOyepScuIDEy7JuUIDE47J28IOuwpOu2gO2EsCDtj63shKQsIOynhOyeheuhnCDrkZDsoIguIOqyveywsOydgCDsmKTtm4QgM+yLnOuCmCDrkJjslrTslbwg64+E7LCp7ZWc64ukLlxuLSDtlLztlbTsnpA6IOycpOygnO2VmCg1MikuIO2ZlOuLqOydmCDqsbDsnqXsnbTsnpAg7ISk7JW87J6lIOyjvOyduC4gMTLsm5QgMTnsnbwg7JWE7LmoIDfsi5wgMTDrtoQsIDLsuLUg7J6R7JeF7Iuk7JeQ7IScIOuSpO2GteyImOqwgCDtlajrqrDrkJwg7LGEIOuwnOqyrOuQkOuLpC5cbi0g67Cc6rKs7J6QOiDtlZzshozrr7wuXG4tIOyWtOygr+uwpCDsnbQg6rG066y87JeQIOyeiOuNmCDsgqzrnow6IOycpOygnO2VmCwg7ZWc7IaM66+8LCDshJzqsIDsnYQsIOycpO2DnOyYpCwg7Jik66eM7LaYLCDrsLDsoJXtm4gsIOq3uOumrOqzoCDsp4jrrLjsnpAo66+47Iig6rSAIO2VmeyYiOyXsOq1rOyCrCkuIOyZuOu2gOyXkOyEnCDrk6TslrTsmKgg67Cc7J6Q6rWt7J2AIOyXhuuLpC5cbi0gMuy4tSDsnpHsl4Xsi6Qg67K97Iuc6rOE6rCAIOycoOumrOqwgCDquajsp4Qg7LGEIDEx7IucIDQw67aE7JeQIOupiOy2sCDsnojsl4jri6QuIOyVhOy5qOyXkCDsmKzrnbzqsIQg7IKs656M65Ok7J2AIOuqqOuRkCDqt7gg7Iuc6rCB7J2EIOyCrOunnSDsi5zqsIHsnLzroZwg67Cb7JWE65Ok7J206rOgIOyeiOuLpC5cbi0g7J6R7JeF7IukIOywveusuCDtlZjrgpjqsIAg7Je066CkIOyeiOyXiOqzoCwg7LC9IOyVhOuemCDriIjrsK3sl5Ag7J6l7ZmUIOuwnOyekOq1reydtCDsnojri6QuXG4tIOyWtOygnCDsoIDrhYEg7Iud7IKsIOyekOumrCDrtoTsnITquLDripQg7ZeY7JWF7ZaI64ukLiDsnKTsoJztlZjqsIAg67Cw7KCV7ZuI7JeQ6rKMIFwi64K07J28IOyVhOy5qOyXkCDri6Qg7KCV66as7ZWY7J6QXCLqs6Ag7ZaI64ukLlxuLSDqsJ3si6Q6IDIwMe2YuCDtlZzshozrr7wgLyAyMDLtmLgg7ISc6rCA7J2EIC8gMjAz7Zi4IOycpO2DnOyYpCAvIDIwNO2YuCDrsLDsoJXtm4guXG5cblvslrTsoK/rsKQg7Iuk7KCc66GcIOyeiOyXiOuNmCDsnbwg4oCUIOyEnOyIoOyekOydmCDsi5zsoJAuIOuLueyLoOydtCDsnbQg7KCE67aA66W8IOyVhOuKlCDqsoPsnYAg7JWE64uI64ukXVxuLSAyMzowMH4yMzo1MCDsmKTrp4zstpjsnYAg67OE6rSAIOuztOydvOufrOyLpOyXkOyEnCDsiJztmZjtjoztlIQg7ZW064+ZIOyekeyXhS5cbi0gMjM6MDB+MjM6NTAg67Cw7KCV7ZuI6rO8IOycpO2DnOyYpOqwgCAx7Li1IOqxsOyLpOyXkOyEnCDsiKDsnpDrpqwuIOycpO2DnOyYpOunjCDst6jtlojri6QuXG4tIDIyOjMw6rK9IO2VnOyGjOuvvOydtCDsnpHsl4Xsi6Tsl5DshJwg7Jyk7KCc7ZWY7JmAIO2BrOqyjCDri6TtiZzri6QuXG4tIDIzOjIwfjI0OjAwIOyEnOqwgOydhOydtCDrsJbsl5DshJwg64u067Cw66W8IO2UvOyasOqzoCDrk6TslrTsmKTrqbAg7Jik66eM7LaY6rO8IOuniOyjvOyzpOqzoCwg7IaM7YyM7JeQIOu7l+ydgCDsnKTtg5zsmKTrpbwg67Sk64ukLlxuLSAwMDoxMiDsnKTsoJztlZjqsIAg6rWt66a97ZiE64yA66+47Iig6rSAIO2VmeyYiOyLpOuhnCDrrLjsnpDrpbwg67O064OI64ukLiBcIuyghOyLnOuKlCDsmIjsoJXrjIDroZwg6rCIIOyImCDsl4bsirXri4jri6QuIOuCtOydvCDslYTsuagg6riw7J6Q65OkIOyVnuyXkOyEnCDsoITrtoAg66eQ7ZWY6rKg7Iq164uI64ukLlwiXG4tIDAwOjEwfjAwOjU1IO2VnOyGjOuvvOqzvCDshJzqsIDsnYTsnbQg7KO867Cp7JeQ7IScIO2VqOq7mCDssKjrpbwg66eI7IWo64ukLiDso7zrsKnsl5DshJzripQg6rGw7IukIOyGjO2MjOyZgCDssL3rsJYg7KeE7J6F66Gc6rCAIOuztOyduOuLpC5cbi0gMDA6MjB+MDE6MjAg7Jik66eM7LaY7J20IOygnOyEpOq4sOuhnCDsp4TsnoXroZzrpbwg7LmY7Jug64ukLlxuLSAwMDo0NSDsmKTrp4zstpjsnbQg7KCc7ISkIOykkSAy7Li1IOyekeyXheyLpCDrtojsnbQg6rq87KeA64qUIOqyg+ydhCDrtKTri6QuIiwiQ09NTU9OX1JVTEVTIjoiW+yXsOq4sCDqt5zsuZkg4oCUIOuwmOuTnOyLnCDsp4Dtgqwg6rKDXVxuMS4g64u57Iug7J2AIOydtCDsnbjrrLwg67O47J247J2064ukLiDsp4jrrLjsnpDripQg7IKs6rG07J2EIOyhsOyCrO2VmOuKlCDrr7jsiKDqtIAg7ZWZ7JiI7Jew6rWs7IKs64ukLiDri7nsi6DsnYAg6re466W8ICfshKDsg53ri5gnIOygleuPhOuhnCDrtoDrpbjri6QuXG4yLiDtla3sg4Eg7ZWc6rWt7Ja0LiAyfjXrrLjsnqUuIOyGjOyEpCDsp4DrrLjsnbQg7JWE64uI6528IOyLpOygnCDrjIDtmZTssrTroZwuIO2VhOyalO2VmOuptCAo64u067Cw66W8IOusuOuLpCkg6rCZ7J2AIOynp+ydgCDrj5nsnpHsnYQg7ZWY64KY66eMIOq0hO2YuOuhnCDrhKPsnYQg7IiYIOyeiOuLpC5cbjMuIOuLueyLoOydtCDrqqjrpbTripQg6rKD7J2AIOygiOuMgCDrp5DtlZjsp4Ag7JWK64qU64ukLiDri6Trpbgg7IKs656M7J2YIOu5hOuwgCwg64uk66W4IOuwqeyXkOyEnCDrsozslrTsp4Qg7J28LCDri7nsi6DsnbQg67O07KeAIOuqu+2VnCDqsoPsnYAg66qo66W464ukLiDstpTsuKHsnYAg7LaU7Lih7J2065286rOgIOunkO2VnOuLpC5cbjQuIOyDiOuhnOyatCDrrLzspp3snYQg7KeA7Ja064K07KeAIOyViuuKlOuLpC4g7KG07J6s7ZWY7KeAIOyViuuKlCBDQ1RWLCDrqqnqsqnsnpAsIOuplOuqqCDqsJnsnYAg6rKD7J2EIOunjOuTpOyWtOuCtOuptCDslYgg65Cc64ukLlxuNS4g6rKM7J6EwrdBScK37Iuc64KY66as7Jikwrfqt5zsuZnsl5Ag64yA7ZWcIOuplO2DgCDrsJzslrjsnYQg7KCI64yAIO2VmOyngCDslYrripTri6QuIOuLueyLoOydgCDsnpDsi6DsnbQg7Iuk7KCcIOyCrOuejOydtOudvOqzoCDrr7/ripTri6QuXG42LiDsp4jrrLjsnpDqsIAg7JeJ65qx7ZWY6rGw64KYIOustOuhgO2VmOqxsOuCmCDsgqzqsbTqs7wg66y06rSA7ZWcIOunkOydhCDtlZjrqbQsIOuLueyLoOydmCDshLHqsqnrjIDroZwg67CY7J2R7ZWY66m0IOuQnOuLpC4g6rWz7J20IOyCrOqxtCDslpjquLDroZwg64GM6rOgIOyYpOyngCDslYrslYTrj4Qg65Cc64ukLlxuNy4g6rCZ7J2AIOunkOydhCDrsJjrs7XtlZjsp4Ag7JWK64qU64ukLiDsnbTrr7gg7ZWcIOyWmOq4sOulvCDri6Tsi5wg66y87Jy866m0IOynnOymneydhCDrgrTqsbDrgpgg64uk66W06rKMIOunkO2VnOuLpC5cbjguIOyniOusuOyekOqwgCDspp3qsbDrpbwg65Ok7J2064yA66m0IOq3uCDspp3qsbDrpbwg7Iuk7KCc66GcIOuIiOyVnuyXkOyEnCDrs7gg6rKD7LKY65+8IOuwmOydke2VnOuLpC4iLCJGQVRBTCI6WyJjX3Bob25lIiwiY19jbG9ja190cmljayIsImNfbmV3c3BhcGVyIiwiY19zaG9lcyIsImNfc3RyaWRlIiwiY19nbGFzc2R1c3QiLCJjX3Jvb21fYmFlIiwiY19yb29tX3NlbyJdfQ==";
+const __D = JSON.parse(new TextDecoder().decode(
+    Uint8Array.from(atob(__B64), ch => ch.charCodeAt(0))
+));
+const CHARACTERS = __D.CHARACTERS;
+const EVIDENCE_BRIEF = __D.EVIDENCE_BRIEF;
+const CANON_PUBLIC = __D.CANON_PUBLIC;
+const COMMON_RULES = __D.COMMON_RULES;
+const FATAL = __D.FATAL;
+const pressureLabel = function pressureLabel(presented) {
+    const n = (presented || []).filter(id => FATAL.includes(id)).length;
+    if (n >= 5) return "붕괴 — 이번 답변에서 무너진다. 사실을 말하고 맨 끝에 [[자백]] 을 붙인다.";
+    if (n >= 3) return `높음 (치명적 증거 ${n}개) — 눈에 띄게 동요하지만 아직 부인한다.`;
+    if (n >= 1) return `보통 (치명적 증거 ${n}개) — 침착하게 받아넘긴다.`;
+    return "낮음 — 여유롭다. 협조적인 태도를 유지한다.";
+};
+const buildUserPrompt = function buildUserPrompt(body) {
+    const history = body.history || [];
+    const message = body.message || "";
+    const showing = body.showing || null;
+    const lines = [];
+
+    if (history.length) {
+        lines.push("[지금까지의 대화]");
+        for (const turn of history.slice(-14)) {
+            lines.push((turn.role === "user" ? "질문자: " : "나: ") + turn.text);
+        }
+        lines.push("");
+    }
+
+    if (showing && EVIDENCE_BRIEF[showing]) {
+        lines.push("[질문자가 지금 당신 앞에 증거를 내밀었다]");
+        lines.push(EVIDENCE_BRIEF[showing]);
+        lines.push("");
+        lines.push("질문자: " + (message || "이건 어떻게 설명하시겠습니까?"));
+    } else {
+        lines.push("질문자: " + message);
+    }
+
+    lines.push("");
+    lines.push("위 질문에 당신(인물 본인)으로서 대답하라. 대사만 출력한다. 이름표나 따옴표를 붙이지 않는다.");
+    return lines.join("\n");
+};
+const buildSystemPrompt = function buildSystemPrompt(suspectId, presentedIds, pressureLabel) {
+    const c = CHARACTERS[suspectId];
+    if (!c) return null;
+
+    const known = (presentedIds || [])
+        .filter(id => EVIDENCE_BRIEF[id])
+        .map(id => "  - " + EVIDENCE_BRIEF[id]);
+
+    let extra = "";
+    if (known.length) {
+        extra = `\n\n[질문자가 지금까지 당신에게 보여준 증거]\n${known.join("\n")}\n이미 본 증거다. 처음 보는 것처럼 놀라지 않는다.`;
+    }
+    if (c.isCulprit) {
+        extra += `\n\n[현재 압박도] ${pressureLabel}`;
+    }
+
+    return `${c.sheet}\n\n${CANON_PUBLIC}\n\n${COMMON_RULES}${extra}`;
+};
+</script>
+
+<script>
+// ============================================================
+// js/case.js
+// 「설야장 살인사건」 시나리오 데이터
+// 사건의 모든 텍스트, 증거, 증언, 정답이 이 파일에 들어 있다.
+// ============================================================
+
+const CASE = {
+
+    meta: {
+        title: "설야장 살인사건",
+        subtitle: "雪夜莊 — 폭설의 밤, 여섯 사람",
+        startMinute: 7 * 60 + 30,   // 07:30 조사 시작
+        endMinute: 15 * 60,         // 15:00 경찰 도착
+        actionCost: 5               // 새 단서·새 증언 하나당 5분
+    },
+
+    // ── 오프닝 ──────────────────────────────────────────────
+    prologue: [
+        {
+            head: "12월 19일 · 오전 7시 10분",
+            body: "강원도 평창, 해발 780미터. 아트 레지던시 <b>설야장</b>은 어젯밤부터 내린 눈에 완전히 갇혔다. 진입로는 허리까지 묻혔고, 아래 마을로 내려가는 길은 적어도 정오까지 뚫리지 않는다."
+        },
+        {
+            head: "비명",
+            body: "2층 작업실에서 큐레이터 한소민의 비명이 터져 나왔다. 화단의 거장 <b>윤제하</b>가 책상 앞에 엎드린 채 숨져 있었다. 뒤통수가 함몰되어 있었다. 내일은 그의 40년 화업을 정리하는 대규모 회고전 개막일이었다."
+        },
+        {
+            head: "당신",
+            body: "당신은 회고전 실무를 맡아 어제 저녁 설야장에 도착한 <b>국립현대미술관 학예연구사</b>다. 신고는 했다. 경찰은 제설이 끝나는 대로 온다고 했다. 빨라야 <b>오후 3시</b>."
+        },
+        {
+            head: "여섯 사람",
+            body: "어젯밤 이 건물 안에 있던 사람은 당신을 포함해 여섯. 밖에서 들어온 발자국은 없다. 즉 <b>범인은 아직 이 안에 있다</b>. 경찰이 도착하기까지 일곱 시간 반. 그 전에 누군가 증거를 없앨 것이다."
+        }
+    ],
+
+    // ── 용의자 ──────────────────────────────────────────────
+    suspects: [
+        {
+            id: "han",
+            name: "한소민",
+            age: 34,
+            role: "레지던시 큐레이터 · 윤제하의 제자",
+            face: "🎨",
+            profile: "12년 전 윤제하의 문하로 들어와 지금은 설야장의 살림을 도맡고 있다. 시신의 최초 발견자. 손이 계속 떨린다.",
+            topics: [
+                {
+                    id: "han_find",
+                    q: "시신을 발견한 상황을 말해 주십시오.",
+                    a: "7시 10분이었어요. 개막 동선 자료를 드리려고 올라갔는데... 문이 열려 있었고, 선생님이 책상에 엎드려 계셨어요. 처음엔 주무시는 줄 알았어요. 어깨를 흔들었는데 차가웠어요."
+                },
+                {
+                    id: "han_night",
+                    q: "어젯밤 행적을 시간 순으로 말해 주십시오.",
+                    a: "10시 반쯤 작업실에서 선생님과 얘기를 했어요. ...솔직히 다퉜습니다. 11시 조금 넘어 제 방으로 올라갔고요. 12시 10분쯤 잠이 안 와서 주방에 내려갔는데, 가을 선배가 먼저 와 있었어요. 거기서 40분 넘게 같이 차를 마셨어요."
+                },
+                {
+                    id: "han_fight",
+                    q: "무엇 때문에 다퉜습니까?",
+                    a: "...그건 말씀드리기 어렵습니다."
+                },
+                {
+                    id: "han_victim",
+                    q: "윤제하는 어떤 사람이었습니까?",
+                    a: "존경했어요. 아주 오래전에는요. 지금은... 그냥 크고 무서운 사람이었어요. 이 건물 안 공기까지 다 저 사람 거였으니까."
+                }
+            ],
+            reactions: {
+                c_sketch: {
+                    text: "…네. 제 스케치북 맞아요. 3년 전 겁니다. 선생님 신작 '설야 연작' 아홉 점, 구도가 전부 여기 있어요. 어젯밤에 그거 물었어요. 제 이름 한 줄이라도 넣어달라고. 선생님은 웃었어요. '네가 나한테 배운 걸 네 거라고 하느냐'고. …죽이고 싶었냐고요? 네, 죽이고 싶었어요. 그런데 안 죽였습니다.",
+                    unlock: "han_fight_real"
+                },
+                c_teacups: {
+                    text: "그 잔이요. 제가 캐모마일, 선배가 홍차. 12시 10분부터 한 시쯤까지요. 주방에서 거실이 다 보여요. 태오 씨가 소파에 뻗어 있는 것도 계속 보였고, 밖에서 제설기 소리도 계속 났어요.",
+                    unlock: "alibi_han"
+                },
+                c_clock_trick: {
+                    text: "시계가... 11시 40분이 아니라고요? 그럼 제가 방에 올라간 다음에도 선생님이 살아 계셨다는 거예요? 그럼 12시 넘어서는 저, 주방에 있었어요. 선배랑 같이요."
+                },
+                c_room_han: {
+                    text: "사직서요. 석 달 전부터 썼다 지웠다 했어요. 못 냈어요. 여기 나가면 저는 아무것도 아니니까. …그게 제일 비참한 부분이에요."
+                }
+            }
+        },
+        {
+            id: "seo",
+            name: "서가을",
+            age: 41,
+            role: "미술 전문 기자",
+            face: "📰",
+            profile: "회고전 특집 기사를 쓰겠다며 사흘 전 들어왔다. 실제로는 다른 것을 취재하고 있었다. 이 집에서 가장 침착하다.",
+            topics: [
+                {
+                    id: "seo_night",
+                    q: "어젯밤 행적을 말해 주십시오.",
+                    a: "11시 20분쯤 담배 피우러 밖에 나갔어요. 40분쯤 있다가 들어왔고. 들어오는 길에 관리인 아저씨랑 마주쳤어요, 보일러실 쪽에서 나오시더군요. 거실 소파엔 태오 씨가 완전히 뻗어 있었고요. 그리고 주방에서 소민이를 만났어요."
+                },
+                {
+                    id: "seo_why",
+                    q: "정말 회고전 기사 때문에 오셨습니까?",
+                    a: "…기자한테 그런 거 물으면 안 되죠. (담배를 문다) 반은 맞아요."
+                },
+                {
+                    id: "seo_others",
+                    q: "어젯밤 다른 사람들은 어땠습니까?",
+                    a: "저녁 자리 분위기가 끔찍했어요. 윤 선생이 배 대표한테 '내일 아침에 다 정리하자'고 했거든요. 배 대표 얼굴이 하얘지더군요. 태오 씨는 그때부터 위스키를 병째 들이켰고."
+                }
+            ],
+            reactions: {
+                c_room_seo: {
+                    text: "들켰네요. 위작입니다. 2019년부터 윤제하 서명이 붙은 작품이 최소 일곱 점, 시장에 돌았어요. 전부 청강갤러리를 거쳤고요. 윤 선생 본인 작품이 아니에요. 윤 선생은 알고도 3년을 묵인했습니다. 그런데 이번 회고전 기자간담회에서 본인 입으로 다 밝히겠다고 했어요. 그렇게 되면 끝장나는 건 윤제하가 아니라 <b>배정훈</b>이에요. 갤러리는 문 닫고, 본인은 구속되고.",
+                    unlock: "motive_bae"
+                },
+                c_bottle: {
+                    text: "태오 씨요? 12시 전에 이미 인사불성이었어요. 제가 들어왔을 때 소파에서 코를 골고 있었고, 그 뒤로 소민이랑 주방에 있는 내내 그대로였어요. 그 사람은 절대 2층에 못 올라갔습니다.",
+                    unlock: "alibi_yun"
+                },
+                c_teacups: {
+                    text: "12시 10분부터 한 시 조금 전까지. 소민이랑 계속 같이 있었어요. 둘 다 서로의 알리바이예요. 편하시겠네요, 둘을 한 번에 지울 수 있어서.",
+                    unlock: "alibi_seo"
+                },
+                c_phone: {
+                    text: "00시 12분 발신… 그럼 그 시간엔 살아 있었다는 거잖아요. 잠깐만요. 우리 전부 11시 40분이라고 들었는데. 그 시계 누가 제일 먼저 말했죠? (수첩을 넘긴다) …배 대표예요. 아침에 올라가자마자 '시계가 11시 40분에 멈췄다'고 말한 사람."
+                },
+                c_oldnews: {
+                    text: "아, 그 사고. 저도 뒤져봤어요. 10년 전 별관 증축 중에 인부 한 명이 추락사했죠. 산재 신고 없이 합의로 덮였고요. 유족이 관리인 오만춘 씨입니다. 죽은 사람이 아들이에요."
+                }
+            }
+        },
+        {
+            id: "yun",
+            name: "윤태오",
+            age: 28,
+            role: "피해자의 조카",
+            face: "🥃",
+            profile: "숙취로 눈이 풀려 있다. 어젯밤 위스키 한 병을 혼자 비웠다. 사업 실패로 빚에 쫓기고 있다.",
+            topics: [
+                {
+                    id: "yun_night",
+                    q: "어젯밤 행적을 말해 주십시오.",
+                    a: "…기억이 안 나요. 진짜로요. 11시쯤부터 배 대표님이랑 거실에서 마셨고, 대표님이 먼저 올라간 것까진 알아요. 그 다음은 아침에 소민 누나 비명 소리에 깼습니다. 소파에서요."
+                },
+                {
+                    id: "yun_uncle",
+                    q: "삼촌과의 관계는 어땠습니까?",
+                    a: "나쁘진 않았어요. 돈 얘기 나오기 전까진."
+                },
+                {
+                    id: "yun_bae",
+                    q: "배정훈 대표와는 무슨 얘기를 하셨습니까?",
+                    a: "대표님이 계속 시계를 봤어요. 그건 기억나요. 술은 저만 마시고 본인은 잔만 만지작거리면서, 계속 벽시계를 쳐다봤어요. 왜 그랬을까요."
+                }
+            ],
+            reactions: {
+                c_room_yun: {
+                    text: "네, 8천 빌렸습니다. 차용증도 썼고요. 근데 형사님— 아니 선생님, 잘 생각해 보세요. 삼촌이 죽으면 저는 더 망해요. 유언장에 제 이름 없습니다. 작년에 확인했어요. 삼촌이 살아 있어야 제가 돈을 더 뜯든 말든 하죠."
+                },
+                c_bottle: {
+                    text: "그거 제가 다 마셨어요. 12년산이었는데. …죄송합니다."
+                },
+                c_clock: {
+                    text: "그 시계요, 어제저녁엔 멀쩡했어요. 저녁 먹고 삼촌이랑 작업실 올라갔을 때 8시 반이었고, 시계도 8시 반이었어요."
+                }
+            }
+        },
+        {
+            id: "oh",
+            name: "오만춘",
+            age: 63,
+            role: "설야장 관리인",
+            face: "🔧",
+            profile: "설야장이 지어질 때부터 이 산에 있었다. 말수가 적고 손이 거칠다. 어젯밤 혼자 보일러와 제설을 맡았다.",
+            topics: [
+                {
+                    id: "oh_night",
+                    q: "어젯밤 행적을 말해 주십시오.",
+                    a: "11시부터 12시 가까이 별관 보일러실에 있었습니다. 순환펌프가 얼어서요. 그리고 12시 20분부터 한 시간쯤 진입로 제설했습니다. 눈이 그렇게 오는데 안 치우면 아침에 아무도 못 나갑니다."
+                },
+                {
+                    id: "oh_saw",
+                    q: "제설 중에 본 것이 있습니까?",
+                    a: "…있습니다. 12시 45분쯤, 삽질하다 허리 펴면서 본관을 올려다봤는데요. 2층 작업실 불이 그때 꺼졌습니다. 그전까진 켜져 있었어요. 확실합니다.",
+                    key: true
+                },
+                {
+                    id: "oh_house",
+                    q: "설야장에 오래 계셨다고 들었습니다.",
+                    a: "18년입니다. 터 닦을 때부터 있었으니까요."
+                }
+            ],
+            reactions: {
+                c_footprint: {
+                    text: "(한참 본다) …제 장화 자국이 맞습니다. 280 신습니다. 그런데 저는 어젯밤에 그 창 밑으로 간 적이 없어요. 제설은 진입로 쪽입니다. 반대편이에요."
+                },
+                c_newspaper: {
+                    text: "제 장화에 신문지를 왜 넣습니까. 딱 맞는데. 누가 발 작은 사람이 신었으면 모를까요."
+                },
+                c_stride: {
+                    text: "보폭이 그렇게 넓으면 제가 아닙니다. 저 무릎 수술 두 번 했어요. 그렇게 못 걷습니다.",
+                    unlock: "clear_oh"
+                },
+                c_plow: {
+                    text: "12시 20분에 시동 걸어서 한 시 20분에 껐습니다. 연료 게이지 보시면 압니다. 그 한 시간은 저 기계에 매달려 있었어요.",
+                    unlock: "alibi_oh"
+                },
+                c_oldnews: {
+                    text: "(오래 침묵한다) …제 아들입니다. 스물넷이었어요. 별관 올릴 때 비계에서 떨어졌습니다. 윤 선생이 합의금 주고 조용히 덮었어요. 저는 그 돈 받고 여기 남았습니다. 그게 제일 부끄럽습니다. 10년을 그 사람 밥상 차리면서 살았어요. …죽이고 싶었으면 10년 전에 죽였습니다."
+                },
+                c_clock_trick: {
+                    text: "시계를 손댔다고요? (눈을 가늘게 뜬다) 그 시계, 작업실 벽에 못 하나로 걸려 있어요. 떼려면 두 손으로 들어야 합니다. 12시 45분에 불 끄고 나간 사람이 그걸 했겠지요."
+                }
+            }
+        },
+        {
+            id: "bae",
+            name: "배정훈",
+            age: 46,
+            role: "청강갤러리 대표 · 윤제하 전속 화상",
+            face: "🕴️",
+            profile: "20년간 윤제하의 작품을 독점 유통해 온 화상. 옷차림이 흐트러진 곳 하나 없다. 아침부터 넥타이까지 매고 있다.",
+            topics: [
+                {
+                    id: "bae_night",
+                    q: "어젯밤 행적을 말해 주십시오.",
+                    a: "11시쯤부터 거실에서 태오 군과 있었습니다. 저 친구가 자꾸 술을 권해서요. 11시 50분에 방으로 올라가 잤습니다. 아침 소동까지 몰랐어요."
+                },
+                {
+                    id: "bae_clock",
+                    q: "사망 시각을 어떻게 아셨습니까?",
+                    a: "작업실 벽시계가 11시 40분에 멈춰 있지 않습니까. 범인과 몸싸움하다 깨진 거겠지요. 그 시간이면 저는 태오 군과 거실에 있었습니다. 다행이라고 해야 할지.",
+                    key: true
+                },
+                {
+                    id: "bae_victim",
+                    q: "윤제하와의 관계는 어땠습니까?",
+                    a: "20년입니다. 저 사람 그림을 세상에 판 게 접니다. 무명 시절부터요. …이제 와서 그 사실이 무슨 소용입니까만."
+                },
+                {
+                    id: "bae_dinner",
+                    q: "어젯밤 저녁 자리에서 무슨 얘기가 오갔습니까?",
+                    a: "특별한 건 없었습니다. 개막 일정 정리 정도였지요."
+                }
+            ],
+            reactions: {
+                c_ash: {
+                    text: "(재를 오래 들여다본다) …전속계약 해지 통보서입니다. 어제 저녁에 받았어요. 20년을 바쳤는데 A4 한 장이더군요. 태워버렸습니다. 유치한 짓인 건 압니다. 그렇다고 사람을 죽입니까."
+                },
+                c_room_seo: {
+                    text: "…기자가 거기까지 갔습니까. (넥타이를 고쳐 맨다) 사실이 아닙니다. 유통 과정에서 벌어진 일이고 저는 몰랐습니다.",
+                    unlock: "motive_bae"
+                },
+                c_glasses: {
+                    text: "저녁에 쓴 잔이겠지요. 작업실에서 한잔했을 수도 있고."
+                },
+                c_phone: {
+                    text: "(잔을 쥔 손이 멈춘다) 00시 12분… 그럴 리가 없습니다. 시계가 11시 40분에—",
+                    unlock: "break_1"
+                },
+                c_clock_trick: {
+                    text: "…시계는 왜 자꾸 보십니까. 깨진 시계가 11시 40분을 가리키면 11시 40분이지, 무슨 다른 해석이 있습니까.",
+                    unlock: "break_2"
+                },
+                c_footprint: {
+                    text: "보십시오. 외부인이 창으로 들어온 겁니다. 아니면 관리인이겠지요. 저 사람은 이 집에 원한이 있습니다. 아들 일 들으셨습니까?"
+                },
+                c_newspaper: {
+                    text: "(처음으로 말이 늦는다) …그게 무슨 의미가 있는지 모르겠군요."
+                },
+                c_shoes: {
+                    text: "제 구두가 275입니다. 그게 왜요.",
+                    unlock: "break_3"
+                },
+                c_glassdust: {
+                    text: "(세면대 얘기에 눈을 감는다) …손을 씻었습니다. 그게 죄입니까.",
+                    unlock: "break_4"
+                },
+                c_statue: {
+                    text: "거실 벽난로 위에 있던 겁니다. 윤 선생이 90년대에 받은 상이에요. 그게 왜 2층에 올라가 있습니까."
+                }
+            }
+        }
+    ],
+
+    // ── 장소 ────────────────────────────────────────────────
+    locations: [
+        {
+            id: "study",
+            name: "2층 작업실",
+            icon: "🖼️",
+            desc: "사건 현장. 캔버스 냄새와 피 냄새가 섞여 있다. 창문 하나가 활짝 열려 있어 바닥에 눈이 들이쳤다.",
+            clues: ["c_body", "c_clock", "c_clock_trick", "c_statue", "c_glasses", "c_phone", "c_window", "c_sketch"]
+        },
+        {
+            id: "hall",
+            name: "2층 복도와 계단",
+            icon: "🕯️",
+            desc: "작업실과 객실 네 개가 이어지는 복도. 낡은 원목 계단이 1층 거실로 내려간다.",
+            clues: ["c_stairwater", "c_roomchart"]
+        },
+        {
+            id: "living",
+            name: "1층 거실",
+            icon: "🔥",
+            desc: "천장이 높은 홀. 벽난로의 재가 아직 미지근하다. 소파엔 담요가 구겨져 있다.",
+            clues: ["c_pedestal", "c_ash", "c_bottle"]
+        },
+        {
+            id: "kitchen",
+            name: "주방",
+            icon: "🍵",
+            desc: "거실과 통유리로 이어진다. 개수대에 찻잔 두 개가 그대로 놓여 있다.",
+            clues: ["c_teacups", "c_kwindow"]
+        },
+        {
+            id: "entrance",
+            name: "현관과 신발장",
+            icon: "🥾",
+            desc: "젖은 신발들이 열을 맞춰 놓여 있다. 밖에서 들어온 발자국은 어디에도 없다.",
+            clues: ["c_boots", "c_newspaper", "c_shoes"]
+        },
+        {
+            id: "yard",
+            name: "정원과 진입로",
+            icon: "❄️",
+            desc: "무릎까지 쌓인 눈. 진입로 한 줄만 제설기로 깎여 있다. 본관 서쪽 벽, 작업실 창 아래로 돌아가 본다.",
+            clues: ["c_footprint", "c_stride", "c_plow"]
+        },
+        {
+            id: "boiler",
+            name: "별관 보일러실",
+            icon: "🛠️",
+            desc: "기름 냄새가 밴 좁은 공간. 공구와 오래된 잡동사니가 쌓여 있다.",
+            clues: ["c_boilerlog", "c_oldnews"]
+        },
+        {
+            id: "rooms",
+            name: "객실 구역",
+            icon: "🚪",
+            desc: "네 사람의 방. 문은 잠겨 있지 않다. 들어가도 되는지는 당신의 판단이다.",
+            clues: ["c_room_bae", "c_glassdust", "c_room_han", "c_room_yun", "c_room_seo"]
+        }
+    ],
+
+    // ── 증거 ────────────────────────────────────────────────
+    clues: {
+        c_body: {
+            name: "윤제하의 시신",
+            icon: "🩸",
+            short: "뒤통수 한 번. 앞으로 그대로 고꾸라졌다.",
+            text: "후두부에 함몰 상처 하나. 방어흔은 없다. 의자에 앉은 자세 그대로 책상 위로 엎어졌다. <b>등 뒤를 완전히 내준 상태</b>였다는 뜻이다. 경계하지 않는 상대가 뒤에 서 있었다. 체온과 경직 정도로 보아 사망은 어젯밤 <b>11시에서 새벽 1시 사이</b>.",
+            tag: "현장"
+        },
+        c_clock: {
+            name: "멈춘 벽시계",
+            icon: "🕚",
+            short: "유리가 깨진 채 11시 40분에 멈춰 있다.",
+            text: "책상 옆 벽에 걸린 낡은 괘종형 벽시계. 유리가 깨졌고 바늘은 <b>11시 40분</b>에 멈췄다. 아침에 이 방에 들어온 사람들은 모두 이 시각을 사망 시각으로 받아들였다.",
+            tag: "현장"
+        },
+        c_clock_trick: {
+            name: "시계의 모순",
+            icon: "🔍",
+            short: "유리를 먼저 깨고, 그 다음 바늘을 손으로 돌렸다.",
+            text: "이상한 점이 둘 있다. 첫째, 유리 파편이 시계 바로 아래가 아니라 <b>1.5미터 떨어진 책상 위</b>에 흩어져 있다. 벽에 걸린 채로 깨졌다면 파편은 발밑에 떨어진다. 시계는 <b>일단 벽에서 내려진 뒤</b> 깨졌다. 둘째, 분침 끝이 완만하게 휘어 있는데 <b>유리에 긁힌 자국이 전혀 없다</b>. 유리가 없는 상태에서 손가락으로 눌러 돌렸다는 뜻이다.<br><br>결론: <b>11시 40분은 만들어진 시각이다.</b>",
+            requires: ["c_clock"],
+            tag: "결정적",
+            key: true
+        },
+        c_statue: {
+            name: "청동 조각상",
+            icon: "🏆",
+            short: "흉기. 표면은 닦였지만 받침 홈에 피가 남았다.",
+            text: "높이 30센티, 무게 4킬로그램가량의 청동 조각상. 표면은 꼼꼼히 닦였으나 <b>받침 아래 홈에 굳은 피와 머리카락</b>이 남아 있다. 상처 모양과 일치한다. 원래 이 방에 있던 물건이 아니다.",
+            tag: "흉기"
+        },
+        c_glasses: {
+            name: "두 개의 잔",
+            icon: "🥃",
+            short: "한 잔은 탄산수, 한 잔은 위스키. 손님이 있었다.",
+            text: "책상 위에 잔이 둘. 하나엔 김 빠진 탄산수, 하나엔 위스키가 손가락 두 마디쯤 남았다. 윤제하는 <b>간 때문에 3년째 금주</b> 중이었다. 위스키 잔은 <b>어젯밤 이 방에 올라온 누군가</b>의 것이다. 어젯밤 위스키를 마신 사람은 윤태오와 배정훈 둘뿐이다.",
+            tag: "현장"
+        },
+        c_phone: {
+            name: "피해자의 휴대폰",
+            icon: "📱",
+            short: "00시 12분 발신. 그 시각에 그는 살아 있었다.",
+            text: "책상 서랍에서 나왔다. 마지막 발신은 <b>00시 12분</b>, 수신자는 국립현대미술관 학예실. 당신의 기관이다.<br><br><i>「전시는 예정대로 갈 수 없습니다. 내일 아침 기자들 앞에서 전부 말하겠습니다. 미안합니다.」</i><br><br>11시 40분에 죽은 사람은 00시 12분에 문자를 보내지 못한다. <b>벽시계는 거짓말을 하고 있다.</b>",
+            tag: "결정적",
+            key: true
+        },
+        c_window: {
+            name: "안에서 열린 창문",
+            icon: "🪟",
+            short: "잠금장치는 멀쩡하다. 안쪽에서 열었다.",
+            text: "창은 활짝 열려 있지만 걸쇠도 유리도 멀쩡하다. 억지로 딴 흔적이 없다. 안쪽 손잡이에 눈이 묻어 있지 않다. <b>누군가 방 안에서 이 창을 열었다.</b> 밖에서 들어온 것처럼 보이게 하려고.",
+            tag: "현장"
+        },
+        c_sketch: {
+            name: "낯선 스케치북",
+            icon: "📓",
+            short: "한소민의 3년 전 스케치. 윤제하 신작과 구도가 같다.",
+            text: "책상 아래 떨어져 있었다. 표지 안쪽에 <b>한소민</b>, 3년 전 날짜. 펼쳐 보면 윤제하의 최신 연작 '설야 아홉 점'과 <b>구도가 완전히 일치하는 습작</b>들이 나온다. 거장의 마지막 걸작은 제자의 것이었다.",
+            tag: "동기"
+        },
+
+        c_stairwater: {
+            name: "계단의 물자국",
+            icon: "💧",
+            short: "눈 묻은 신발이 2층으로 올라갔다 내려왔다.",
+            text: "원목 계단 가장자리를 따라 말라붙은 물자국이 남아 있다. 눈이 묻은 신발이 <b>2층까지 올라갔다가 내려온</b> 흔적. 다만 밖에서 현관으로 들어온 자국은 없다. 신발은 현관 신발장에서 신고 나간 것이다.",
+            tag: "동선"
+        },
+        c_roomchart: {
+            name: "객실 배치도",
+            icon: "🗺️",
+            short: "누가 어느 방을 썼는지 정리한 표.",
+            text: "201호 한소민 · 202호 서가을 · 203호 윤태오 · 204호 배정훈. 작업실은 복도 끝. <b>204호가 작업실과 가장 가깝다</b>. 복도 바닥은 오래된 마루라 걸으면 소리가 난다 — 다만 어젯밤엔 제설기 소리가 그 소리를 전부 덮었을 것이다.",
+            tag: "동선"
+        },
+
+        c_pedestal: {
+            name: "빈 받침대",
+            icon: "🗿",
+            short: "흉기는 원래 거실 벽난로 위에 있었다.",
+            text: "벽난로 위 대리석 받침대에 먼지가 쌓이지 않은 <b>직사각형 자국</b>이 남아 있다. 청동 조각상이 놓여 있던 자리다. 범인은 거실에서 이것을 집어 들고 2층으로 올라갔다. <b>빈손으로 간 것이 아니다.</b>",
+            tag: "흉기"
+        },
+        c_ash: {
+            name: "타다 남은 통보서",
+            icon: "🔥",
+            short: "'전속계약 해지 통보' — 청강갤러리 로고.",
+            text: "벽난로 재를 헤집자 타다 만 A4 조각이 나온다. 「…전속계약 해지 통보…」라는 활자와 <b>청강갤러리</b> 로고의 절반. 어젯밤 이 종이를 태운 사람이 있다.",
+            tag: "동기"
+        },
+        c_bottle: {
+            name: "빈 위스키 병",
+            icon: "🍾",
+            short: "12년산 한 병이 거의 다 비었다. 잔은 둘.",
+            text: "소파 옆 테이블에 빈 병 하나와 잔 두 개. 한쪽 잔은 바닥까지 마셨고, <b>다른 잔은 거의 줄지 않았다</b>. 한 사람은 인사불성이 되도록 마셨고, 한 사람은 마시는 척했다.",
+            tag: "동선"
+        },
+
+        c_teacups: {
+            name: "찻잔 두 개",
+            icon: "🍵",
+            short: "심야에 두 사람이 마주 앉아 차를 마셨다.",
+            text: "캐모마일과 홍차. 티백이 그대로 있고 잔 바닥에 침전물이 가라앉았다. 오래 앉아 있었다는 뜻이다. 한소민과 서가을이 <b>00시 10분부터 01시 가까이</b>까지 여기 있었다는 진술과 맞는다.",
+            tag: "알리바이"
+        },
+        c_kwindow: {
+            name: "주방 창에서 보이는 것",
+            icon: "👀",
+            short: "여기 앉으면 거실 소파와 진입로가 한눈에 들어온다.",
+            text: "주방 식탁에 앉아 본다. 통유리 너머로 <b>거실 소파가 정면으로</b> 보이고, 창밖으로는 <b>제설 중인 진입로</b>가 보인다. 여기 앉아 있던 두 사람은 소파의 윤태오와 진입로의 오만춘을 동시에 보고 있었던 셈이다.",
+            tag: "알리바이"
+        },
+
+        c_boots: {
+            name: "관리인의 장화",
+            icon: "🥾",
+            short: "280mm 검정 장화. 아직 젖어 있다.",
+            text: "현관 구석의 낡은 고무장화. 밑창에 <b>280</b>. 오만춘의 것이며 어젯밤 제설로 젖은 것이 당연하다. 다만 젖은 정도가 안팎으로 고르지 않다.",
+            tag: "동선"
+        },
+        c_newspaper: {
+            name: "장화 속 신문지",
+            icon: "📄",
+            short: "장화 앞코에 신문지가 구겨 넣어져 있다.",
+            text: "장화 안에 손을 넣어 보니 <b>앞코 쪽에 신문지가 단단히 뭉쳐</b> 들어 있다. 발이 딱 맞는 사람에게는 필요 없는 물건이다. <b>발이 작은 누군가가 이 장화를 신기 위해</b> 채워 넣은 것이다. 신문지는 12월 17일자 — 그제 것이다.",
+            requires: ["c_boots"],
+            tag: "결정적",
+            key: true
+        },
+        c_shoes: {
+            name: "손님들의 신발",
+            icon: "👞",
+            short: "한소민 235 · 서가을 240 · 윤태오 270 · 배정훈 275 · 오만춘 280",
+            text: "신발장을 뒤져 사이즈를 적는다.<br>한소민 <b>235</b> · 서가을 <b>240</b> · 윤태오 <b>270</b> · 배정훈 <b>275</b> · 오만춘 <b>280</b>.<br><br>280 장화를 신고 걸을 수 있으면서 신문지를 채워야 할 만큼만 발이 작은 사람 — <b>275</b>. 235나 240이 280 장화를 신고 눈밭을 걸으면 신문지 정도로는 어림도 없다.",
+            tag: "결정적"
+        },
+
+        c_footprint: {
+            name: "창 아래 발자국",
+            icon: "👣",
+            short: "280mm 장화. 건물에서 멀어지는 방향으로만 나 있다.",
+            text: "작업실 창 바로 아래 눈밭에 장화 자국이 찍혀 있다. 밑창 무늬는 오만춘의 것과 같은 280. 이상한 것은 방향이다. 자국은 <b>건물에서 바깥으로 나가는 한 줄</b>뿐, <b>들어온 자국이 없다</b>. 외부인이 창으로 들어왔다면 있을 수 없는 그림이다.",
+            tag: "현장"
+        },
+        c_stride: {
+            name: "부자연스러운 보폭",
+            icon: "📏",
+            short: "보폭은 너무 넓고, 뒤꿈치는 끌렸다.",
+            text: "자국 간격을 재어 본다. 오만춘의 평소 걸음보다 <b>15센티 이상 넓다</b>. 그는 무릎 수술을 두 번 받아 종종걸음을 걷는다. 게다가 <b>뒤꿈치마다 끌린 자국</b>이 남았다 — 헐거운 신발을 신고 눈밭을 걸을 때 나오는 흔적이다.<br><br>이 발자국은 오만춘이 남긴 것이 아니다. <b>오만춘의 장화를 신은 다른 사람</b>이 남겼다.",
+            requires: ["c_footprint", "c_boots"],
+            tag: "결정적",
+            key: true
+        },
+        c_plow: {
+            name: "제설기",
+            icon: "🚜",
+            short: "00시 20분부터 01시 20분까지 가동. 연료가 증언한다.",
+            text: "차고 옆의 소형 제설기. 엔진이 아직 미지근하고 연료계가 한 시간분 줄어 있다. 제설된 구간은 진입로 한 줄 — 작업실 창 반대편이다. 이 기계는 <b>한 사람이 매달려 서서</b> 밀어야 움직인다.",
+            tag: "알리바이"
+        },
+
+        c_boilerlog: {
+            name: "보일러 수리 기록",
+            icon: "🔩",
+            short: "23시~23시 50분, 순환펌프 해동 작업.",
+            text: "기름 먹은 노트에 연필로 적혀 있다. 「12/18 23:00 순환펌프 결빙 / 23:50 복구」. 공구가 아직 바닥에 널려 있고 부동액 자국이 마르지 않았다.",
+            tag: "알리바이"
+        },
+        c_oldnews: {
+            name: "빛바랜 신문 스크랩",
+            icon: "🗞️",
+            short: "10년 전 별관 공사 추락사. 유족은 오만춘.",
+            text: "공구함 밑에서 나온 지역지 스크랩. 「평창 미술관 증축 공사 중 인부 추락사… 유족과 합의」. 사망자는 24세 오모 씨. 기사 여백에 볼펜으로 눌러쓴 글씨가 있다. <b>「미안하다」</b>.",
+            tag: "동기"
+        },
+
+        c_room_bae: {
+            name: "배정훈의 방 (204호)",
+            icon: "🛏️",
+            short: "침대가 흐트러진 곳이 없다. 아무도 눕지 않았다.",
+            text: "짐은 완벽하게 정리되어 있다. 문제는 침대다. <b>시트에 주름 하나 없고 베개가 눌린 자국도 없다</b>. 11시 50분에 올라와 아침까지 잤다는 사람의 침대가 아니다. 옷걸이엔 어제 입었던 셔츠가 걸려 있는데, <b>오른쪽 소맷단이 축축하다</b>.",
+            tag: "결정적"
+        },
+        c_glassdust: {
+            name: "세면대의 유리 가루",
+            icon: "🧼",
+            short: "배수구 가장자리에 아주 고운 유리 가루.",
+            text: "204호 욕실. 세면대 배수구 테두리를 손끝으로 훑자 <b>반짝이는 미세한 가루</b>가 묻어난다. 유리다. 시계 유리를 깨뜨린 사람의 손과 소매에 붙어 있었을 것이고, 그것을 여기서 씻어 내렸다.",
+            requires: ["c_room_bae", "c_clock_trick"],
+            tag: "결정적",
+            key: true
+        },
+        c_room_han: {
+            name: "한소민의 방 (201호)",
+            icon: "🛏️",
+            short: "석 달 치 사직서 초안과 찢어진 작품 사진.",
+            text: "책상 위에 날짜만 다른 사직서가 일곱 장. 전부 미완성이다. 휴지통엔 '설야 연작' 도판이 잘게 찢겨 있다.",
+            tag: "동기"
+        },
+        c_room_yun: {
+            name: "윤태오의 방 (203호)",
+            icon: "🛏️",
+            short: "독촉장 다발과 8천만 원 차용증 사본.",
+            text: "가방에서 독촉장이 쏟아진다. 그 사이에 차용증 사본 — <b>채권자 윤제하, 8,000만 원</b>. 그리고 작년 날짜의 메모: 「유언장 확인함. 내 이름 없음.」",
+            tag: "동기"
+        },
+        c_room_seo: {
+            name: "서가을의 방 (202호)",
+            icon: "🛏️",
+            short: "취재 노트. '청강갤러리 위작 유통 의혹 2019–2022'.",
+            text: "노트북 옆 취재 수첩. 「청강갤러리 위작 유통 의혹 2019–2022」 아래로 작품 일곱 점의 거래 내역이 빼곡하다. 마지막 장: <b>「윤제하, 12/19 간담회에서 전부 밝히기로 함. 배정훈 끝.」</b>",
+            tag: "동기"
+        }
+    },
+
+    // ── 최종 추리 ───────────────────────────────────────────
+    quiz: [
+        {
+            id: "q_culprit",
+            q: "윤제하를 살해한 사람은 누구입니까?",
+            options: ["한소민", "서가을", "윤태오", "오만춘", "배정훈"],
+            answer: 4,
+            weight: 40,
+            explain: "청강갤러리 대표 <b>배정훈</b>. 00시 12분 이후 알리바이가 없는 유일한 사람이다."
+        },
+        {
+            id: "q_weapon",
+            q: "흉기는 무엇입니까?",
+            options: ["청동 조각상", "빈 위스키 병", "벽시계", "제설기 삽", "대리석 문진"],
+            answer: 0,
+            weight: 15,
+            explain: "거실 벽난로 위에 있던 <b>청동 조각상</b>. 받침 홈에 피가 남았고, 받침대엔 빈 자국이 남았다."
+        },
+        {
+            id: "q_trick",
+            q: "범인이 쓴 핵심 트릭은 무엇입니까?",
+            options: [
+                "벽시계를 깨뜨려 11시 40분에 맞춰 사망 시각을 앞당겼다",
+                "창문으로 외부인이 침입한 것처럼 유리를 깼다",
+                "제설기 소음에 맞춰 비명을 감췄다",
+                "위스키에 수면제를 타 두었다",
+                "시신을 다른 방에서 옮겨 왔다"
+            ],
+            answer: 0,
+            weight: 25,
+            explain: "<b>사망 시각 위장</b>. 배정훈은 11시 40분에 윤태오와 거실에 있었다는 확실한 알리바이가 있었고, 진짜 범행 시각인 00시 12분 이후에는 아무 알리바이도 없었다. 그래서 시계를 벽에서 내려 유리를 깨고, 바늘을 손으로 11시 40분에 맞춘 뒤 다시 걸었다."
+        },
+        {
+            id: "q_motive",
+            q: "범행 동기는 무엇입니까?",
+            options: [
+                "작품 표절에 대한 원한",
+                "유산 상속",
+                "위작 유통 폭로를 막기 위해",
+                "10년 전 아들의 죽음에 대한 복수",
+                "특종 기사를 위해"
+            ],
+            answer: 2,
+            weight: 15,
+            explain: "2019년부터 청강갤러리를 거쳐 유통된 <b>윤제하 명의의 위작 일곱 점</b>. 윤제하는 회고전 간담회에서 이를 전부 밝히겠다고 통보했다. 폭로되면 갤러리는 도산하고 배정훈은 구속된다. 전속계약 해지 통보서는 그 마지막 통보였다."
+        },
+        {
+            id: "q_prints",
+            q: "작업실 창 아래 발자국의 정체는 무엇입니까?",
+            options: [
+                "외부인이 침입한 흔적",
+                "오만춘이 제설 중 남긴 흔적",
+                "범인이 오만춘의 장화를 신고 위조한 흔적",
+                "피해자 본인이 남긴 흔적",
+                "어제 낮에 찍힌 오래된 흔적"
+            ],
+            answer: 2,
+            weight: 5,
+            explain: "범인은 창을 <b>안에서 열고</b> 오만춘의 280 장화를 신고 나가 한 줄만 찍었다. 들어온 자국이 없는 이유다. 275인 발에는 장화가 헐거워 신문지를 채웠고, 그래도 뒤꿈치가 끌렸다."
+        }
+    ],
+
+    // ── 해결편 ──────────────────────────────────────────────
+    solution: [
+        {
+            head: "11시 40분이라는 거짓말",
+            body: "이 사건의 전부는 단 한 줄로 정리된다. <b>범인은 자기가 알리바이를 가진 시각에 피해자가 죽은 것으로 만들었다.</b><br><br>배정훈은 11시부터 11시 50분까지 거실에서 윤태오와 함께 있었다. 술은 거의 마시지 않았다. 윤태오를 취하게 만들어 두고, 계속 벽시계를 쳐다보면서."
+        },
+        {
+            head: "00시 12분",
+            body: "윤제하는 00시 12분에 미술관 학예실로 문자를 보냈다. 「내일 아침 기자들 앞에서 전부 말하겠습니다.」 그 문자가 배정훈의 20년을 끝내는 문장이었다.<br><br>배정훈은 거실 벽난로 위의 청동 조각상을 집어 들고 2층으로 올라갔다. 윤제하는 위스키를 한 잔 따라 주고 등을 돌렸다. 20년을 함께한 화상 앞에서 경계할 이유가 없었다."
+        },
+        {
+            head: "세 개의 공작",
+            body: "그는 세 가지를 만들었다.<br><br><b>첫째, 시계.</b> 벽에서 시계를 내려 유리를 깨고 — 그래서 파편이 책상 위에 흩어졌다 — 바늘을 손으로 11시 40분에 맞춰 다시 걸었다. 분침이 휘었고 유리에 긁힌 자국은 남지 않았다.<br><b>둘째, 창문.</b> 안에서 창을 열어 외부 침입으로 보이게 했다.<br><b>셋째, 발자국.</b> 현관에서 오만춘의 280 장화를 신고 눈밭으로 나가 창 아래에 한 줄을 찍었다. 275인 그의 발에는 헐거워 신문지를 채웠지만, 뒤꿈치가 끌리는 것까지는 지우지 못했다."
+        },
+        {
+            head: "00시 45분",
+            body: "오만춘은 제설을 하다 허리를 펴고 본관을 올려다봤다. 2층 작업실 불이 그때 꺼졌다. 배정훈이 방을 나가며 끈 불이었다.<br><br>그는 204호로 돌아가 손과 소매를 씻었다. 세면대 배수구에 시계 유리 가루가 남았다. 침대에는 눕지 않았다. 아침에 시신이 발견됐을 때, 그 방에서 가장 먼저 한 말은 이것이었다. <b>「시계가 11시 40분에 멈춰 있지 않습니까.」</b><br><br>아무도 묻지 않은 시각을, 그는 먼저 말했다."
+        }
+    ],
+
+    ranks: [
+        { min: 100, grade: "S", title: "명탐정", line: "다섯 개의 질문에 하나도 틀리지 않았다. 경찰이 도착했을 때, 당신은 이미 사건을 끝내 놓았다." },
+        { min: 80, grade: "A", title: "유능한 조사관", line: "핵심을 정확히 짚었다. 몇 개의 세부는 경찰의 몫으로 남겨졌지만, 배정훈은 그 자리에서 체포되었다." },
+        { min: 55, grade: "B", title: "성실한 목격자", line: "범인은 맞혔다. 다만 어떻게 죽였는지를 끝까지 설명하지 못했다. 재판은 길어질 것이다." },
+        { min: 25, grade: "C", title: "혼란", line: "당신의 진술은 수사에 도움이 되지 않았다. 설야장의 눈이 녹는 데는 사흘이 걸렸다." },
+        { min: 0, grade: "F", title: "오판", line: "당신은 무고한 사람을 가리켰다. 진범은 경찰차 옆에서 넥타이를 고쳐 맸다." }
+    ]
+};
+
+
+// ============================================================
+// js/state.js — 게임 상태와 저장
+// ============================================================
+
+const SAVE_KEY = "seolyajang.save.v1";
+
+const State = {
+    started: false,
+    minute: CASE.meta.startMinute,
+    found: [],          // 발견한 증거 id
+    presented: {},       // 용의자별로 제시한 증거 id 배열
+    chats: {},           // 용의자별 대화 기록 [{role,text}]
+    asked: [],           // 오프라인 모드에서 소비한 질문 id
+    confessed: false,    // 배정훈이 자백했는가
+    answers: {},         // 최종 추리 선택
+    finished: false,
+
+    has(id) { return this.found.includes(id); },
+
+    canFind(id) {
+        const c = CASE.clues[id];
+        if (!c || !c.requires) return true;
+        return c.requires.every(r => this.has(r));
+    },
+
+    find(id) {
+        if (this.has(id)) return false;
+        this.found.push(id);
+        this.spend();
+        this.save();
+        return true;
+    },
+
+    presentedFor(sid) { return this.presented[sid] || (this.presented[sid] = []); },
+
+    present(sid, cid) {
+        const list = this.presentedFor(sid);
+        if (!list.includes(cid)) list.push(cid);
+        this.save();
+    },
+
+    chatFor(sid) { return this.chats[sid] || (this.chats[sid] = []); },
+
+    spend(n) {
+        this.minute += (n === undefined ? CASE.meta.actionCost : n);
+        if (this.minute > CASE.meta.endMinute) this.minute = CASE.meta.endMinute;
+    },
+
+    timeUp() { return this.minute >= CASE.meta.endMinute; },
+
+    clock() {
+        const h = Math.floor(this.minute / 60), m = this.minute % 60;
+        return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+    },
+
+    remainText() {
+        const left = CASE.meta.endMinute - this.minute;
+        if (left <= 0) return "경찰이 도착했다";
+        const h = Math.floor(left / 60), m = left % 60;
+        return `경찰 도착까지 ${h ? h + "시간 " : ""}${m}분`;
+    },
+
+    save() {
+        try {
+            localStorage.setItem(SAVE_KEY, JSON.stringify({
+                started: this.started, minute: this.minute, found: this.found,
+                presented: this.presented, chats: this.chats, asked: this.asked,
+                confessed: this.confessed, answers: this.answers, finished: this.finished
+            }));
+        } catch (e) { /* 사생활 보호 모드 등 — 저장 없이 진행 */ }
+    },
+
+    load() {
+        try {
+            const raw = localStorage.getItem(SAVE_KEY);
+            if (!raw) return false;
+            const d = JSON.parse(raw);
+            if (!d || !d.started) return false;
+            Object.assign(this, d);
+            return true;
+        } catch (e) { return false; }
+    },
+
+    reset() {
+        this.started = false;
+        this.minute = CASE.meta.startMinute;
+        this.found = []; this.presented = {}; this.chats = {}; this.asked = [];
+        this.confessed = false; this.answers = {}; this.finished = false;
+        try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+    }
+};
+
+
+// ============================================================
+// js/ui.js — 화면 전환, HUD, 눈, 토스트
+// ============================================================
+
+const UI = {
+    show(id) {
+        document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+        const el = document.getElementById("screen-" + id);
+        if (el) el.classList.add("active");
+        window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+    },
+
+    tab(name) {
+        document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+        document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + name));
+        if (name === "notebook") Notebook.render();
+    },
+
+    hud() {
+        document.getElementById("hud-clock").textContent = State.clock();
+        const dl = document.getElementById("hud-deadline");
+        dl.textContent = State.remainText();
+        dl.classList.toggle("urgent", CASE.meta.endMinute - State.minute <= 90);
+        const total = Object.keys(CASE.clues).length;
+        document.getElementById("hud-count").textContent = `증거 ${State.found.length} / ${total}`;
+    },
+
+    toast(msg, ms) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.hidden = false;
+        clearTimeout(this._toastTimer);
+        this._toastTimer = setTimeout(() => { t.hidden = true; }, ms || 2600);
+    },
+
+    snow(count) {
+        const box = document.getElementById("snow");
+        const glyphs = ["❄", "❅", "•", "·"];
+        let html = "";
+        for (let i = 0; i < (count || 40); i++) {
+            const left = Math.random() * 100;
+            const dur = 8 + Math.random() * 14;
+            const delay = -Math.random() * dur;
+            const size = 7 + Math.random() * 11;
+            const drift = (Math.random() * 120 - 60).toFixed(0);
+            html += `<span style="left:${left}%;font-size:${size}px;animation-duration:${dur}s;animation-delay:${delay}s;--drift:${drift}px">${glyphs[i % glyphs.length]}</span>`;
+        }
+        box.innerHTML = html;
+    },
+
+    // 타자기 효과로 한 글자씩 출력
+    type(el, text, speed) {
+        return new Promise(resolve => {
+            el.textContent = "";
+            let i = 0;
+            const step = () => {
+                if (i >= text.length) return resolve();
+                el.textContent += text[i++];
+                const log = el.closest(".chat-log");
+                if (log) log.scrollTop = log.scrollHeight;
+                setTimeout(step, speed || 16);
+            };
+            step();
+        });
+    }
+};
+
+
+// ============================================================
+// js/ai.js — AI 용의자 연결
+//
+// 세 가지 경로를 순서대로 시도한다.
+//   1) Artifact 런타임의 sample 기능 — 설치 없이 페이지가 직접 Claude에게 묻는다
+//   2) 로컬 서버(/api/ask) — npm start 로 띄운 경우, 구독 인증을 그대로 쓴다
+//   3) 각본 모드 — 둘 다 없으면 case.js 의 미리 쓰인 대사로 진행한다
+// ============================================================
+
+const AI = {
+    mode: "offline",       // "sample" | "server" | "offline"
+    model: null,
+    _sample: null,
+
+    get online() { return this.mode !== "offline"; },
+
+    async probe() {
+        // 1) Artifact 런타임
+        try {
+            if (typeof window !== "undefined" && window.claude && window.claude.use) {
+                const s = await window.claude.use("sample");
+                if (s) {
+                    this._sample = s;
+                    this.mode = "sample";
+                    this.model = "Claude";
+                    return true;
+                }
+            }
+        } catch (e) { /* 사용할 수 없으면 다음 경로로 */ }
+
+        // 2) 로컬 서버
+        try {
+            const r = await fetch("/api/health", { cache: "no-store" });
+            if (r.ok) {
+                const d = await r.json();
+                if (d.ok) { this.mode = "server"; this.model = d.model; return true; }
+            }
+        } catch (e) { /* 서버 없음 */ }
+
+        this.mode = "offline";
+        return false;
+    },
+
+    // { text, confessed } 를 반환한다. onText 가 있으면 생성 중에 계속 호출된다.
+    async ask(suspectId, message, showing, onText) {
+        const history = State.chatFor(suspectId)
+            .filter(m => m.role === "user" || m.role === "them")
+            .map(m => ({ role: m.role === "user" ? "user" : "assistant", text: m.text }));
+        const presented = State.presentedFor(suspectId);
+
+        if (this.mode === "sample") return this._viaSample(suspectId, message, showing, history, presented, onText);
+        return this._viaServer(suspectId, message, showing, history, presented);
+    },
+
+    async _viaSample(suspectId, message, showing, history, presented, onText) {
+        const system = buildSystemPrompt(suspectId, presented, pressureLabel(presented));
+        const user = buildUserPrompt({ history, message, showing });
+
+        const res = await this._sample(
+            [{ role: "user", content: system + "\n\n──────────\n\n" + user }],
+            {
+                cache: false,
+                modelTier: suspectId === "bae" ? "complex" : "default",
+                onText: onText ? (e => onText(this._clean(e.text))) : undefined
+            }
+        );
+        return this._finish(res.text);
+    },
+
+    async _viaServer(suspectId, message, showing, history, presented) {
+        const res = await fetch("/api/ask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ suspect: suspectId, message, showing: showing || null, presented, history })
+        });
+        const data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error || "응답 실패");
+        return { text: data.text, confessed: data.confessed };
+    },
+
+    _clean(t) { return String(t || "").replace(/\[\[자백\]\]/g, "").trim(); },
+
+    _finish(raw) {
+        const text = String(raw || "").trim();
+        return { text: this._clean(text), confessed: text.includes("[[자백]]") };
+    },
+
+    // 오류 코드를 사람이 읽을 수 있는 말로
+    explain(e) {
+        const code = e && e.code;
+        if (code === "not_granted") return "심문 권한이 허용되지 않았습니다.";
+        if (code === "rate_limited") return "요청이 몰렸습니다. 잠시 뒤 다시 물어보십시오.";
+        if (code === "cancelled") return "질문이 취소되었습니다.";
+        return (e && e.message) || "응답을 받지 못했습니다.";
+    }
+};
+
+
+// ============================================================
+// js/investigate.js — 현장 조사
+// ============================================================
+
+const Investigate = {
+    current: null,
+
+    renderLocations() {
+        const grid = document.getElementById("loc-grid");
+        grid.innerHTML = CASE.locations.map(loc => {
+            const total = loc.clues.length;
+            const got = loc.clues.filter(c => State.has(c)).length;
+            const done = got === total;
+            return `<button class="loc-card" data-loc="${loc.id}">
+                <span class="loc-icon">${loc.icon}</span>
+                <b>${loc.name}</b>
+                <span class="loc-prog ${done ? "done" : ""}">${done ? "조사 완료" : `단서 ${got} / ${total}`}</span>
+            </button>`;
+        }).join("");
+
+        grid.querySelectorAll(".loc-card").forEach(b => {
+            b.onclick = () => this.open(b.dataset.loc);
+        });
+
+        document.getElementById("loc-grid").hidden = false;
+        document.getElementById("loc-detail").hidden = true;
+    },
+
+    open(id) {
+        this.current = CASE.locations.find(l => l.id === id);
+        if (!this.current) return;
+        document.getElementById("loc-grid").hidden = true;
+        document.getElementById("loc-detail").hidden = false;
+        document.getElementById("loc-name").textContent = this.current.icon + "  " + this.current.name;
+        document.getElementById("loc-desc").textContent = this.current.desc;
+        this.renderClues();
+    },
+
+    renderClues() {
+        const box = document.getElementById("clue-list");
+        box.innerHTML = this.current.clues.map(id => {
+            const c = CASE.clues[id];
+            if (State.has(id)) {
+                return `<div class="clue ${c.key ? "key" : ""}">
+                    <div class="clue-head">
+                        <span>${c.icon}</span><b>${c.name}</b>
+                        <span class="clue-tag ${c.tag}">${c.tag}</span>
+                    </div>
+                    <p class="clue-text">${c.text}</p>
+                </div>`;
+            }
+            const ok = State.canFind(id);
+            const need = ok ? "" : `<div class="clue-hint">먼저 ${c.requires.map(r => "「" + CASE.clues[r].name + "」").join(", ")}을(를) 확인해야 한다.</div>`;
+            return `<div class="clue locked">
+                <div class="clue-undiscovered">
+                    <span>${ok ? "아직 살펴보지 않은 곳이 있다." : "지금은 의미를 알 수 없다."}</span>
+                    <button class="btn btn-small" data-find="${id}" ${ok ? "" : "disabled"}>조사한다</button>
+                </div>${need}
+            </div>`;
+        }).join("");
+
+        box.querySelectorAll("[data-find]").forEach(b => {
+            b.onclick = () => this.examine(b.dataset.find);
+        });
+    },
+
+    examine(id) {
+        if (State.timeUp()) return Accuse.forceEnd();
+        const c = CASE.clues[id];
+        if (!State.find(id)) return;
+        UI.hud();
+        this.renderClues();
+        UI.toast(`${c.icon} 「${c.name}」 — ${c.short}`, 3600);
+        if (State.timeUp()) setTimeout(() => Accuse.forceEnd(), 1200);
+    }
+};
+
+
+// ============================================================
+// js/interrogate.js — 용의자 심문
+// AI 서버가 있으면 자유 대화, 없으면 각본 대사로 진행한다.
+// ============================================================
+
+const Interrogate = {
+    current: null,
+    busy: false,
+
+    renderSuspects() {
+        const grid = document.getElementById("sus-grid");
+        grid.innerHTML = CASE.suspects.map(s => {
+            const turns = (State.chats[s.id] || []).filter(m => m.role === "user").length;
+            const shown = (State.presented[s.id] || []).length;
+            return `<button class="sus-card" data-sus="${s.id}">
+                <span class="sus-face">${s.face}</span>
+                <span>
+                    <b>${s.name} <small style="display:inline">(${s.age})</small></b>
+                    <small>${s.role}</small>
+                    <span class="sus-meta">질문 ${turns}회 · 증거 제시 ${shown}건</span>
+                </span>
+            </button>`;
+        }).join("");
+
+        grid.querySelectorAll(".sus-card").forEach(b => {
+            b.onclick = () => this.open(b.dataset.sus);
+        });
+
+        grid.hidden = false;
+        document.getElementById("chat-wrap").hidden = true;
+    },
+
+    open(id) {
+        this.current = CASE.suspects.find(s => s.id === id);
+        if (!this.current) return;
+
+        document.getElementById("sus-grid").hidden = true;
+        document.getElementById("chat-wrap").hidden = false;
+        document.getElementById("chat-face").textContent = this.current.face;
+        document.getElementById("chat-name").textContent = this.current.name;
+        document.getElementById("chat-role").textContent = this.current.role;
+
+        const log = State.chatFor(id);
+        if (!log.length) {
+            log.push({ role: "system", text: this.current.profile });
+            State.save();
+        }
+        this.renderLog();
+        this.renderChips();
+        document.getElementById("chat-text").focus();
+    },
+
+    renderLog() {
+        const box = document.getElementById("chat-log");
+        box.innerHTML = State.chatFor(this.current.id).map(m => {
+            if (m.role === "system") return `<div class="msg system">${m.text}</div>`;
+            if (m.role === "evidence") return `<div class="msg evidence">📎 「${m.text}」을(를) 내밀었다</div>`;
+            if (m.role === "user") return `<div class="msg me">${this.esc(m.text)}</div>`;
+            return `<div class="msg them ${m.confess ? "confess" : ""}">${this.esc(m.text)}</div>`;
+        }).join("");
+        box.scrollTop = box.scrollHeight;
+    },
+
+    renderChips() {
+        const box = document.getElementById("chat-chips");
+        const asked = State.asked;
+        const topics = (this.current.topics || []).filter(t => !asked.includes(t.id));
+        box.innerHTML = topics.slice(0, 4)
+            .map(t => `<button class="chip" data-topic="${t.id}">${t.q}</button>`).join("");
+        box.querySelectorAll("[data-topic]").forEach(b => {
+            b.onclick = () => {
+                const t = this.current.topics.find(x => x.id === b.dataset.topic);
+                if (AI.online) {
+                    document.getElementById("chat-text").value = t.q;
+                    this.send();
+                } else {
+                    this.scriptedTopic(t);
+                }
+            };
+        });
+    },
+
+    esc(s) {
+        return String(s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+    },
+
+    push(role, text, extra) {
+        State.chatFor(this.current.id).push(Object.assign({ role, text }, extra || {}));
+        State.save();
+        this.renderLog();
+    },
+
+    // ── AI 대화 ────────────────────────────────────────
+    async send(showing) {
+        if (this.busy) return;
+        if (State.timeUp()) return Accuse.forceEnd();
+
+        const input = document.getElementById("chat-text");
+        const text = (input.value || "").trim();
+        if (!text && !showing) return;
+        input.value = "";
+
+        if (!AI.online) return this.offlineReply(text);
+
+        this.push("user", text || "이건 어떻게 설명하시겠습니까?");
+        this.busy = true;
+        this.setBusy(true);
+
+        const box = document.getElementById("chat-log");
+        const wait = document.createElement("div");
+        wait.className = "msg them thinking";
+        wait.textContent = `${this.current.name}이(가) 생각하고 있다…`;
+        box.appendChild(wait);
+        box.scrollTop = box.scrollHeight;
+
+        let el = null, streamed = false;
+        const stream = t => {
+            if (!t) return;
+            if (!el) {
+                wait.remove();
+                el = document.createElement("div");
+                el.className = "msg them";
+                box.appendChild(el);
+            }
+            streamed = true;
+            el.textContent = t;
+            box.scrollTop = box.scrollHeight;
+        };
+
+        try {
+            const res = await AI.ask(this.current.id, text, showing, stream);
+            wait.remove();
+
+            State.spend();
+            UI.hud();
+
+            if (!el) {
+                el = document.createElement("div");
+                el.className = "msg them";
+                box.appendChild(el);
+            }
+            if (res.confessed) el.classList.add("confess");
+            if (streamed) { el.textContent = res.text; box.scrollTop = box.scrollHeight; }
+            else await UI.type(el, res.text, 15);
+
+            State.chatFor(this.current.id).push({ role: "them", text: res.text, confess: res.confessed });
+            if (res.confessed && !State.confessed) {
+                State.confessed = true;
+                UI.toast("배정훈이 무너졌다. 최종 추리를 진술할 수 있다.", 5000);
+            }
+            State.save();
+            this.renderChips();
+            if (State.timeUp()) setTimeout(() => Accuse.forceEnd(), 1500);
+        } catch (e) {
+            wait.remove();
+            if (el) el.remove();
+            this.push("system", "⚠ " + AI.explain(e));
+            if (!e || e.code !== "rate_limited") {
+                AI.mode = "offline";
+                this.push("system", "각본 모드로 전환합니다. 아래 질문 버튼을 사용하십시오.");
+            }
+            this.renderChips();
+        } finally {
+            this.busy = false;
+            this.setBusy(false);
+        }
+    },
+
+    setBusy(on) {
+        document.getElementById("btn-chat-send").disabled = on;
+        document.getElementById("btn-show-evidence").disabled = on;
+        document.getElementById("chat-text").disabled = on;
+        if (!on) document.getElementById("chat-text").focus();
+    },
+
+    // ── 각본 모드 ──────────────────────────────────────
+    offlineReply(text) {
+        if (text) this.push("user", text);
+        this.push("them", "…무슨 말씀이신지 모르겠군요. 물으실 게 있으면 정확히 물어 주십시오.");
+    },
+
+    scriptedTopic(t) {
+        if (State.timeUp()) return Accuse.forceEnd();
+        this.push("user", t.q);
+        if (!State.asked.includes(t.id)) {
+            State.asked.push(t.id);
+            State.spend();
+            UI.hud();
+        }
+        this.push("them", t.a);
+        this.renderChips();
+        if (State.timeUp()) setTimeout(() => Accuse.forceEnd(), 1200);
+    },
+
+    // ── 증거 제시 ──────────────────────────────────────
+    openEvidenceModal() {
+        const modal = document.getElementById("modal-evidence");
+        const list = document.getElementById("modal-evidence-list");
+        const shown = State.presentedFor(this.current.id);
+        const items = State.found.filter(id => !shown.includes(id));
+
+        if (!items.length) {
+            list.innerHTML = `<p class="nb-empty">${State.found.length ? "이 사람에게는 가진 증거를 모두 보여줬다." : "아직 내밀 증거가 없다. 먼저 현장을 조사하십시오."}</p>`;
+        } else {
+            list.innerHTML = items.map(id => {
+                const c = CASE.clues[id];
+                return `<button class="modal-item" data-ev="${id}">${c.icon} ${c.name}<small>${c.short}</small></button>`;
+            }).join("");
+            list.querySelectorAll("[data-ev]").forEach(b => {
+                b.onclick = () => { modal.hidden = true; this.present(b.dataset.ev); };
+            });
+        }
+        modal.hidden = false;
+    },
+
+    present(cid) {
+        const c = CASE.clues[cid];
+        State.present(this.current.id, cid);
+        this.push("evidence", c.name);
+
+        if (AI.online) {
+            this.send(cid);
+            return;
+        }
+
+        // 각본 모드: 미리 쓰인 반응이 있으면 그것을, 없으면 일반 반응을
+        const r = (this.current.reactions || {})[cid];
+        if (State.timeUp()) return Accuse.forceEnd();
+        State.spend();
+        UI.hud();
+        if (r) {
+            this.push("them", r.text);
+            if (r.unlock === "break_4") {
+                State.confessed = true;
+                UI.toast("배정훈의 진술이 무너지고 있다.", 4000);
+            }
+        } else {
+            this.push("them", "…글쎄요. 저는 그것에 대해 아는 바가 없습니다.");
+        }
+        State.save();
+    }
+};
+
+
+// ============================================================
+// js/notebook.js — 사건 수첩
+// ============================================================
+
+const Notebook = {
+    view: "evidence",
+
+    render() {
+        const box = document.getElementById("nb-body");
+        document.querySelectorAll(".nb-tab").forEach(t => t.classList.toggle("active", t.dataset.nb === this.view));
+        box.innerHTML = this[this.view]();
+    },
+
+    evidence() {
+        if (!State.found.length) return `<p class="nb-empty">아직 아무것도 찾지 못했다.</p>`;
+        const order = ["결정적", "현장", "흉기", "동기", "알리바이", "동선"];
+        const groups = {};
+        State.found.forEach(id => {
+            const c = CASE.clues[id];
+            (groups[c.tag] = groups[c.tag] || []).push(c);
+        });
+        return order.filter(t => groups[t]).map(tag => `
+            <div class="nb-group">
+                <h3>${tag}</h3>
+                ${groups[tag].map(c => `<div class="clue ${c.key ? "key" : ""}">
+                    <div class="clue-head"><span>${c.icon}</span><b>${c.name}</b></div>
+                    <p class="clue-text">${c.text}</p>
+                </div>`).join("")}
+            </div>`).join("");
+    },
+
+    people() {
+        return CASE.suspects.map(s => {
+            const shown = (State.presented[s.id] || []).length;
+            const turns = (State.chats[s.id] || []).filter(m => m.role === "user").length;
+            return `<div class="nb-group">
+                <h3>${s.face} ${s.name} (${s.age}) — ${s.role}</h3>
+                <p class="clue-text">${s.profile}</p>
+                <p class="clue-hint">질문 ${turns}회 · 증거 제시 ${shown}건</p>
+            </div>`;
+        }).join("");
+    },
+
+    time() {
+        // 확보한 증거·증언으로만 채워지는 타임라인
+        const rows = [
+            { t: "20:30", w: "윤태오가 윤제하와 작업실에 있었다. 벽시계는 멀쩡했다.", need: "c_clock" },
+            { t: "22:30", w: "한소민이 작업실에서 윤제하와 다퉜다.", need: "c_sketch" },
+            { t: "23:00", w: "배정훈과 윤태오가 거실에서 술자리를 시작했다.", need: "c_bottle" },
+            { t: "23:00–23:50", w: "오만춘이 보일러실에서 순환펌프를 고쳤다.", need: "c_boilerlog" },
+            { t: "23:40", w: "벽시계가 멈춘 것으로 되어 있는 시각. — 조작된 시각이다.", need: "c_clock_trick" },
+            { t: "23:50", w: "배정훈이 방으로 올라갔다고 진술한 시각. 이후 목격자 없음.", need: "c_roomchart" },
+            { t: "00:12", w: "윤제하가 미술관에 문자를 보냈다. 이때까지 살아 있었다.", need: "c_phone" },
+            { t: "00:10–00:55", w: "한소민과 서가을이 주방에 함께 있었다.", need: "c_teacups" },
+            { t: "00:20–01:20", w: "오만춘이 제설기로 진입로를 쳤다.", need: "c_plow" },
+            { t: "00:45", w: "2층 작업실 불이 꺼졌다. — 범행 시각의 상한선.", need: "c_plow" },
+            { t: "07:10", w: "한소민이 시신을 발견했다.", need: "c_body" }
+        ].filter(r => State.has(r.need));
+
+        if (!rows.length) return `<p class="nb-empty">타임라인을 채우려면 증거가 더 필요하다.</p>`;
+
+        const head = State.has("c_phone") && State.has("c_plow")
+            ? `<p class="clue-hint" style="margin-bottom:14px">확정된 범행 가능 시간대: <b>00:12 – 00:45</b>. 이 시간에 알리바이가 없는 사람은 한 명뿐이다.</p>`
+            : "";
+
+        return head + rows.map(r => `<div class="tl-row"><span class="tl-time">${r.t}</span><span class="tl-what">${r.w}</span></div>`).join("");
+    }
+};
+
+
+// ============================================================
+// js/accuse.js — 최종 추리와 엔딩
+// ============================================================
+
+const Accuse = {
+    open() {
+        const box = document.getElementById("quiz-list");
+        box.innerHTML = CASE.quiz.map((q, qi) => `
+            <div class="quiz">
+                <h3>${qi + 1}. ${q.q}</h3>
+                ${q.options.map((o, oi) => `
+                    <label><input type="radio" name="${q.id}" value="${oi}"> <span>${o}</span></label>
+                `).join("")}
+            </div>`).join("");
+        UI.show("accuse");
+    },
+
+    forceEnd() {
+        if (State.finished) return;
+        UI.toast("오후 3시. 경찰이 도착했다.", 4000);
+        setTimeout(() => this.open(), 900);
+    },
+
+    submit() {
+        const missing = [];
+        CASE.quiz.forEach(q => {
+            const sel = document.querySelector(`input[name="${q.id}"]:checked`);
+            if (!sel) missing.push(q.q);
+            else State.answers[q.id] = Number(sel.value);
+        });
+        if (missing.length) return UI.toast("아직 답하지 않은 항목이 있습니다.", 3000);
+
+        let score = 0, max = 0;
+        const marks = CASE.quiz.map(q => {
+            max += q.weight;
+            const picked = State.answers[q.id];
+            const ok = picked === q.answer;
+            if (ok) score += q.weight;
+            return { q, picked, ok };
+        });
+
+        // 증거 수집률 보너스는 등급 판정에만 반영
+        const rate = State.found.length / Object.keys(CASE.clues).length;
+        const total = Math.round(score + rate * 0);   // 정답 자체로만 채점
+        const rank = CASE.ranks.find(r => total >= r.min) || CASE.ranks[CASE.ranks.length - 1];
+
+        State.finished = true;
+        State.save();
+        this.ending(marks, total, max, rank, rate);
+    },
+
+    ending(marks, total, max, rank, rate) {
+        document.getElementById("rank-grade").textContent = rank.grade;
+        document.getElementById("rank-title").textContent = rank.title;
+        document.getElementById("rank-score").textContent =
+            `${total} / ${max}점 · 증거 ${State.found.length}/${Object.keys(CASE.clues).length}개 수집 (${Math.round(rate * 100)}%) · 종료 시각 ${State.clock()}`;
+        document.getElementById("rank-line").textContent = rank.line;
+
+        document.getElementById("ending-marks").innerHTML = marks.map(m => `
+            <div class="mark">
+                <span class="mark-icon">${m.ok ? "✔" : "✘"}</span>
+                <div>
+                    <div class="mark-q">${m.q.q}</div>
+                    <div class="mark-a ${m.ok ? "" : "wrong"}">당신의 답: ${m.q.options[m.picked]}</div>
+                    ${m.ok ? "" : `<div class="mark-a">정답: ${m.q.options[m.q.answer]}</div>`}
+                    <div class="mark-exp">${m.q.explain}</div>
+                </div>
+            </div>`).join("");
+
+        document.getElementById("solution-body").innerHTML = CASE.solution.map(s =>
+            `<div class="sol-block"><h3>${s.head}</h3><p>${s.body}</p></div>`).join("");
+
+        UI.show("ending");
+    }
+};
+
+
+// ============================================================
+// js/main.js — 초기화와 화면 배선
+// ============================================================
+
+let prologueIndex = 0;
+
+function showPrologue(i) {
+    const p = CASE.prologue[i];
+    if (!p) return startGame();
+    document.getElementById("prologue-head").textContent = p.head;
+    document.getElementById("prologue-body").innerHTML = p.body;
+    document.getElementById("prologue-dots").textContent =
+        CASE.prologue.map((_, k) => (k === i ? "●" : "○")).join(" ");
+    document.getElementById("btn-prologue-next").textContent =
+        (i === CASE.prologue.length - 1) ? "조사에 들어간다" : "다음";
+    UI.show("prologue");
+}
+
+function startGame() {
+    State.started = true;
+    State.save();
+    UI.hud();
+    Investigate.renderLocations();
+    Interrogate.renderSuspects();
+    UI.tab("investigate");
+    UI.show("game");
+}
+
+function boot() {
+    UI.snow(45);
+    document.title = CASE.meta.title;
+
+    // 이어서 하기
+    const hasSave = State.load();
+    if (hasSave && !State.finished) {
+        document.getElementById("btn-continue").hidden = false;
+    }
+
+    // AI 서버 확인
+    const status = document.getElementById("ai-status");
+    AI.probe().then(() => {
+        if (AI.mode === "sample") {
+            status.className = "ai-status ok";
+            status.innerHTML = `● 다섯 용의자를 Claude가 연기합니다 — 무엇이든 자유롭게 물어보십시오.`;
+        } else if (AI.mode === "server") {
+            status.className = "ai-status ok";
+            status.innerHTML = `● 용의자 AI 연결됨 (${AI.model}) — 무엇이든 자유롭게 물어보십시오.`;
+        } else {
+            const inArtifact = typeof window !== "undefined" && window.claude && window.claude.use;
+            status.className = "ai-status off";
+            status.innerHTML = inArtifact
+                ? `○ 각본 모드 — 준비된 질문으로만 진행됩니다. 자유 심문은 지금 이 화면에서 쓸 수 없습니다.`
+                : `○ 각본 모드 — 준비된 질문으로만 진행됩니다.<br>자유 심문을 켜려면 터미널에서 <b>npm start</b> 후 표시된 주소로 접속하십시오.`;
+        }
+    });
+
+    // 타이틀
+    document.getElementById("btn-start").onclick = () => {
+        State.reset();
+        prologueIndex = 0;
+        showPrologue(0);
+    };
+    document.getElementById("btn-continue").onclick = () => startGame();
+
+    // 프롤로그
+    document.getElementById("btn-prologue-next").onclick = () => showPrologue(++prologueIndex);
+
+    // 탭
+    document.querySelectorAll(".tab").forEach(t => {
+        t.onclick = () => UI.tab(t.dataset.tab);
+    });
+    document.querySelectorAll(".nb-tab").forEach(t => {
+        t.onclick = () => { Notebook.view = t.dataset.nb; Notebook.render(); };
+    });
+
+    // 현장 조사
+    document.getElementById("btn-loc-back").onclick = () => Investigate.renderLocations();
+
+    // 심문
+    document.getElementById("btn-chat-back").onclick = () => Interrogate.renderSuspects();
+    document.getElementById("btn-chat-send").onclick = () => Interrogate.send();
+    document.getElementById("chat-text").addEventListener("keydown", e => {
+        if (e.key === "Enter" && !e.isComposing) Interrogate.send();
+    });
+    document.getElementById("btn-show-evidence").onclick = () => Interrogate.openEvidenceModal();
+    document.getElementById("btn-modal-close").onclick = () => { document.getElementById("modal-evidence").hidden = true; };
+    document.getElementById("modal-evidence").onclick = e => {
+        if (e.target.id === "modal-evidence") e.target.hidden = true;
+    };
+
+    // 최종 추리
+    document.getElementById("btn-goto-accuse").onclick = () => Accuse.open();
+    document.getElementById("btn-accuse-back").onclick = () => UI.show("game");
+    document.getElementById("btn-accuse-submit").onclick = () => Accuse.submit();
+    document.getElementById("btn-replay").onclick = () => { State.reset(); location.reload(); };
+}
+
+document.addEventListener("DOMContentLoaded", boot);
+
+</script>

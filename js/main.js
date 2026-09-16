@@ -38,13 +38,19 @@ function boot() {
 
     // AI 서버 확인
     const status = document.getElementById("ai-status");
-    AI.probe().then(ok => {
-        if (ok) {
+    AI.probe().then(() => {
+        if (AI.mode === "sample") {
             status.className = "ai-status ok";
-            status.innerHTML = `● 용의자 AI 연결됨 (${AI.model}) — 다섯 명에게 무엇이든 자유롭게 물을 수 있습니다.`;
+            status.innerHTML = `● 다섯 용의자를 Claude가 연기합니다 — 무엇이든 자유롭게 물어보십시오.`;
+        } else if (AI.mode === "server") {
+            status.className = "ai-status ok";
+            status.innerHTML = `● 용의자 AI 연결됨 (${AI.model}) — 무엇이든 자유롭게 물어보십시오.`;
         } else {
+            const inArtifact = typeof window !== "undefined" && window.claude && window.claude.use;
             status.className = "ai-status off";
-            status.innerHTML = `○ 각본 모드 — 준비된 질문으로만 진행됩니다.<br>AI 심문을 켜려면 터미널에서 <b>npm start</b> 후 표시된 주소로 접속하십시오.`;
+            status.innerHTML = inArtifact
+                ? `○ 각본 모드 — 준비된 질문으로만 진행됩니다. 자유 심문은 지금 이 화면에서 쓸 수 없습니다.`
+                : `○ 각본 모드 — 준비된 질문으로만 진행됩니다.<br>자유 심문을 켜려면 터미널에서 <b>npm start</b> 후 표시된 주소로 접속하십시오.`;
         }
     });
 

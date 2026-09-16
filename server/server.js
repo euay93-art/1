@@ -10,7 +10,7 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 const { spawn } = require("child_process");
-const { CHARACTERS, EVIDENCE_BRIEF, buildSystemPrompt } = require("./characters");
+const { CHARACTERS, buildSystemPrompt, buildUserPrompt, pressureLabel } = require("./characters");
 
 const ROOT = path.resolve(__dirname, "..");
 const PORT = Number(process.env.PORT || 4173);
@@ -18,10 +18,6 @@ const MODEL = process.env.SEOLYA_MODEL || "opus";
 const EFFORT = process.env.SEOLYA_EFFORT || "low";
 const CLAUDE_BIN = process.env.CLAUDE_BIN || "claude";
 const TIMEOUT_MS = Number(process.env.SEOLYA_TIMEOUT || 180000);
-
-// 배정훈의 붕괴 판정에 쓰이는 치명적 증거들
-const FATAL = ["c_phone", "c_clock_trick", "c_newspaper", "c_shoes", "c_stride",
-               "c_glassdust", "c_room_bae", "c_room_seo"];
 
 const MIME = {
     ".html": "text/html; charset=utf-8",
@@ -82,41 +78,6 @@ function callClaude(systemPrompt, userPrompt) {
         child.stdin.write(userPrompt);
         child.stdin.end();
     });
-}
-
-// ── 심문 프롬프트 ───────────────────────────────────────────
-function buildUserPrompt(body) {
-    const { history = [], message = "", showing = null } = body;
-
-    const lines = [];
-    if (history.length) {
-        lines.push("[지금까지의 대화]");
-        for (const turn of history.slice(-14)) {
-            lines.push((turn.role === "user" ? "질문자: " : "나: ") + turn.text);
-        }
-        lines.push("");
-    }
-
-    if (showing && EVIDENCE_BRIEF[showing]) {
-        lines.push("[질문자가 지금 당신 앞에 증거를 내밀었다]");
-        lines.push(EVIDENCE_BRIEF[showing]);
-        lines.push("");
-        lines.push("질문자: " + (message || "이건 어떻게 설명하시겠습니까?"));
-    } else {
-        lines.push("질문자: " + message);
-    }
-
-    lines.push("");
-    lines.push("위 질문에 당신(인물 본인)으로서 대답하라. 대사만 출력한다. 이름표나 따옴표를 붙이지 않는다.");
-    return lines.join("\n");
-}
-
-function pressureLabel(presented) {
-    const n = (presented || []).filter(id => FATAL.includes(id)).length;
-    if (n >= 5) return "붕괴 — 이번 답변에서 무너진다. 사실을 말하고 맨 끝에 [[자백]] 을 붙인다.";
-    if (n >= 3) return `높음 (치명적 증거 ${n}개) — 눈에 띄게 동요하지만 아직 부인한다.`;
-    if (n >= 1) return `보통 (치명적 증거 ${n}개) — 침착하게 받아넘긴다.`;
-    return "낮음 — 여유롭다. 협조적인 태도를 유지한다.";
 }
 
 // ── API ─────────────────────────────────────────────────────

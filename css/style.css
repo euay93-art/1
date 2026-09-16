@@ -17,6 +17,7 @@
   --blood:     #a63d3d;
   --snow:      #dce8fa;
   --radius: 12px;
+  --display: "Nanum Myeongjo", "Apple SD Gothic Neo", "Noto Serif KR", serif;
   color-scheme: dark;
 }
 
@@ -98,10 +99,12 @@ i { color: var(--ink-dim); }
   padding: 16vh 20px 60px; text-align: center;
 }
 .title-mark {
+  font-family: var(--display);
   color: var(--gold); letter-spacing: .5em; font-size: 14px;
   margin-bottom: 20px; opacity: .8;
 }
 .title-wrap h1 {
+  font-family: var(--display);
   font-size: clamp(30px, 8vw, 46px); margin: 0;
   letter-spacing: .04em; font-weight: 700;
 }
@@ -129,7 +132,8 @@ i { color: var(--ink-dim); }
   border-radius: var(--radius); padding: 30px 26px;
   border-left: 3px solid var(--gold);
 }
-.prologue-card h2 { margin: 0 0 14px; font-size: 15px; color: var(--gold); letter-spacing: .1em; font-weight: 600; }
+.prologue-card h2 {
+  font-family: var(--display); margin: 0 0 14px; font-size: 15px; color: var(--gold); letter-spacing: .1em; font-weight: 600; }
 .prologue-card p { margin: 0; font-size: 16px; line-height: 1.95; }
 .prologue-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 22px; }
 .prologue-dots { color: var(--ink-faint); letter-spacing: .35em; font-size: 12px; }
@@ -186,7 +190,8 @@ i { color: var(--ink-dim); }
 .loc-prog { font-size: 12px; color: var(--ink-faint); margin-top: 6px; display: block; }
 .loc-prog.done { color: #7fc9a0; }
 
-.loc-detail h2 { margin: 6px 0 4px; font-size: 21px; }
+.loc-detail h2 {
+  font-family: var(--display); margin: 6px 0 4px; font-size: 21px; }
 .loc-desc { color: var(--ink-dim); margin: 0 0 20px; font-size: 14px; }
 
 /* ── 단서 ────────────────────────────────────────────── */
@@ -275,7 +280,8 @@ i { color: var(--ink-dim); }
 
 /* ── 최종 추리 ───────────────────────────────────────── */
 .accuse-wrap, .ending-wrap { max-width: 720px; margin: 0 auto; padding: 60px 20px 80px; }
-.accuse-wrap h2 { font-size: 26px; margin: 0 0 8px; }
+.accuse-wrap h2 {
+  font-family: var(--display); font-size: 26px; margin: 0 0 8px; }
 .accuse-lead { color: var(--ink-dim); margin: 0 0 30px; font-size: 14px; }
 .quiz {
   background: var(--panel); border: 1px solid var(--line);
@@ -298,8 +304,10 @@ i { color: var(--ink-dim); }
   background: var(--panel); border: 1px solid var(--gold);
   border-radius: var(--radius); margin-bottom: 30px;
 }
-.rank-grade { font-size: 62px; font-weight: 800; color: var(--gold); line-height: 1; }
-.rank-title { font-size: 21px; margin-top: 8px; }
+.rank-grade {
+  font-family: var(--display); font-size: 62px; font-weight: 800; color: var(--gold); line-height: 1; }
+.rank-title {
+  font-family: var(--display); font-size: 21px; margin-top: 8px; }
 .rank-score { color: var(--ink-faint); font-size: 13px; margin-top: 6px; }
 .rank-line { color: var(--ink-dim); margin: 18px auto 0; max-width: 460px; font-size: 14.5px; }
 
@@ -310,9 +318,11 @@ i { color: var(--ink-dim); }
 .mark-a.wrong { color: #e59a9a; }
 .mark-exp { color: var(--ink-faint); font-size: 13.2px; margin-top: 6px; }
 
-.solution-head { margin: 46px 0 18px; font-size: 22px; color: var(--gold); }
+.solution-head {
+  font-family: var(--display); margin: 46px 0 18px; font-size: 22px; color: var(--gold); }
 .sol-block { margin-bottom: 26px; }
-.sol-block h3 { font-size: 15px; margin: 0 0 8px; color: var(--gold-soft); }
+.sol-block h3 {
+  font-family: var(--display); font-size: 15px; margin: 0 0 8px; color: var(--gold-soft); }
 .sol-block p { margin: 0; color: var(--ink-dim); font-size: 14.5px; line-height: 1.95; }
 
 /* ── 모달 / 토스트 ───────────────────────────────────── */

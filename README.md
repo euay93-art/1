@@ -6,6 +6,22 @@
 
 ## 실행
 
+두 가지 방법이 있고, 어느 쪽이든 AI 심문이 동작한다.
+
+### 1. 링크로 바로 (설치 없음)
+
+`dist/seolyajang.html` 을 Artifact 로 배포하면 준비물 없이 어디서나 플레이할 수 있다.
+페이지가 `claude.use("sample")` 로 직접 Claude 에게 물으므로 서버가 필요 없다.
+
+```bash
+node build/build-artifact.mjs   # dist/seolyajang.html 생성
+```
+
+캐릭터 시트가 페이지 안에 들어가므로(base64, 스포일러 방지용일 뿐 보안이 아님)
+개발자 도구를 열면 정답이 보인다. 남에게 풀게 할 거라면 아래 로컬 서버 쪽이 안전하다.
+
+### 2. 로컬 서버
+
 ```bash
 npm start
 ```
@@ -57,8 +73,14 @@ js/notebook.js        사건 수첩
 js/accuse.js          최종 추리와 채점
 js/main.js            초기화
 server/server.js      정적 서빙 + /api/ask
-server/characters.js  AI 용의자의 인격·기억·거짓말 규칙
+server/characters.js  AI 용의자의 인격·기억·거짓말 규칙, 프롬프트 조립
+build/build-artifact.mjs  단일 HTML 빌드
+dist/seolyajang.html  빌드 결과물 (생성물 — 직접 고치지 말 것)
 ```
+
+`js/ai.js` 는 Artifact 런타임 → 로컬 서버 → 각본 모드 순으로 환경을 감지한다.
+프롬프트를 조립하는 함수는 `server/characters.js` 에만 있고, 빌드가 그 모듈을
+그대로 읽어 브라우저용 번들에 넣으므로 사본이 어긋나지 않는다.
 
 `server/characters.js`에는 진범이 실제로 한 일과 각 인물이 숨기는 비밀이 들어 있다.
 이 파일은 서버에만 존재하며 브라우저로 내려가지 않는다. **먼저 플레이하고 싶다면 열지 말 것.**
