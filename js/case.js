@@ -320,7 +320,54 @@ const CASE = {
             name: "2층 작업실",
             icon: "🖼️",
             desc: "사건 현장. 캔버스 냄새와 피 냄새가 섞여 있다. 창문 하나가 활짝 열려 있어 바닥에 눈이 들이쳤다.",
-            clues: ["c_body", "c_clock", "c_clock_trick", "c_statue", "c_glasses", "c_phone", "c_window", "c_sketch"]
+            clues: ["c_body", "c_clock", "c_clock_trick", "c_statue", "c_glasses", "c_phone", "c_window", "c_sketch"],
+            objects: [
+                {
+                    id: "desk_body", name: "책상 앞", icon: "🩸",
+                    look: "윤제하는 책상 위에 엎드려 있다. 오른팔이 책상 밖으로 늘어졌고, 손끝이 바닥을 향한 채 굳었다. 방이 바깥만큼 춥다.",
+                    steps: ["c_body"]
+                },
+                {
+                    id: "wallclock", name: "벽시계", icon: "🕚",
+                    look: "책상 옆 벽에 낡은 괘종형 벽시계가 걸려 있다. 유리가 깨졌고 초침이 움직이지 않는다. 이 방에서 나는 소리라고는 창으로 드는 바람뿐이다.",
+                    steps: ["c_clock", "c_clock_trick"]
+                },
+                {
+                    id: "two_glasses", name: "책상 위의 잔", icon: "🥃",
+                    look: "잔이 둘. 하나는 길고 하나는 짧다. 짧은 쪽 밑에는 코스터가 정확히 중앙에 깔려 있다. 사람이 죽어 나간 방에서 그것만 반듯하다.",
+                    steps: ["c_glasses"]
+                },
+                {
+                    id: "desk_drawer", name: "책상 서랍", icon: "🗄️",
+                    look: "책상 서랍은 닫혀 있다. 손잡이 둘레만 먼지가 닦여 있다. 어제까지 열고 닫던 서랍이다.",
+                    steps: ["c_phone"]
+                },
+                {
+                    id: "open_window", name: "열린 창", icon: "🪟",
+                    look: "창 하나가 활짝 열려 있다. 밤새 눈이 들이쳐 바닥에 창백한 둔덕이 생겼다. 방 안 공기가 바깥과 다르지 않다.",
+                    steps: ["c_window"]
+                },
+                {
+                    id: "bronze", name: "청동 조각상", icon: "🏆",
+                    look: "책상 모서리에 작은 청동 조각상이 서 있다. 물감통과 붓 사이에서 혼자 격이 다르다. 여기 있을 물건이 아니다.",
+                    steps: ["c_statue"]
+                },
+                {
+                    id: "floor_book", name: "바닥의 스케치북", icon: "📓",
+                    look: "책상 아래, 바닥에 스케치북 한 권이 떨어져 있다. 표지 모서리가 닳았다. 떨어뜨린 지 오래되지 않았다.",
+                    steps: ["c_sketch"]
+                },
+                {
+                    id: "easels", name: "이젤과 캔버스", icon: "🖼️",
+                    look: "이젤 둘, 벽에 기대 세운 캔버스 여남은 점. 전부 뒷면을 보이고 있다. 내일 걸릴 것들이다. 먼지가 앉지 않았다.",
+                    steps: []
+                },
+                {
+                    id: "paintbox", name: "물감과 붓", icon: "🖌️",
+                    look: "유리병에 꽂힌 붓들, 눌러 짜다 만 물감 튜브. 기름 냄새가 아직 난다. 어제까지 누군가 여기서 그림을 그렸다.",
+                    steps: []
+                }
+            ]
         },
         {
             id: "hall",

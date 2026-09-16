@@ -11,6 +11,7 @@ const State = {
     presented: {},       // 용의자별로 제시한 증거 id 배열
     chats: {},           // 용의자별 대화 기록 [{role,text}]
     asked: [],           // 오프라인 모드에서 소비한 질문 id
+    looked: [],          // 훑어본 물건
     quoted: [],          // 이미 대질에 쓴 진술
     confronted: {},      // 용의자별 대질 횟수
     trust: {},           // 마음을 연 용의자
@@ -74,7 +75,7 @@ const State = {
             localStorage.setItem(SAVE_KEY, JSON.stringify({
                 started: this.started, minute: this.minute, found: this.found,
                 presented: this.presented, chats: this.chats, asked: this.asked,
-                quoted: this.quoted, confronted: this.confronted, trust: this.trust,
+                looked: this.looked, quoted: this.quoted, confronted: this.confronted, trust: this.trust,
                 confessed: this.confessed, answers: this.answers, finished: this.finished
             }));
         } catch (e) { /* 사생활 보호 모드 등 — 저장 없이 진행 */ }
@@ -103,6 +104,7 @@ const State = {
             this.minute = clamp(d.minute, CASE.meta.startMinute, CASE.meta.endMinute, CASE.meta.startMinute);
             this.found = known(d.found, clueIds);
             this.asked = known(d.asked, topicIds);
+            this.looked = Array.isArray(d.looked) ? d.looked.filter(x => typeof x === "string") : [];
             this.quoted = Array.isArray(d.quoted) ? d.quoted.filter(x => typeof x === "string") : [];
             const tr = plain(d.trust);
             this.trust = {};
@@ -139,7 +141,7 @@ const State = {
     reset() {
         this.started = false;
         this.minute = CASE.meta.startMinute;
-        this.found = []; this.presented = {}; this.chats = {}; this.asked = []; this.quoted = []; this.confronted = {}; this.trust = {};
+        this.found = []; this.presented = {}; this.chats = {}; this.asked = []; this.looked = []; this.quoted = []; this.confronted = {}; this.trust = {};
         this.confessed = false; this.answers = {}; this.finished = false;
         try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
     }

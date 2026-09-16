@@ -216,6 +216,40 @@ i { color: var(--ink-dim); }
 .clue-undiscovered { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .clue-undiscovered span { color: var(--ink-faint); font-size: 14px; }
 
+/* ── 2단 보기 (물건) ─────────────────────────────────── */
+.ob {
+  display: block; width: 100%; text-align: left; font: inherit; color: var(--ink);
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 14px 16px;
+}
+.ob-shut { cursor: pointer; transition: .15s; }
+.ob-shut:hover { border-color: var(--gold); transform: translateX(2px); }
+button.ob-head {
+  display: flex; align-items: center; gap: 9px; flex-wrap: wrap; width: 100%;
+  background: none; border: 0; color: var(--ink); font: inherit;
+  cursor: pointer; padding: 0; text-align: left;
+}
+button.ob-head:hover .ob-hint { color: var(--gold-soft); }
+.ob-seen { opacity: .82; }
+.ob-seen:hover { opacity: 1; }
+.ob-shut { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.ob-icon { font-size: 17px; }
+.ob b { font-size: 15px; }
+.ob-mark { font-size: 12px; color: var(--ink-faint); width: 14px; flex-shrink: 0; }
+.ob-mark.more { color: var(--gold-soft); }
+.ob-mark.done { color: #6fa88a; opacity: .7; }
+.ob-hint { margin-left: auto; font-size: 12.5px; color: var(--ink-faint); }
+.ob-open { border-left: 2px solid var(--line); }
+.ob-look { margin: 10px 0 0; font-size: 14.2px; color: var(--ink-dim); line-height: 1.85; }
+.ob-open .clue { margin-top: 12px; }
+.ob-none { margin: 12px 0 0; font-size: 12.5px; color: var(--ink-faint); }
+.btn-closer { margin-top: 12px; border-color: var(--gold); color: var(--gold-soft); }
+.btn-closer .cost { opacity: .6; font-size: 11.5px; margin-left: 4px; }
+.loc-new {
+  border: 1px solid var(--gold); color: var(--gold-soft);
+  border-radius: 99px; padding: 1px 7px; font-size: 10.5px; margin-left: 4px;
+}
+
 /* ── 용의자 ──────────────────────────────────────────── */
 .sus-card { display: flex; gap: 14px; align-items: flex-start; }
 .sus-face { font-size: 30px; line-height: 1; }

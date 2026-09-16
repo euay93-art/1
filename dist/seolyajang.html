@@ -220,6 +220,40 @@ i { color: var(--ink-dim); }
 .clue-undiscovered { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .clue-undiscovered span { color: var(--ink-faint); font-size: 14px; }
 
+/* ── 2단 보기 (물건) ─────────────────────────────────── */
+.ob {
+  display: block; width: 100%; text-align: left; font: inherit; color: var(--ink);
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 14px 16px;
+}
+.ob-shut { cursor: pointer; transition: .15s; }
+.ob-shut:hover { border-color: var(--gold); transform: translateX(2px); }
+button.ob-head {
+  display: flex; align-items: center; gap: 9px; flex-wrap: wrap; width: 100%;
+  background: none; border: 0; color: var(--ink); font: inherit;
+  cursor: pointer; padding: 0; text-align: left;
+}
+button.ob-head:hover .ob-hint { color: var(--gold-soft); }
+.ob-seen { opacity: .82; }
+.ob-seen:hover { opacity: 1; }
+.ob-shut { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.ob-icon { font-size: 17px; }
+.ob b { font-size: 15px; }
+.ob-mark { font-size: 12px; color: var(--ink-faint); width: 14px; flex-shrink: 0; }
+.ob-mark.more { color: var(--gold-soft); }
+.ob-mark.done { color: #6fa88a; opacity: .7; }
+.ob-hint { margin-left: auto; font-size: 12.5px; color: var(--ink-faint); }
+.ob-open { border-left: 2px solid var(--line); }
+.ob-look { margin: 10px 0 0; font-size: 14.2px; color: var(--ink-dim); line-height: 1.85; }
+.ob-open .clue { margin-top: 12px; }
+.ob-none { margin: 12px 0 0; font-size: 12.5px; color: var(--ink-faint); }
+.btn-closer { margin-top: 12px; border-color: var(--gold); color: var(--gold-soft); }
+.btn-closer .cost { opacity: .6; font-size: 11.5px; margin-left: 4px; }
+.loc-new {
+  border: 1px solid var(--gold); color: var(--gold-soft);
+  border-radius: 99px; padding: 1px 7px; font-size: 10.5px; margin-left: 4px;
+}
+
 /* ── 용의자 ──────────────────────────────────────────── */
 .sus-card { display: flex; gap: 14px; align-items: flex-start; }
 .sus-face { font-size: 30px; line-height: 1; }
@@ -954,7 +988,54 @@ const CASE = {
             name: "2층 작업실",
             icon: "🖼️",
             desc: "사건 현장. 캔버스 냄새와 피 냄새가 섞여 있다. 창문 하나가 활짝 열려 있어 바닥에 눈이 들이쳤다.",
-            clues: ["c_body", "c_clock", "c_clock_trick", "c_statue", "c_glasses", "c_phone", "c_window", "c_sketch"]
+            clues: ["c_body", "c_clock", "c_clock_trick", "c_statue", "c_glasses", "c_phone", "c_window", "c_sketch"],
+            objects: [
+                {
+                    id: "desk_body", name: "책상 앞", icon: "🩸",
+                    look: "윤제하는 책상 위에 엎드려 있다. 오른팔이 책상 밖으로 늘어졌고, 손끝이 바닥을 향한 채 굳었다. 방이 바깥만큼 춥다.",
+                    steps: ["c_body"]
+                },
+                {
+                    id: "wallclock", name: "벽시계", icon: "🕚",
+                    look: "책상 옆 벽에 낡은 괘종형 벽시계가 걸려 있다. 유리가 깨졌고 초침이 움직이지 않는다. 이 방에서 나는 소리라고는 창으로 드는 바람뿐이다.",
+                    steps: ["c_clock", "c_clock_trick"]
+                },
+                {
+                    id: "two_glasses", name: "책상 위의 잔", icon: "🥃",
+                    look: "잔이 둘. 하나는 길고 하나는 짧다. 짧은 쪽 밑에는 코스터가 정확히 중앙에 깔려 있다. 사람이 죽어 나간 방에서 그것만 반듯하다.",
+                    steps: ["c_glasses"]
+                },
+                {
+                    id: "desk_drawer", name: "책상 서랍", icon: "🗄️",
+                    look: "책상 서랍은 닫혀 있다. 손잡이 둘레만 먼지가 닦여 있다. 어제까지 열고 닫던 서랍이다.",
+                    steps: ["c_phone"]
+                },
+                {
+                    id: "open_window", name: "열린 창", icon: "🪟",
+                    look: "창 하나가 활짝 열려 있다. 밤새 눈이 들이쳐 바닥에 창백한 둔덕이 생겼다. 방 안 공기가 바깥과 다르지 않다.",
+                    steps: ["c_window"]
+                },
+                {
+                    id: "bronze", name: "청동 조각상", icon: "🏆",
+                    look: "책상 모서리에 작은 청동 조각상이 서 있다. 물감통과 붓 사이에서 혼자 격이 다르다. 여기 있을 물건이 아니다.",
+                    steps: ["c_statue"]
+                },
+                {
+                    id: "floor_book", name: "바닥의 스케치북", icon: "📓",
+                    look: "책상 아래, 바닥에 스케치북 한 권이 떨어져 있다. 표지 모서리가 닳았다. 떨어뜨린 지 오래되지 않았다.",
+                    steps: ["c_sketch"]
+                },
+                {
+                    id: "easels", name: "이젤과 캔버스", icon: "🖼️",
+                    look: "이젤 둘, 벽에 기대 세운 캔버스 여남은 점. 전부 뒷면을 보이고 있다. 내일 걸릴 것들이다. 먼지가 앉지 않았다.",
+                    steps: []
+                },
+                {
+                    id: "paintbox", name: "물감과 붓", icon: "🖌️",
+                    look: "유리병에 꽂힌 붓들, 눌러 짜다 만 물감 튜브. 기름 냄새가 아직 난다. 어제까지 누군가 여기서 그림을 그렸다.",
+                    steps: []
+                }
+            ]
         },
         {
             id: "hall",
@@ -1329,6 +1410,7 @@ const State = {
     presented: {},       // 용의자별로 제시한 증거 id 배열
     chats: {},           // 용의자별 대화 기록 [{role,text}]
     asked: [],           // 오프라인 모드에서 소비한 질문 id
+    looked: [],          // 훑어본 물건
     quoted: [],          // 이미 대질에 쓴 진술
     confronted: {},      // 용의자별 대질 횟수
     trust: {},           // 마음을 연 용의자
@@ -1392,7 +1474,7 @@ const State = {
             localStorage.setItem(SAVE_KEY, JSON.stringify({
                 started: this.started, minute: this.minute, found: this.found,
                 presented: this.presented, chats: this.chats, asked: this.asked,
-                quoted: this.quoted, confronted: this.confronted, trust: this.trust,
+                looked: this.looked, quoted: this.quoted, confronted: this.confronted, trust: this.trust,
                 confessed: this.confessed, answers: this.answers, finished: this.finished
             }));
         } catch (e) { /* 사생활 보호 모드 등 — 저장 없이 진행 */ }
@@ -1421,6 +1503,7 @@ const State = {
             this.minute = clamp(d.minute, CASE.meta.startMinute, CASE.meta.endMinute, CASE.meta.startMinute);
             this.found = known(d.found, clueIds);
             this.asked = known(d.asked, topicIds);
+            this.looked = Array.isArray(d.looked) ? d.looked.filter(x => typeof x === "string") : [];
             this.quoted = Array.isArray(d.quoted) ? d.quoted.filter(x => typeof x === "string") : [];
             const tr = plain(d.trust);
             this.trust = {};
@@ -1457,7 +1540,7 @@ const State = {
     reset() {
         this.started = false;
         this.minute = CASE.meta.startMinute;
-        this.found = []; this.presented = {}; this.chats = {}; this.asked = []; this.quoted = []; this.confronted = {}; this.trust = {};
+        this.found = []; this.presented = {}; this.chats = {}; this.asked = []; this.looked = []; this.quoted = []; this.confronted = {}; this.trust = {};
         this.confessed = false; this.answers = {}; this.finished = false;
         try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
     }
@@ -1649,10 +1732,11 @@ const Investigate = {
             const total = loc.clues.length;
             const got = loc.clues.filter(c => State.has(c)).length;
             const done = got === total;
+            const twoStep = !!loc.objects;
             return `<button class="loc-card" data-loc="${loc.id}">
                 <span class="loc-icon">${loc.icon}</span>
                 <b>${loc.name}</b>
-                <span class="loc-prog ${done ? "done" : ""}">${done ? "조사 완료" : `단서 ${got} / ${total}`}</span>
+                <span class="loc-prog ${done ? "done" : ""}">${done ? "조사 완료" : `단서 ${got} / ${total}`}${twoStep ? ' <span class="loc-new">둘러보기</span>' : ""}</span>
             </button>`;
         }).join("");
 
@@ -1667,6 +1751,7 @@ const Investigate = {
     open(id) {
         this.current = CASE.locations.find(l => l.id === id);
         if (!this.current) return;
+        this.unfolded = {};      // 방에 다시 들어오면 접힌 상태로 시작한다
         document.getElementById("loc-grid").hidden = true;
         document.getElementById("loc-detail").hidden = false;
         document.getElementById("loc-name").textContent = this.current.icon + "  " + this.current.name;
@@ -1674,7 +1759,113 @@ const Investigate = {
         this.renderClues();
     },
 
+    // ── 2단 보기 ────────────────────────────────────────
+    // 물건 목록이 있는 방은 이쪽으로 간다. 훑어보는 건 공짜,
+    // 가까이 들여다보는 것만 시간을 쓴다.
+    key(loc, obj) { return loc.id + "." + obj.id; },
+
+    // 이 물건에서 아직 캘 것이 남았는가
+    remaining(obj) {
+        return (obj.steps || []).filter(c => !State.has(c));
+    },
+
+    unfolded: {},
+
+    renderObjects() {
+        const loc = this.current;
+        const box = document.getElementById("clue-list");
+
+        box.innerHTML = loc.objects.map(o => {
+            const k = this.key(loc, o);
+            const seen = State.looked.indexOf(k) !== -1;
+            const left = this.remaining(o).length;
+            const mark = !seen ? '<span class="ob-mark">○</span>'
+                       : left  ? '<span class="ob-mark more">◆</span>'
+                               : '<span class="ob-mark done">✓</span>';
+
+            if (!seen) {
+                return `<button class="ob ob-shut" data-look="${o.id}">
+                    ${mark}<span class="ob-icon">${o.icon}</span><b>${o.name}</b>
+                    <span class="ob-hint">살펴본다</span>
+                </button>`;
+            }
+
+            if (!this.unfolded[o.id]) {
+                return `<button class="ob ob-shut ob-seen" data-fold="${o.id}">
+                    ${mark}<span class="ob-icon">${o.icon}</span><b>${o.name}</b>
+                    <span class="ob-hint">${left ? "아직 볼 것이 남았다" : "다시 본다"}</span>
+                </button>`;
+            }
+
+            const found = (o.steps || []).filter(c => State.has(c)).map(c => {
+                const cl = CASE.clues[c];
+                return `<div class="clue ${cl.key ? "key" : ""}">
+                    <div class="clue-head"><span>${cl.icon}</span><b>${cl.name}</b>
+                        <span class="clue-tag ${cl.tag}">${cl.tag}</span></div>
+                    <p class="clue-text">${cl.text}</p>
+                </div>`;
+            }).join("");
+
+            const more = left
+                ? `<button class="btn btn-small btn-closer" data-closer="${o.id}">🔎 가까이 본다 <span class="cost">5분</span></button>`
+                : `<p class="ob-none">더 볼 것은 없다.</p>`;
+
+            return `<div class="ob ob-open">
+                <button class="ob-head" data-fold="${o.id}">
+                    ${mark}<span class="ob-icon">${o.icon}</span><b>${o.name}</b>
+                    <span class="ob-hint">접는다</span>
+                </button>
+                <p class="ob-look">${o.look}</p>
+                ${found}
+                ${more}
+            </div>`;
+        }).join("");
+
+        box.querySelectorAll("[data-look]").forEach(b => {
+            b.onclick = () => this.lookAt(b.dataset.look);
+        });
+        box.querySelectorAll("[data-fold]").forEach(b => {
+            b.onclick = () => {
+                const id = b.dataset.fold;
+                this.unfolded[id] = !this.unfolded[id];
+                this.renderObjects();
+            };
+        });
+        box.querySelectorAll("[data-closer]").forEach(b => {
+            b.onclick = () => this.lookCloser(b.dataset.closer);
+        });
+    },
+
+    // 훑어보기 — 시간을 쓰지 않는다
+    lookAt(objId) {
+        const k = this.key(this.current, { id: objId });
+        if (State.looked.indexOf(k) === -1) {
+            State.looked.push(k);
+            State.save();
+        }
+        this.unfolded[objId] = true;
+        this.renderObjects();
+    },
+
+    // 가까이 보기 — 여기서만 시계가 돈다
+    lookCloser(objId) {
+        if (State.timeUp()) return Accuse.forceEnd();
+        const obj = this.current.objects.find(o => o.id === objId);
+        const next = this.remaining(obj)[0];
+        if (!next) return;
+
+        const c = CASE.clues[next];
+        State.find(next);
+        UI.hud();
+        this.unfolded[objId] = true;
+        this.renderObjects();
+        UI.toast(`${c.icon} 「${c.name}」 — ${c.short}`, 3600);
+        if (State.timeUp()) setTimeout(() => Accuse.forceEnd(), 1200);
+    },
+
     renderClues() {
+        if (this.current.objects) return this.renderObjects();
+
         const box = document.getElementById("clue-list");
         box.innerHTML = this.current.clues.map(id => {
             const c = CASE.clues[id];
