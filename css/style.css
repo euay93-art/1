@@ -261,7 +261,7 @@ i { color: var(--ink-dim); }
   background: var(--bg-2); border: 1px solid var(--line); color: var(--ink);
   border-radius: 8px; padding: 11px 14px;
 }
-.chat-input input:focus { outline: none; border-color: var(--gold); }
+.chat-input input:focus { border-color: var(--gold); }
 
 /* ── 수첩 ────────────────────────────────────────────── */
 .nb-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
@@ -362,4 +362,20 @@ i { color: var(--ink-dim); }
   .hud { padding: 10px 12px; }
   .msg { max-width: 92%; }
   .loc-grid, .sus-grid { grid-template-columns: 1fr; }
+}
+
+/* ── 접근성 ──────────────────────────────────────────────
+   이 블록은 파일 맨 끝에 있어야 한다. 앞에 두면 뒤따르는
+   규칙에 덮인다. */
+:where(button, input, a, [tabindex]):focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 2px;
+  /* outline 을 지우거나 얇게 그리는 환경이 있어 링을 하나 더 둔다 */
+  box-shadow: 0 0 0 3px rgba(232, 198, 92, .35);
+}
+.chat-input input:focus-visible { outline-offset: -2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .screen.active, .toast, .modal { animation: none !important; }
+  .btn, .loc-card, .sus-card, .watch-bar i { transition: none !important; }
 }
