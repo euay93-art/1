@@ -148,10 +148,6 @@ const Interrogate = {
         try {
             const res = await AI.ask(who.id, text, showing, stream, quote);
             wait.remove();
-
-            State.spend();
-            UI.hud();
-
             State.chatFor(who.id).push({ role: "them", text: res.text, confess: res.confessed });
             if (res.confessed && !State.confessed) {
                 State.confessed = true;
@@ -212,14 +208,10 @@ const Interrogate = {
     scriptedTopic(t) {
         if (State.timeUp()) return Accuse.forceEnd();
         this.push("user", t.q);
-        if (!State.asked.includes(t.id)) {
-            State.asked.push(t.id);
-            State.spend();
-            UI.hud();
-        }
+        if (!State.asked.includes(t.id)) State.asked.push(t.id);
         this.push("them", t.a);
+        State.save();
         this.renderChips();
-        if (State.timeUp()) setTimeout(() => Accuse.forceEnd(), 1200);
     },
 
     // ── 증언 대질 ──────────────────────────────────────
@@ -263,14 +255,12 @@ const Interrogate = {
         if (!q) return;
         if (!State.quoted) State.quoted = [];
         State.quoted.push(q.key);
+        State.confront(this.current.id);
         this.push("quote", q.who + "|" + q.text);
         State.save();
 
         if (AI.online) return this.send(null, q);
 
-        if (State.timeUp()) return Accuse.forceEnd();
-        State.spend();
-        UI.hud();
         this.push("them", this.current.fallback || "…그 사람이 그렇게 말했습니까. 저는 제가 본 것밖에 모릅니다.");
     },
 
@@ -307,9 +297,6 @@ const Interrogate = {
 
         // 각본 모드: 미리 쓰인 반응이 있으면 그것을, 없으면 일반 반응을
         const r = (this.current.reactions || {})[cid];
-        if (State.timeUp()) return Accuse.forceEnd();
-        State.spend();
-        UI.hud();
         if (r) {
             this.push("them", r.text);
             if (r.unlock === "break_4") {

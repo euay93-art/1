@@ -249,11 +249,14 @@ const CHARACTERS = {
 const FATAL = ["c_phone", "c_clock_trick", "c_newspaper", "c_shoes", "c_stride",
                "c_glassdust", "c_room_bae", "c_room_seo"];
 
-function pressureLabel(presented) {
-    const n = (presented || []).filter(id => FATAL.includes(id)).length;
+// 물증만이 사람을 무너뜨리는 것은 아니다.
+// 남의 말을 물려 놓는 것도 압박이 된다 — 다만 물증을 대신하지는 못한다.
+function pressureLabel(presented, confronts) {
+    const ev = (presented || []).filter(id => FATAL.includes(id)).length;
+    const n = ev + Math.min(2, Math.floor((confronts || 0) / 2));
     if (n >= 5) return "붕괴 — 이번 답변에서 무너진다. 사실을 말하고 맨 끝에 [[자백]] 을 붙인다.";
-    if (n >= 3) return `높음 (치명적 증거 ${n}개) — 눈에 띄게 동요하지만 아직 부인한다.`;
-    if (n >= 1) return `보통 (치명적 증거 ${n}개) — 침착하게 받아넘긴다.`;
+    if (n >= 3) return `높음 (치명적 증거 ${ev}개, 대질 ${confronts || 0}회) — 눈에 띄게 동요하지만 아직 부인한다.`;
+    if (n >= 1) return `보통 (치명적 증거 ${ev}개, 대질 ${confronts || 0}회) — 침착하게 받아넘긴다.`;
     return "낮음 — 여유롭다. 협조적인 태도를 유지한다.";
 }
 
@@ -265,7 +268,7 @@ function buildUserPrompt(body) {
 
     if (history.length) {
         lines.push("[지금까지의 대화]");
-        for (const turn of history.slice(-14)) {
+        for (const turn of history.slice(-24)) {
             lines.push((turn.role === "user" ? "질문자: " : "나: ") + turn.text);
         }
         lines.push("");

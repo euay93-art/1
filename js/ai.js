@@ -47,13 +47,14 @@ const AI = {
             .filter(m => m.role === "user" || m.role === "them")
             .map(m => ({ role: m.role === "user" ? "user" : "assistant", text: m.text }));
         const presented = State.presentedFor(suspectId);
+        const confronts = State.confrontsFor(suspectId);
 
-        if (this.mode === "sample") return this._viaSample(suspectId, message, showing, history, presented, onText, quote);
-        return this._viaServer(suspectId, message, showing, history, presented, quote);
+        if (this.mode === "sample") return this._viaSample(suspectId, message, showing, history, presented, onText, quote, confronts);
+        return this._viaServer(suspectId, message, showing, history, presented, quote, confronts);
     },
 
-    async _viaSample(suspectId, message, showing, history, presented, onText, quote) {
-        const system = buildSystemPrompt(suspectId, presented, pressureLabel(presented));
+    async _viaSample(suspectId, message, showing, history, presented, onText, quote, confronts) {
+        const system = buildSystemPrompt(suspectId, presented, pressureLabel(presented, confronts));
         const user = buildUserPrompt({ history, message, showing, quote });
 
         const res = await this._sample(
@@ -67,11 +68,11 @@ const AI = {
         return this._finish(res.text);
     },
 
-    async _viaServer(suspectId, message, showing, history, presented, quote) {
+    async _viaServer(suspectId, message, showing, history, presented, quote, confronts) {
         const res = await fetch("/api/ask", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ suspect: suspectId, message, showing: showing || null, presented, history, quote: quote || null })
+            body: JSON.stringify({ suspect: suspectId, message, showing: showing || null, presented, history, quote: quote || null, confronts: confronts || 0 })
         });
         const data = await res.json();
         if (!res.ok || data.error) throw new Error(data.error || "응답 실패");

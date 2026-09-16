@@ -12,6 +12,7 @@ const State = {
     chats: {},           // 용의자별 대화 기록 [{role,text}]
     asked: [],           // 오프라인 모드에서 소비한 질문 id
     quoted: [],          // 이미 대질에 쓴 진술
+    confronted: {},      // 용의자별 대질 횟수
     confessed: false,    // 배정훈이 자백했는가
     answers: {},         // 최종 추리 선택
     finished: false,
@@ -33,6 +34,9 @@ const State = {
     },
 
     presentedFor(sid) { return this.presented[sid] || (this.presented[sid] = []); },
+
+    confront(sid) { this.confronted[sid] = (this.confronted[sid] || 0) + 1; },
+    confrontsFor(sid) { return this.confronted[sid] || 0; },
 
     present(sid, cid) {
         const list = this.presentedFor(sid);
@@ -66,7 +70,7 @@ const State = {
             localStorage.setItem(SAVE_KEY, JSON.stringify({
                 started: this.started, minute: this.minute, found: this.found,
                 presented: this.presented, chats: this.chats, asked: this.asked,
-                quoted: this.quoted,
+                quoted: this.quoted, confronted: this.confronted,
                 confessed: this.confessed, answers: this.answers, finished: this.finished
             }));
         } catch (e) { /* 사생활 보호 모드 등 — 저장 없이 진행 */ }
@@ -96,6 +100,11 @@ const State = {
             this.found = known(d.found, clueIds);
             this.asked = known(d.asked, topicIds);
             this.quoted = Array.isArray(d.quoted) ? d.quoted.filter(x => typeof x === "string") : [];
+            const cf = plain(d.confronted);
+            this.confronted = {};
+            suspectIds.forEach(id => {
+                this.confronted[id] = (typeof cf[id] === "number" && cf[id] > 0) ? Math.floor(cf[id]) : 0;
+            });
             this.confessed = !!d.confessed;
             this.finished = !!d.finished;
 
@@ -122,7 +131,7 @@ const State = {
     reset() {
         this.started = false;
         this.minute = CASE.meta.startMinute;
-        this.found = []; this.presented = {}; this.chats = {}; this.asked = []; this.quoted = [];
+        this.found = []; this.presented = {}; this.chats = {}; this.asked = []; this.quoted = []; this.confronted = {};
         this.confessed = false; this.answers = {}; this.finished = false;
         try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
     }

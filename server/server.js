@@ -94,7 +94,8 @@ async function handleAsk(req, res) {
             if (!CHARACTERS[id]) return send(res, 400, { error: "알 수 없는 인물입니다." });
 
             const presented = Array.isArray(body.presented) ? body.presented : [];
-            const sys = buildSystemPrompt(id, presented, pressureLabel(presented));
+            const confronts = Number(body.confronts) || 0;
+            const sys = buildSystemPrompt(id, presented, pressureLabel(presented, confronts));
             const usr = buildUserPrompt(body);
 
             let text = await callClaude(sys, usr);
