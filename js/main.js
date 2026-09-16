@@ -41,7 +41,7 @@ function boot() {
     Sync.init().then(ok => { if (ok) console.log("진행 기록 동기화 켜짐:", Sync.runId); });
 
     AI.probe().then(() => {
-        document.getElementById("tab-partner").hidden = !Partner.available();
+        document.getElementById("tab-partner").hidden = !(Partner.available() || Sync.db);
         if (AI.mode === "sample") {
             status.className = "ai-status ok";
             status.innerHTML = `● 다섯 용의자를 Claude가 연기합니다 — 무엇이든 자유롭게 물어보십시오.`;
@@ -94,6 +94,13 @@ function boot() {
     });
     document.querySelectorAll("#partner-chips .chip").forEach(b => {
         b.onclick = () => Partner.send(b.dataset.ask);
+    });
+    document.querySelectorAll("#partner-switch .seg").forEach(b => {
+        b.onclick = () => Partner.setView(b.dataset.view);
+    });
+    document.getElementById("btn-radio-send").onclick = () => Partner.sayRadio();
+    document.getElementById("radio-text").addEventListener("keydown", e => {
+        if (e.key === "Enter" && !e.isComposing) Partner.sayRadio();
     });
     document.getElementById("btn-modal-close").onclick = () => { document.getElementById("modal-evidence").hidden = true; };
     document.getElementById("modal-evidence").onclick = e => {

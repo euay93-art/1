@@ -263,6 +263,16 @@ i { color: var(--ink-dim); }
 }
 .chat-input input:focus { outline: none; border-color: var(--gold); }
 
+/* ── 동행 / 무전 ─────────────────────────────────────── */
+.seg-row { display: flex; gap: 6px; margin-bottom: 16px; }
+.seg {
+  font: inherit; font-size: 13px; cursor: pointer; flex: 1 1 0; min-width: 0;
+  background: transparent; border: 1px solid var(--line);
+  color: var(--ink-dim); border-radius: 8px; padding: 8px 10px;
+}
+.seg.active { border-color: var(--gold); color: var(--gold-soft); background: var(--panel-2); }
+.msg.them.radio { border-color: var(--gold); background: #1e2a20; }
+
 /* ── 동행 수사 ───────────────────────────────────────── */
 .partner-head { border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 14px; }
 .partner-head h2 { font-family: var(--display); margin: 0 0 6px; font-size: 20px; }

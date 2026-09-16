@@ -107,6 +107,27 @@
 
     <!-- 동행 수사 -->
     <div class="panel" id="panel-partner">
+      <div class="seg-row" id="partner-switch">
+        <button class="seg active" data-view="partner">🤝 게임 파트너</button>
+        <button class="seg" data-view="radio">📻 무전</button>
+      </div>
+
+      <div id="radio-side" hidden>
+        <div class="partner-head">
+          <h2>무전</h2>
+          <p class="partner-desc">
+            <b>대화창에 있는 Claude</b>와 직접 연결됩니다. 당신의 수사 진행도 그쪽에서 읽을 수 있습니다.
+            사람이 아니라 다른 창에 있는 상대라서, 답이 바로 오지 않고 조금 뒤에 올 수 있습니다.
+          </p>
+        </div>
+        <div class="chat-log" id="radio-log"></div>
+        <div class="chat-input">
+          <input type="text" id="radio-text" placeholder="대화창의 Claude에게 무전…" autocomplete="off">
+          <button class="btn btn-primary" id="btn-radio-send">보내기</button>
+        </div>
+      </div>
+
+      <div id="partner-side">
       <div class="partner-head">
         <h2>동행 수사</h2>
         <p class="partner-desc">
@@ -125,6 +146,7 @@
       <div class="chat-input">
         <input type="text" id="partner-text" placeholder="동료에게 상의하기…" autocomplete="off">
         <button class="btn btn-primary" id="btn-partner-send">보내기</button>
+      </div>
       </div>
     </div>
 

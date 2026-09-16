@@ -73,7 +73,73 @@ const Partner = {
 ${this.brief()}`;
     },
 
+    view: "partner",     // "partner" | "radio"
+    unread: 0,
+
+    setView(v) {
+        this.view = v;
+        document.querySelectorAll("#partner-switch .seg").forEach(b =>
+            b.classList.toggle("active", b.dataset.view === v));
+        document.getElementById("partner-side").hidden = (v !== "partner");
+        document.getElementById("radio-side").hidden = (v !== "radio");
+        if (v === "radio") { this.unread = 0; this.badge(); }
+        this.render();
+    },
+
+    badge() {
+        const t = document.getElementById("tab-partner");
+        if (t) t.textContent = this.unread ? `🤝 동행 (${this.unread})` : "🤝 동행";
+        const s = document.querySelector('#partner-switch [data-view="radio"]');
+        if (s) s.textContent = this.unread ? `📻 무전 ${this.unread}` : "📻 무전";
+    },
+
+    // Sync 가 새 무전을 받으면 부른다
+    onRadio() {
+        const log = Sync.radioLog();
+        const last = log[log.length - 1];
+        if (this.view !== "radio" && last && last.from === "claude") {
+            this.unread++;
+            this.badge();
+            UI.toast("📻 무전이 왔다 — 동행 탭에서 확인하십시오.", 4000);
+        }
+        if (this.view === "radio") this.renderRadio();
+    },
+
+    renderRadio() {
+        const box = document.getElementById("radio-log");
+        if (!box) return;
+        const on = Sync.db;
+        const log = on ? Sync.radioLog() : [];
+
+        if (!on) {
+            box.innerHTML = `<div class="msg system">이 화면에서는 무전을 쓸 수 없습니다. 배포된 링크로 열면 연결됩니다.</div>`;
+        } else if (!log.length) {
+            box.innerHTML = `<div class="msg system">아직 주고받은 무전이 없습니다. 먼저 말을 걸어 보십시오.</div>`;
+        } else {
+            box.innerHTML = log.map(m => m.from === "me"
+                ? `<div class="msg me">${Interrogate.esc(m.text)}</div>`
+                : `<div class="msg them radio">${Interrogate.esc(m.text)}</div>`).join("");
+        }
+        box.scrollTop = box.scrollHeight;
+        document.getElementById("btn-radio-send").disabled = !on;
+        document.getElementById("radio-text").disabled = !on;
+    },
+
+    async sayRadio() {
+        const input = document.getElementById("radio-text");
+        const text = (input.value || "").trim();
+        if (!text) return;
+        input.value = "";
+        try {
+            await Sync.sayRadio(text);
+            this.renderRadio();
+        } catch (e) {
+            UI.toast("무전을 보내지 못했습니다.", 3000);
+        }
+    },
+
     render() {
+        if (this.view === "radio") return this.renderRadio();
         const box = document.getElementById("partner-log");
         const log = State.partnerChat || (State.partnerChat = []);
         box.innerHTML = log.map(m =>
