@@ -267,6 +267,12 @@ i { color: var(--ink-dim); }
 }
 .chat-input input:focus { outline: none; border-color: var(--gold); }
 
+/* ── 동행 수사 ───────────────────────────────────────── */
+.partner-head { border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 14px; }
+.partner-head h2 { font-family: var(--display); margin: 0 0 6px; font-size: 20px; }
+.partner-desc { margin: 0; color: var(--ink-dim); font-size: 13.5px; }
+.partner-stat { display: block; margin-top: 8px; font-size: 12.5px; color: var(--gold-soft); }
+
 /* ── 수첩 ────────────────────────────────────────────── */
 .nb-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
 .nb-tab {
@@ -426,6 +432,7 @@ html, body { height: 100%; }
     <button class="tab active" data-tab="investigate">🔦 현장 조사</button>
     <button class="tab" data-tab="interrogate">💬 심문</button>
     <button class="tab" data-tab="notebook">📕 사건 수첩</button>
+    <button class="tab" data-tab="partner" id="tab-partner" hidden>🤝 동행</button>
   </nav>
 
   <main class="panels">
@@ -461,6 +468,29 @@ html, body { height: 100%; }
           <input type="text" id="chat-text" placeholder="무엇이든 물어보십시오…" autocomplete="off">
           <button class="btn btn-primary" id="btn-chat-send">묻기</button>
         </div>
+      </div>
+    </div>
+
+    <!-- 동행 수사 -->
+    <div class="panel" id="panel-partner">
+      <div class="partner-head">
+        <h2>동행 수사</h2>
+        <p class="partner-desc">
+          당신이 <b>지금까지 확보한 것만</b> 알고 있는 동료입니다. 범인이 누구인지는 모릅니다.
+          모순을 짚고 다음에 뭘 뒤질지 같이 정하는 용도로 쓰십시오.
+        </p>
+        <span class="partner-stat" id="partner-stat"></span>
+      </div>
+      <div class="chat-log" id="partner-log"></div>
+      <div class="chat-chips" id="partner-chips">
+        <button class="chip" data-ask="지금까지 나온 것 중에 서로 안 맞는 게 있나?">모순 짚어줘</button>
+        <button class="chip" data-ask="다음에 어디를 뒤지고 누구한테 뭘 물어야 할까?">다음 수순은?</button>
+        <button class="chip" data-ask="지금 가장 의심스러운 사람은 누구고, 왜 그렇게 보나?">누가 수상해?</button>
+        <button class="chip" data-ask="지금까지 확보한 걸 시간 순으로 정리해줘.">정리해줘</button>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="partner-text" placeholder="동료에게 상의하기…" autocomplete="off">
+        <button class="btn btn-primary" id="btn-partner-send">보내기</button>
       </div>
     </div>
 
@@ -1247,6 +1277,7 @@ const State = {
     presented: {},       // 용의자별로 제시한 증거 id 배열
     chats: {},           // 용의자별 대화 기록 [{role,text}]
     asked: [],           // 오프라인 모드에서 소비한 질문 id
+    partnerChat: [],     // 동행 수사 대화
     confessed: false,    // 배정훈이 자백했는가
     answers: {},         // 최종 추리 선택
     finished: false,
@@ -1301,9 +1332,11 @@ const State = {
             localStorage.setItem(SAVE_KEY, JSON.stringify({
                 started: this.started, minute: this.minute, found: this.found,
                 presented: this.presented, chats: this.chats, asked: this.asked,
+                partnerChat: this.partnerChat,
                 confessed: this.confessed, answers: this.answers, finished: this.finished
             }));
         } catch (e) { /* 사생활 보호 모드 등 — 저장 없이 진행 */ }
+        if (typeof Sync !== "undefined") Sync.push();
     },
 
     load() {
@@ -1321,6 +1354,7 @@ const State = {
         this.started = false;
         this.minute = CASE.meta.startMinute;
         this.found = []; this.presented = {}; this.chats = {}; this.asked = [];
+        this.partnerChat = [];
         this.confessed = false; this.answers = {}; this.finished = false;
         try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
     }
@@ -1343,6 +1377,7 @@ const UI = {
         document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
         document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + name));
         if (name === "notebook") Notebook.render();
+        if (name === "partner") Partner.render();
     },
 
     hud() {
@@ -1473,6 +1508,25 @@ const AI = {
         const data = await res.json();
         if (!res.ok || data.error) throw new Error(data.error || "응답 실패");
         return { text: data.text, confessed: data.confessed };
+    },
+
+    // 인물 연기가 아닌 자유 호출 (동행 수사)
+    async raw(prompt, onText) {
+        if (this.mode === "sample") {
+            const res = await this._sample(
+                [{ role: "user", content: prompt }],
+                { cache: false, modelTier: "complex", onText: onText ? (e => onText(e.text)) : undefined }
+            );
+            return String(res.text || "").trim();
+        }
+        const res = await fetch("/api/raw", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt })
+        });
+        const data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error || "응답 실패");
+        return data.text;
     },
 
     _clean(t) { return String(t || "").replace(/\[\[자백\]\]/g, "").trim(); },
@@ -1816,6 +1870,241 @@ const Interrogate = {
 
 
 // ============================================================
+// js/partner.js — 동행 수사
+// 플레이어가 지금까지 확보한 것만 아는 파트너. 정답은 모른다.
+// 그래서 대신 풀어주지 못하고, 같이 헤맨다.
+// ============================================================
+
+const Partner = {
+    busy: false,
+
+    available() { return AI.mode === "sample" || AI.mode === "server"; },
+
+    // 파트너에게 넘길 자료 — 플레이어가 실제로 확보한 것만
+    brief() {
+        const L = [];
+        L.push("[사건 개요]");
+        L.push("12월 19일 아침, 폭설로 고립된 강원도 산중 아트 레지던시 '설야장'에서 화단의 거장 윤제하(52)가 2층 작업실에서 뒤통수가 함몰된 채 발견됐다. 어젯밤 건물 안에 있던 사람은 피해자와 다섯 명, 그리고 우리 둘뿐이다. 외부에서 들어온 발자국은 없다. 경찰은 오후 3시에나 도착한다.");
+        L.push("");
+        L.push("[용의자]");
+        CASE.suspects.forEach(s => L.push(`- ${s.name}(${s.age}), ${s.role}`));
+        L.push("");
+        L.push(`[현재 시각] ${State.clock()} · ${State.remainText()}`);
+        L.push("");
+
+        L.push("[우리가 지금까지 확보한 증거]");
+        if (!State.found.length) {
+            L.push("아직 아무것도 없다.");
+        } else {
+            State.found.forEach(id => {
+                const c = CASE.clues[id];
+                L.push(`- 「${c.name}」 (${c.tag}) : ${c.text.replace(/<[^>]+>/g, "")}`);
+            });
+        }
+        L.push("");
+
+        const talked = CASE.suspects.filter(s => (State.chats[s.id] || []).some(m => m.role === "them"));
+        if (talked.length) {
+            L.push("[심문에서 나온 말]");
+            talked.forEach(s => {
+                const lines = (State.chats[s.id] || [])
+                    .filter(m => m.role === "user" || m.role === "them").slice(-8);
+                L.push(`《${s.name}》`);
+                lines.forEach(m => L.push((m.role === "user" ? "  나: " : `  ${s.name}: `) + m.text));
+            });
+            L.push("");
+        }
+
+        const unexplored = CASE.locations.filter(l => l.clues.some(c => !State.has(c)));
+        if (unexplored.length) {
+            L.push("[아직 더 뒤질 것이 남은 장소]");
+            L.push(unexplored.map(l => l.name).join(", "));
+            L.push("");
+        }
+        return L.join("\n");
+    },
+
+    systemPrompt() {
+        return `당신은 이 사건을 나와 함께 조사하는 동료다. 나는 국립현대미술관 학예연구사고, 당신은 내가 상의할 수 있는 유일한 사람이다.
+
+[가장 중요한 규칙]
+당신은 <b>범인이 누구인지 모른다.</b> 진짜로 모른다. 당신이 아는 것은 아래에 적힌, 내가 지금까지 직접 확보한 자료가 전부다. 그 밖의 사실을 지어내지 마라. 아직 찾지 못한 증거의 내용을 아는 척하지 마라.
+
+[당신이 하는 일]
+- 확보한 자료 안에서 <b>모순과 빈틈</b>을 짚는다. ("이 시각이 맞으면 저 진술이 안 맞는다")
+- 다음에 뭘 뒤지고 누구에게 뭘 물어야 할지 <b>구체적으로</b> 제안한다.
+- 내가 틀린 방향으로 가면 근거를 들어 반대한다. 동의만 하는 사람은 쓸모가 없다.
+- 확신이 없으면 없다고 말한다. "아마", "이것만으로는 모른다"를 쓴다.
+- 자료가 부족하면 단정하지 말고, 무엇이 더 있어야 말할 수 있는지 말한다.
+
+[말투]
+동료끼리 하는 반존대. 짧고 실무적으로. 3~6문장. 흥분하지 않고, 필요하면 목록으로 정리한다.
+소설 지문을 쓰지 마라. 게임이나 AI에 대한 메타 발언을 하지 마라.
+
+${this.brief()}`;
+    },
+
+    render() {
+        const box = document.getElementById("partner-log");
+        const log = State.partnerChat || (State.partnerChat = []);
+        box.innerHTML = log.map(m =>
+            m.role === "user"
+                ? `<div class="msg me">${Interrogate.esc(m.text)}</div>`
+                : `<div class="msg them">${Interrogate.esc(m.text)}</div>`
+        ).join("");
+        box.scrollTop = box.scrollHeight;
+
+        document.getElementById("partner-stat").textContent =
+            `증거 ${State.found.length}개 · ${State.clock()} 기준으로 함께 보는 중`;
+    },
+
+    async send(preset) {
+        if (this.busy) return;
+        const input = document.getElementById("partner-text");
+        const text = (preset || input.value || "").trim();
+        if (!text) return;
+        input.value = "";
+
+        const log = State.partnerChat || (State.partnerChat = []);
+        log.push({ role: "user", text });
+        State.save();
+        this.render();
+
+        this.busy = true;
+        document.getElementById("btn-partner-send").disabled = true;
+        input.disabled = true;
+
+        const box = document.getElementById("partner-log");
+        const el = document.createElement("div");
+        el.className = "msg them thinking";
+        el.textContent = "자료를 훑고 있다…";
+        box.appendChild(el);
+        box.scrollTop = box.scrollHeight;
+
+        try {
+            const history = log.slice(-10, -1)
+                .map(m => (m.role === "user" ? "나: " : "동료: ") + m.text).join("\n");
+
+            const prompt = this.systemPrompt() +
+                (history ? `\n\n[우리가 방금 나눈 말]\n${history}` : "") +
+                `\n\n──────────\n나: ${text}\n\n동료로서 대답하라. 대사만 출력한다.`;
+
+            let streamed = false;
+            const res = await AI.raw(prompt, t => {
+                streamed = true;
+                el.className = "msg them";
+                el.textContent = t;
+                box.scrollTop = box.scrollHeight;
+            });
+
+            el.className = "msg them";
+            if (streamed) el.textContent = res;
+            else await UI.type(el, res, 14);
+
+            log.push({ role: "them", text: res });
+            State.save();
+            Sync.push();
+        } catch (e) {
+            el.remove();
+            log.push({ role: "them", text: "⚠ " + AI.explain(e) });
+            State.save();
+            this.render();
+        } finally {
+            this.busy = false;
+            document.getElementById("btn-partner-send").disabled = false;
+            input.disabled = false;
+            input.focus();
+        }
+    }
+};
+
+
+// ============================================================
+// js/sync.js — 진행 기록을 아티팩트 DB에 올린다
+// 이걸 켜 두면 Claude가 대화 쪽에서 내 수사 진행을 읽고 같이 볼 수 있다.
+// DB를 못 쓰는 환경이면 조용히 꺼진다.
+// ============================================================
+
+const Sync = {
+    db: null,
+    runId: null,
+    dirty: false,
+    inflight: false,
+    timer: null,
+
+    async init() {
+        try {
+            if (!(typeof window !== "undefined" && window.claude && window.claude.use)) return false;
+            this.db = await window.claude.use("db");
+            if (!this.db) return false;
+        } catch (e) { return false; }
+
+        try {
+            this.runId = localStorage.getItem("seolyajang.run");
+        } catch (e) { /* 저장 불가 */ }
+        if (!this.runId) {
+            this.runId = "run-" + new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "") +
+                         "-" + Math.random().toString(36).slice(2, 6);
+            try { localStorage.setItem("seolyajang.run", this.runId); } catch (e) {}
+        }
+        this.push();
+        return true;
+    },
+
+    snapshot() {
+        const talked = {};
+        CASE.suspects.forEach(s => {
+            const lines = (State.chats[s.id] || []).filter(m => m.role === "user" || m.role === "them");
+            if (lines.length) {
+                talked[s.name] = lines.map(m => (m.role === "user" ? "나: " : s.name + ": ") + m.text);
+            }
+        });
+
+        return {
+            갱신시각: new Date().toISOString(),
+            게임내시각: State.clock(),
+            남은시간: State.remainText(),
+            증거: State.found.map(id => CASE.clues[id].name),
+            미발견: Object.keys(CASE.clues).filter(id => !State.has(id)).map(id => CASE.clues[id].name),
+            제시한증거: Object.fromEntries(Object.entries(State.presented || {})
+                .filter(([, v]) => v && v.length)
+                .map(([sid, v]) => [
+                    (CASE.suspects.find(s => s.id === sid) || {}).name || sid,
+                    v.map(c => CASE.clues[c].name)
+                ])),
+            심문: talked,
+            동행대화: (State.partnerChat || []).map(m => (m.role === "user" ? "나: " : "동료: ") + m.text),
+            배정훈자백: !!State.confessed,
+            종료: !!State.finished,
+            최종답변: State.finished ? State.answers : null
+        };
+    },
+
+    // 잦은 변경을 한 번의 쓰기로 모은다
+    push() {
+        if (!this.db) return;
+        this.dirty = true;
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => this._flush(), 1200);
+    },
+
+    async _flush() {
+        if (!this.db || !this.dirty || this.inflight) return;
+        this.inflight = true;
+        this.dirty = false;
+        try {
+            await this.db.doc("plays/" + this.runId).set(this.snapshot());
+        } catch (e) {
+            this.dirty = true;   // 다음 기회에 다시
+        } finally {
+            this.inflight = false;
+            if (this.dirty) setTimeout(() => this._flush(), 3000);
+        }
+    }
+};
+
+
+// ============================================================
 // js/notebook.js — 사건 수첩
 // ============================================================
 
@@ -2002,7 +2291,10 @@ function boot() {
 
     // AI 서버 확인
     const status = document.getElementById("ai-status");
+    Sync.init().then(ok => { if (ok) console.log("진행 기록 동기화 켜짐:", Sync.runId); });
+
     AI.probe().then(() => {
+        document.getElementById("tab-partner").hidden = !Partner.available();
         if (AI.mode === "sample") {
             status.className = "ai-status ok";
             status.innerHTML = `● 다섯 용의자를 Claude가 연기합니다 — 무엇이든 자유롭게 물어보십시오.`;
@@ -2047,6 +2339,15 @@ function boot() {
         if (e.key === "Enter" && !e.isComposing) Interrogate.send();
     });
     document.getElementById("btn-show-evidence").onclick = () => Interrogate.openEvidenceModal();
+
+    // 동행 수사
+    document.getElementById("btn-partner-send").onclick = () => Partner.send();
+    document.getElementById("partner-text").addEventListener("keydown", e => {
+        if (e.key === "Enter" && !e.isComposing) Partner.send();
+    });
+    document.querySelectorAll("#partner-chips .chip").forEach(b => {
+        b.onclick = () => Partner.send(b.dataset.ask);
+    });
     document.getElementById("btn-modal-close").onclick = () => { document.getElementById("modal-evidence").hidden = true; };
     document.getElementById("modal-evidence").onclick = e => {
         if (e.target.id === "modal-evidence") e.target.hidden = true;

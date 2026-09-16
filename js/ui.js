@@ -14,6 +14,7 @@ const UI = {
         document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
         document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + name));
         if (name === "notebook") Notebook.render();
+        if (name === "partner") Partner.render();
     },
 
     hud() {

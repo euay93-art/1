@@ -38,7 +38,10 @@ function boot() {
 
     // AI 서버 확인
     const status = document.getElementById("ai-status");
+    Sync.init().then(ok => { if (ok) console.log("진행 기록 동기화 켜짐:", Sync.runId); });
+
     AI.probe().then(() => {
+        document.getElementById("tab-partner").hidden = !Partner.available();
         if (AI.mode === "sample") {
             status.className = "ai-status ok";
             status.innerHTML = `● 다섯 용의자를 Claude가 연기합니다 — 무엇이든 자유롭게 물어보십시오.`;
@@ -83,6 +86,15 @@ function boot() {
         if (e.key === "Enter" && !e.isComposing) Interrogate.send();
     });
     document.getElementById("btn-show-evidence").onclick = () => Interrogate.openEvidenceModal();
+
+    // 동행 수사
+    document.getElementById("btn-partner-send").onclick = () => Partner.send();
+    document.getElementById("partner-text").addEventListener("keydown", e => {
+        if (e.key === "Enter" && !e.isComposing) Partner.send();
+    });
+    document.querySelectorAll("#partner-chips .chip").forEach(b => {
+        b.onclick = () => Partner.send(b.dataset.ask);
+    });
     document.getElementById("btn-modal-close").onclick = () => { document.getElementById("modal-evidence").hidden = true; };
     document.getElementById("modal-evidence").onclick = e => {
         if (e.target.id === "modal-evidence") e.target.hidden = true;
