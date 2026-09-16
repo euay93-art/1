@@ -54,7 +54,6 @@ const Sync = {
                 ])),
             심문: talked,
             동행대화: (State.partnerChat || []).map(m => (m.role === "user" ? "나: " : "동료: ") + m.text),
-            무전함: "radio/" + this.runId + " (Claude가 쓰는 곳) / radio/" + this.runId + "-me (플레이어가 쓰는 곳)",
             배정훈자백: !!State.confessed,
             종료: !!State.finished,
             최종답변: State.finished ? State.answers : null
@@ -63,8 +62,9 @@ const Sync = {
 
     // ── 무전 ────────────────────────────────────────────
     // 문서를 둘로 나눠 한쪽만 쓴다. 덮어쓸 일이 없다.
-    //   radio/<run>      ← Claude 가 대화창에서 쓴다 (페이지는 읽기만)
-    //   radio/<run>-me   ← 플레이어가 쓴다 (Claude 가 읽기만)
+    //   radio/claude   ← Claude 가 대화창에서 쓴다 (페이지는 읽기만)
+    //   radio/player   ← 플레이어가 쓴다 (Claude 가 읽기만)
+    // 진행과 무관한 고정 채널이라 게임을 새로 시작해도 대화가 이어진다.
     mine: [],
     theirs: [],
 
@@ -72,7 +72,16 @@ const Sync = {
         if (!this.db) return;
         this._onRadio = onChange;
         try {
-            this.db.doc("radio/" + this.runId).onSnapshot(
+            this.db.doc("radio/player").onSnapshot(
+                snap => {
+                    const d = snap.exists ? snap.data() : null;
+                    const list = (d && Array.isArray(d.msgs)) ? d.msgs : [];
+                    if (list.length >= this.mine.length) this.mine = list;
+                    if (this._onRadio) this._onRadio();
+                },
+                () => {}
+            );
+            this.db.doc("radio/claude").onSnapshot(
                 snap => {
                     const d = snap.exists ? snap.data() : null;
                     this.theirs = (d && Array.isArray(d.msgs)) ? d.msgs : [];
@@ -94,7 +103,7 @@ const Sync = {
         if (!this.db) throw new Error("무전을 쓸 수 없는 화면입니다.");
         this.mine.push({ text, at: new Date().toISOString() });
         if (this.mine.length > 80) this.mine = this.mine.slice(-80);
-        await this.db.doc("radio/" + this.runId + "-me").set({
+        await this.db.doc("radio/player").set({
             msgs: this.mine,
             갱신시각: new Date().toISOString(),
             증거수: State.found.length,

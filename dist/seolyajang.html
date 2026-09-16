@@ -345,6 +345,40 @@ i { color: var(--ink-dim); }
   font-family: var(--display); font-size: 15px; margin: 0 0 8px; color: var(--gold-soft); }
 .sol-block p { margin: 0; color: var(--ink-dim); font-size: 14.5px; line-height: 1.95; }
 
+/* ── 관제실 ──────────────────────────────────────────── */
+.btn-watch { margin-top: 20px; }
+.watch-wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 60px; }
+.watch-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.watch-head h1 { font-family: var(--display); font-size: 26px; margin: 0; }
+.watch-sub { color: var(--ink-dim); font-size: 13.5px; margin: 6px 0 0; }
+.live {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: #6fd39a; margin-right: 6px; vertical-align: middle;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .live { animation: none; } }
+
+.watch-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.watch-col { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+.watch-col h3 { font-family: var(--display); margin: 0 0 12px; font-size: 18px; }
+.watch-col h4 { font-size: 12px; color: var(--gold); letter-spacing: .1em; margin: 18px 0 8px; }
+.watch-meta { display: flex; align-items: baseline; gap: 12px; color: var(--ink-dim); font-size: 12.5px; }
+.watch-clock { font-size: 22px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.watch-bar { height: 5px; background: var(--bg-2); border-radius: 99px; overflow: hidden; margin: 12px 0 8px; }
+.watch-bar i { display: block; height: 100%; background: linear-gradient(90deg, #a8851b, var(--gold-soft)); transition: width .4s ease; }
+.watch-count { font-size: 13px; color: var(--ink-dim); }
+.watch-flag { color: #e59a9a; }
+.watch-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+.watch-chip { font-size: 11.5px; border: 1px solid var(--line); border-radius: 99px; padding: 2px 9px; color: var(--ink-dim); }
+.watch-talk { border-left: 2px solid var(--line); padding-left: 10px; margin-bottom: 10px; }
+.watch-talk b { font-size: 13px; }
+.watch-line { font-size: 12.8px; color: var(--ink-dim); margin-top: 3px; }
+
+.watch-radio { margin-top: 24px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+.watch-radio h3 { font-family: var(--display); margin: 0 0 12px; font-size: 17px; }
+.watch-radio .chat-log { min-height: 140px; max-height: 34vh; }
+
 /* ── 모달 / 토스트 ───────────────────────────────────── */
 .modal {
   position: fixed; inset: 0; z-index: 90;
@@ -406,6 +440,7 @@ html, body { height: 100%; }
       <button class="btn btn-primary" id="btn-start">조사를 시작한다</button>
       <button class="btn btn-ghost" id="btn-continue" hidden>이어서 하기</button>
     </div>
+    <button class="btn btn-ghost btn-small btn-watch" id="btn-watch">📡 관제실 — 창 하나 더 열어 같이 보기</button>
     <div class="ai-status" id="ai-status">용의자 AI 연결 확인 중…</div>
   </div>
 </section>
@@ -536,6 +571,30 @@ html, body { height: 100%; }
       <div class="nb-body" id="nb-body"></div>
     </div>
   </main>
+</section>
+
+<!-- ── 관제실 ───────────────────────────────────────────── -->
+<section class="screen" id="screen-watch">
+  <div class="watch-wrap">
+    <header class="watch-head">
+      <div>
+        <h1>📡 관제실</h1>
+        <p class="watch-sub"><span class="live"></span> 두 사람의 수사가 실시간으로 갱신됩니다. 게임 창 옆에 띄워 두십시오.</p>
+      </div>
+      <button class="btn btn-ghost btn-small" id="btn-watch-back">← 게임으로</button>
+    </header>
+
+    <div class="watch-grid" id="watch-body"></div>
+
+    <div class="watch-radio">
+      <h3>📻 무전</h3>
+      <div class="chat-log" id="watch-radio-log"></div>
+      <div class="chat-input">
+        <input type="text" id="watch-radio-text" placeholder="대화창의 Claude에게…" autocomplete="off">
+        <button class="btn btn-primary" id="btn-watch-radio-send">보내기</button>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ── 최종 추리 ────────────────────────────────────────── -->
@@ -2173,7 +2232,6 @@ const Sync = {
                 ])),
             심문: talked,
             동행대화: (State.partnerChat || []).map(m => (m.role === "user" ? "나: " : "동료: ") + m.text),
-            무전함: "radio/" + this.runId + " (Claude가 쓰는 곳) / radio/" + this.runId + "-me (플레이어가 쓰는 곳)",
             배정훈자백: !!State.confessed,
             종료: !!State.finished,
             최종답변: State.finished ? State.answers : null
@@ -2182,8 +2240,9 @@ const Sync = {
 
     // ── 무전 ────────────────────────────────────────────
     // 문서를 둘로 나눠 한쪽만 쓴다. 덮어쓸 일이 없다.
-    //   radio/<run>      ← Claude 가 대화창에서 쓴다 (페이지는 읽기만)
-    //   radio/<run>-me   ← 플레이어가 쓴다 (Claude 가 읽기만)
+    //   radio/claude   ← Claude 가 대화창에서 쓴다 (페이지는 읽기만)
+    //   radio/player   ← 플레이어가 쓴다 (Claude 가 읽기만)
+    // 진행과 무관한 고정 채널이라 게임을 새로 시작해도 대화가 이어진다.
     mine: [],
     theirs: [],
 
@@ -2191,7 +2250,16 @@ const Sync = {
         if (!this.db) return;
         this._onRadio = onChange;
         try {
-            this.db.doc("radio/" + this.runId).onSnapshot(
+            this.db.doc("radio/player").onSnapshot(
+                snap => {
+                    const d = snap.exists ? snap.data() : null;
+                    const list = (d && Array.isArray(d.msgs)) ? d.msgs : [];
+                    if (list.length >= this.mine.length) this.mine = list;
+                    if (this._onRadio) this._onRadio();
+                },
+                () => {}
+            );
+            this.db.doc("radio/claude").onSnapshot(
                 snap => {
                     const d = snap.exists ? snap.data() : null;
                     this.theirs = (d && Array.isArray(d.msgs)) ? d.msgs : [];
@@ -2213,7 +2281,7 @@ const Sync = {
         if (!this.db) throw new Error("무전을 쓸 수 없는 화면입니다.");
         this.mine.push({ text, at: new Date().toISOString() });
         if (this.mine.length > 80) this.mine = this.mine.slice(-80);
-        await this.db.doc("radio/" + this.runId + "-me").set({
+        await this.db.doc("radio/player").set({
             msgs: this.mine,
             갱신시각: new Date().toISOString(),
             증거수: State.found.length,
@@ -2241,6 +2309,116 @@ const Sync = {
             this.inflight = false;
             if (this.dirty) setTimeout(() => this._flush(), 3000);
         }
+    }
+};
+
+
+// ============================================================
+// js/watch.js — 관제실
+// 같은 링크를 창 하나 더 열어 게임 옆에 띄워 두는 화면.
+// 내 수사와 상대 수사가 한 화면에서 실시간으로 갱신된다.
+// ============================================================
+
+const Watch = {
+    runs: {},
+    started: false,
+
+    async open() {
+        UI.show("watch");
+        if (this.started) return;
+        this.started = true;
+
+        if (!Sync.db) {
+            await Sync.init();
+        }
+        if (!Sync.db) {
+            document.getElementById("watch-body").innerHTML =
+                `<p class="nb-empty">이 화면에서는 실시간 연결을 쓸 수 없습니다. 배포된 링크로 열어야 합니다.</p>`;
+            return;
+        }
+
+        // 진행 상황 — 한 번만 구독한다
+        try {
+            Sync.db.collection("plays").onSnapshot(
+                snap => {
+                    this.runs = {};
+                    snap.docs.forEach(d => { this.runs[d.id] = d.data(); });
+                    this.render();
+                },
+                () => { UI.toast("진행 상황 연결이 끊겼습니다.", 3000); }
+            );
+        } catch (e) { /* 경로 오류 */ }
+
+        Sync.watchRadio(() => this.renderRadio());
+        this.render();
+        this.renderRadio();
+    },
+
+    // 가장 최근에 갱신된 것을 고른다
+    pick(mine) {
+        const entries = Object.entries(this.runs)
+            .filter(([id]) => (id.indexOf("claude") === 0) === mine)
+            .sort((a, b) => String(b[1].갱신시각 || "").localeCompare(String(a[1].갱신시각 || "")));
+        return entries.length ? entries[0][1] : null;
+    },
+
+    card(title, face, r) {
+        if (!r) {
+            return `<div class="watch-col">
+                <h3>${face} ${title}</h3>
+                <p class="nb-empty">아직 조사를 시작하지 않았습니다.</p>
+            </div>`;
+        }
+        const total = Object.keys(CASE.clues).length;
+        const got = (r.증거 || []).length;
+        const pct = Math.round(got / total * 100);
+
+        const talks = Object.entries(r.심문 || {});
+        const recent = talks.map(([who, lines]) => {
+            const tail = lines.slice(-2).map(l => `<div class="watch-line">${Interrogate.esc(l)}</div>`).join("");
+            return `<div class="watch-talk"><b>${Interrogate.esc(who)}</b>${tail}</div>`;
+        }).join("");
+
+        return `<div class="watch-col">
+            <h3>${face} ${title}</h3>
+            <div class="watch-meta">
+                <span class="watch-clock">${r.게임내시각 || "--:--"}</span>
+                <span>${r.남은시간 || ""}</span>
+            </div>
+            <div class="watch-bar"><i style="width:${pct}%"></i></div>
+            <div class="watch-count">증거 ${got} / ${total}${r.배정훈자백 ? ' · <b class="watch-flag">배정훈 자백</b>' : ""}${r.종료 ? " · 종료" : ""}</div>
+            <div class="watch-chips">${(r.증거 || []).map(n => `<span class="watch-chip">${Interrogate.esc(n)}</span>`).join("") || '<span class="nb-empty">아직 없음</span>'}</div>
+            ${recent ? `<h4>최근 심문</h4>${recent}` : ""}
+        </div>`;
+    },
+
+    render() {
+        const box = document.getElementById("watch-body");
+        if (!box || !Sync.db) return;
+        box.innerHTML =
+            this.card("Claude", "🕵️", this.pick(true)) +
+            this.card("당신", "🔍", this.pick(false));
+    },
+
+    renderRadio() {
+        const box = document.getElementById("watch-radio-log");
+        if (!box) return;
+        const log = Sync.radioLog();
+        box.innerHTML = log.length
+            ? log.map(m => m.from === "me"
+                ? `<div class="msg me">${Interrogate.esc(m.text)}</div>`
+                : `<div class="msg them radio">${Interrogate.esc(m.text)}</div>`).join("")
+            : `<div class="msg system">아직 주고받은 무전이 없습니다.</div>`;
+        box.scrollTop = box.scrollHeight;
+    },
+
+    async say() {
+        const input = document.getElementById("watch-radio-text");
+        const text = (input.value || "").trim();
+        if (!text) return;
+        input.value = "";
+        try { await Sync.sayRadio(text); this.renderRadio(); }
+        catch (e) { UI.toast("무전을 보내지 못했습니다.", 3000); }
     }
 };
 
@@ -2458,6 +2636,12 @@ function boot() {
         showPrologue(0);
     };
     document.getElementById("btn-continue").onclick = () => startGame();
+    document.getElementById("btn-watch").onclick = () => Watch.open();
+    document.getElementById("btn-watch-back").onclick = () => UI.show(State.started ? "game" : "title");
+    document.getElementById("btn-watch-radio-send").onclick = () => Watch.say();
+    document.getElementById("watch-radio-text").addEventListener("keydown", e => {
+        if (e.key === "Enter" && !e.isComposing) Watch.say();
+    });
 
     // 프롤로그
     document.getElementById("btn-prologue-next").onclick = () => showPrologue(++prologueIndex);

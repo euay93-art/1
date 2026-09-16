@@ -57,7 +57,7 @@ const body = html
 const scripts = [
     "js/case.js", "js/state.js", "js/ui.js", "js/ai.js",
     "js/investigate.js", "js/interrogate.js", "js/partner.js",
-    "js/sync.js", "js/notebook.js",
+    "js/sync.js", "js/watch.js", "js/notebook.js",
     "js/accuse.js", "js/main.js"
 ].map(read).join("\n\n");
 

@@ -30,6 +30,7 @@
       <button class="btn btn-primary" id="btn-start">조사를 시작한다</button>
       <button class="btn btn-ghost" id="btn-continue" hidden>이어서 하기</button>
     </div>
+    <button class="btn btn-ghost btn-small btn-watch" id="btn-watch">📡 관제실 — 창 하나 더 열어 같이 보기</button>
     <div class="ai-status" id="ai-status">용의자 AI 연결 확인 중…</div>
   </div>
 </section>
@@ -162,6 +163,30 @@
   </main>
 </section>
 
+<!-- ── 관제실 ───────────────────────────────────────────── -->
+<section class="screen" id="screen-watch">
+  <div class="watch-wrap">
+    <header class="watch-head">
+      <div>
+        <h1>📡 관제실</h1>
+        <p class="watch-sub"><span class="live"></span> 두 사람의 수사가 실시간으로 갱신됩니다. 게임 창 옆에 띄워 두십시오.</p>
+      </div>
+      <button class="btn btn-ghost btn-small" id="btn-watch-back">← 게임으로</button>
+    </header>
+
+    <div class="watch-grid" id="watch-body"></div>
+
+    <div class="watch-radio">
+      <h3>📻 무전</h3>
+      <div class="chat-log" id="watch-radio-log"></div>
+      <div class="chat-input">
+        <input type="text" id="watch-radio-text" placeholder="대화창의 Claude에게…" autocomplete="off">
+        <button class="btn btn-primary" id="btn-watch-radio-send">보내기</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── 최종 추리 ────────────────────────────────────────── -->
 <section class="screen" id="screen-accuse">
   <div class="accuse-wrap">
@@ -212,6 +237,7 @@
 <script src="js/interrogate.js"></script>
 <script src="js/partner.js"></script>
 <script src="js/sync.js"></script>
+<script src="js/watch.js"></script>
 <script src="js/notebook.js"></script>
 <script src="js/accuse.js"></script>
 <script src="js/main.js"></script>

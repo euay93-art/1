@@ -64,6 +64,12 @@ function boot() {
         showPrologue(0);
     };
     document.getElementById("btn-continue").onclick = () => startGame();
+    document.getElementById("btn-watch").onclick = () => Watch.open();
+    document.getElementById("btn-watch-back").onclick = () => UI.show(State.started ? "game" : "title");
+    document.getElementById("btn-watch-radio-send").onclick = () => Watch.say();
+    document.getElementById("watch-radio-text").addEventListener("keydown", e => {
+        if (e.key === "Enter" && !e.isComposing) Watch.say();
+    });
 
     // 프롤로그
     document.getElementById("btn-prologue-next").onclick = () => showPrologue(++prologueIndex);
