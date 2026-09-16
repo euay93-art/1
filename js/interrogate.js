@@ -112,6 +112,10 @@ const Interrogate = {
 
         if (!AI.online) return this.offlineReply(text);
 
+        // 대화 상대를 지금 못 박는다. 기다리는 사이 화면을 옮겨도 답은 이 사람 것이다.
+        const who = this.current;
+        const mine = () => this.current === who;
+
         this.push("user", text || "이건 어떻게 설명하시겠습니까?");
         this.busy = true;
         this.setBusy(true);
@@ -125,7 +129,7 @@ const Interrogate = {
 
         let el = null, streamed = false;
         const stream = t => {
-            if (!t) return;
+            if (!t || !mine()) return;
             if (!el) {
                 wait.remove();
                 el = document.createElement("div");
@@ -138,11 +142,23 @@ const Interrogate = {
         };
 
         try {
-            const res = await AI.ask(this.current.id, text, showing, stream);
+            const res = await AI.ask(who.id, text, showing, stream);
             wait.remove();
 
             State.spend();
             UI.hud();
+
+            State.chatFor(who.id).push({ role: "them", text: res.text, confess: res.confessed });
+            if (res.confessed && !State.confessed) {
+                State.confessed = true;
+                UI.toast(who.name + "이(가) 무너졌다. 최종 추리를 진술할 수 있다.", 5000);
+            }
+            State.save();
+
+            if (!mine()) {                       // 이미 다른 사람을 보고 있다
+                UI.toast(who.name + "의 답이 도착했다. 심문 기록에 남겨 두었다.", 3500);
+                return;
+            }
 
             if (!el) {
                 el = document.createElement("div");
@@ -153,17 +169,12 @@ const Interrogate = {
             if (streamed) { el.textContent = res.text; box.scrollTop = box.scrollHeight; }
             else await UI.type(el, res.text, 15);
 
-            State.chatFor(this.current.id).push({ role: "them", text: res.text, confess: res.confessed });
-            if (res.confessed && !State.confessed) {
-                State.confessed = true;
-                UI.toast("배정훈이 무너졌다. 최종 추리를 진술할 수 있다.", 5000);
-            }
-            State.save();
             this.renderChips();
             if (State.timeUp()) setTimeout(() => Accuse.forceEnd(), 1500);
         } catch (e) {
             wait.remove();
             if (el) el.remove();
+            if (!mine()) { UI.toast(who.name + "의 답을 받지 못했다.", 3000); return; }
             this.push("system", "⚠ " + AI.explain(e));
             if (!e || e.code !== "rate_limited") {
                 AI.mode = "offline";
@@ -172,7 +183,10 @@ const Interrogate = {
             this.renderChips();
         } finally {
             this.busy = false;
-            this.setBusy(false);
+            if (mine()) this.setBusy(false);
+            else { document.getElementById("btn-chat-send").disabled = false;
+                   document.getElementById("btn-show-evidence").disabled = false;
+                   document.getElementById("chat-text").disabled = false; }
         }
     },
 

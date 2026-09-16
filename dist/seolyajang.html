@@ -1339,13 +1339,48 @@ const State = {
         } catch (e) { /* 사생활 보호 모드 등 — 저장 없이 진행 */ }
     },
 
+    // 저장 내용은 믿지 않는다. 손상됐거나 옛 판본이어도 게임이 서야 한다.
     load() {
         try {
             const raw = localStorage.getItem(SAVE_KEY);
             if (!raw) return false;
             const d = JSON.parse(raw);
-            if (!d || !d.started) return false;
-            Object.assign(this, d);
+            if (!d || d.started !== true) return false;
+
+            const clueIds = Object.keys(CASE.clues);
+            const suspectIds = CASE.suspects.map(s => s.id);
+            const topicIds = [];
+            CASE.suspects.forEach(s => (s.topics || []).forEach(t => topicIds.push(t.id)));
+
+            const clamp = (v, lo, hi, dflt) =>
+                (typeof v === "number" && isFinite(v)) ? Math.min(hi, Math.max(lo, v)) : dflt;
+            const known = (v, allow) =>
+                Array.isArray(v) ? v.filter(x => allow.indexOf(x) !== -1) : [];
+            const plain = v => (v && typeof v === "object" && !Array.isArray(v)) ? v : {};
+
+            this.started = true;
+            this.minute = clamp(d.minute, CASE.meta.startMinute, CASE.meta.endMinute, CASE.meta.startMinute);
+            this.found = known(d.found, clueIds);
+            this.asked = known(d.asked, topicIds);
+            this.confessed = !!d.confessed;
+            this.finished = !!d.finished;
+
+            const pres = plain(d.presented);
+            this.presented = {};
+            suspectIds.forEach(id => { this.presented[id] = known(pres[id], clueIds); });
+
+            const ch = plain(d.chats);
+            this.chats = {};
+            suspectIds.forEach(id => {
+                this.chats[id] = Array.isArray(ch[id])
+                    ? ch[id].filter(m => m && typeof m.role === "string" && typeof m.text === "string")
+                    : [];
+            });
+
+            const ans = plain(d.answers);
+            this.answers = {};
+            CASE.quiz.forEach(q => { if (typeof ans[q.id] === "number") this.answers[q.id] = ans[q.id]; });
+
             return true;
         } catch (e) { return false; }
     },
@@ -1718,6 +1753,10 @@ const Interrogate = {
 
         if (!AI.online) return this.offlineReply(text);
 
+        // 대화 상대를 지금 못 박는다. 기다리는 사이 화면을 옮겨도 답은 이 사람 것이다.
+        const who = this.current;
+        const mine = () => this.current === who;
+
         this.push("user", text || "이건 어떻게 설명하시겠습니까?");
         this.busy = true;
         this.setBusy(true);
@@ -1731,7 +1770,7 @@ const Interrogate = {
 
         let el = null, streamed = false;
         const stream = t => {
-            if (!t) return;
+            if (!t || !mine()) return;
             if (!el) {
                 wait.remove();
                 el = document.createElement("div");
@@ -1744,11 +1783,23 @@ const Interrogate = {
         };
 
         try {
-            const res = await AI.ask(this.current.id, text, showing, stream);
+            const res = await AI.ask(who.id, text, showing, stream);
             wait.remove();
 
             State.spend();
             UI.hud();
+
+            State.chatFor(who.id).push({ role: "them", text: res.text, confess: res.confessed });
+            if (res.confessed && !State.confessed) {
+                State.confessed = true;
+                UI.toast(who.name + "이(가) 무너졌다. 최종 추리를 진술할 수 있다.", 5000);
+            }
+            State.save();
+
+            if (!mine()) {                       // 이미 다른 사람을 보고 있다
+                UI.toast(who.name + "의 답이 도착했다. 심문 기록에 남겨 두었다.", 3500);
+                return;
+            }
 
             if (!el) {
                 el = document.createElement("div");
@@ -1759,17 +1810,12 @@ const Interrogate = {
             if (streamed) { el.textContent = res.text; box.scrollTop = box.scrollHeight; }
             else await UI.type(el, res.text, 15);
 
-            State.chatFor(this.current.id).push({ role: "them", text: res.text, confess: res.confessed });
-            if (res.confessed && !State.confessed) {
-                State.confessed = true;
-                UI.toast("배정훈이 무너졌다. 최종 추리를 진술할 수 있다.", 5000);
-            }
-            State.save();
             this.renderChips();
             if (State.timeUp()) setTimeout(() => Accuse.forceEnd(), 1500);
         } catch (e) {
             wait.remove();
             if (el) el.remove();
+            if (!mine()) { UI.toast(who.name + "의 답을 받지 못했다.", 3000); return; }
             this.push("system", "⚠ " + AI.explain(e));
             if (!e || e.code !== "rate_limited") {
                 AI.mode = "offline";
@@ -1778,7 +1824,10 @@ const Interrogate = {
             this.renderChips();
         } finally {
             this.busy = false;
-            this.setBusy(false);
+            if (mine()) this.setBusy(false);
+            else { document.getElementById("btn-chat-send").disabled = false;
+                   document.getElementById("btn-show-evidence").disabled = false;
+                   document.getElementById("chat-text").disabled = false; }
         }
     },
 

@@ -70,13 +70,48 @@ const State = {
         } catch (e) { /* 사생활 보호 모드 등 — 저장 없이 진행 */ }
     },
 
+    // 저장 내용은 믿지 않는다. 손상됐거나 옛 판본이어도 게임이 서야 한다.
     load() {
         try {
             const raw = localStorage.getItem(SAVE_KEY);
             if (!raw) return false;
             const d = JSON.parse(raw);
-            if (!d || !d.started) return false;
-            Object.assign(this, d);
+            if (!d || d.started !== true) return false;
+
+            const clueIds = Object.keys(CASE.clues);
+            const suspectIds = CASE.suspects.map(s => s.id);
+            const topicIds = [];
+            CASE.suspects.forEach(s => (s.topics || []).forEach(t => topicIds.push(t.id)));
+
+            const clamp = (v, lo, hi, dflt) =>
+                (typeof v === "number" && isFinite(v)) ? Math.min(hi, Math.max(lo, v)) : dflt;
+            const known = (v, allow) =>
+                Array.isArray(v) ? v.filter(x => allow.indexOf(x) !== -1) : [];
+            const plain = v => (v && typeof v === "object" && !Array.isArray(v)) ? v : {};
+
+            this.started = true;
+            this.minute = clamp(d.minute, CASE.meta.startMinute, CASE.meta.endMinute, CASE.meta.startMinute);
+            this.found = known(d.found, clueIds);
+            this.asked = known(d.asked, topicIds);
+            this.confessed = !!d.confessed;
+            this.finished = !!d.finished;
+
+            const pres = plain(d.presented);
+            this.presented = {};
+            suspectIds.forEach(id => { this.presented[id] = known(pres[id], clueIds); });
+
+            const ch = plain(d.chats);
+            this.chats = {};
+            suspectIds.forEach(id => {
+                this.chats[id] = Array.isArray(ch[id])
+                    ? ch[id].filter(m => m && typeof m.role === "string" && typeof m.text === "string")
+                    : [];
+            });
+
+            const ans = plain(d.answers);
+            this.answers = {};
+            CASE.quiz.forEach(q => { if (typeof ans[q.id] === "number") this.answers[q.id] = ans[q.id]; });
+
             return true;
         } catch (e) { return false; }
     },
