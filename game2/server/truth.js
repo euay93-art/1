@@ -31,7 +31,7 @@ const SETTING = {
 // mark  : 이 일이 세상에 남긴 흔적 = 단서 후보
 const TIMELINE = [
     { when: "3월 9일 낮", what: "포목점 심부름꾼이 감찰 단속에 걸려 못 쓰게 됐다. 행상이 그 소식을 계주에게 물어다 줬다.",
-      by: ["peddler"], mark: ["c_replacement"] },
+      by: ["peddler"], mark: ["c_replacement", "c_draper_word"] },
     { when: "3월 9일 저녁", what: "계주가 운반책을 이선화로 바꿨다. 침모에게 치수를 일렀다.",
       by: ["peddler", "seamstress"], grants: ["F1_who"], mark: ["c_replacement", "c_uniform"] },
     { when: "3월 10일 낮", what: "계주가 기생더러 요정 앞을 지나는 아이 얼굴을 익혀두라 했다. 급한 전갈을 넘길 자리가 거기뿐이라.",
@@ -43,7 +43,7 @@ const TIMELINE = [
     { when: "3월 12일 두 시부터 세 시 반", what: "모임이 끝나고 인쇄가 등사판을 돌렸다. 밤에 대려면 그 시간뿐이었다.",
       by: ["printer"], mark: ["c_ink_dates"] },
     { when: "3월 12일 오후 네 시", what: "침모가 교복 저고리 안감을 뜯고 종이를 넣고 다시 꿰맸다. 인쇄가 종이를 접어 건넸고, 행상이 실패를 가져다주러 들렀다가 보았다.",
-      by: ["seamstress", "printer", "peddler"], grants: ["F4_how"], mark: ["c_sewing_room", "c_uniform"] },
+      by: ["seamstress", "printer", "peddler"], grants: ["F4_how"], mark: ["c_sewing_room", "c_uniform", "c_spool"] },
     { when: "3월 12일 네 시 반", what: "침모가 침선방을 닫고 집으로 갔다.", by: ["seamstress"], mark: ["c_sewing_room"] },
     { when: "3월 12일 다섯 시", what: "인쇄가 등사실로 돌아가 밤까지 있었다. 잉크를 갈고 판을 닦았다.",
       by: ["printer"], mark: ["c_ink_dates"] },

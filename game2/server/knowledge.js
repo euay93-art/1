@@ -125,13 +125,13 @@ const KNEW = {
     // 행상 — 하루 종일 길 위에 있다. 모든 자리를 스쳐 지나간다.
     peddler: {
         F1_who:   { knew: true,  how: "포목점이 끊긴 것을 계주에게 알린 사람이 본인이다. 그래서 아이로 바뀌었고, 바뀌는 자리에 있었다.",
-                    proof: ["c_replacement", "talk:gyeju"] },
+                    proof: ["c_replacement", "c_draper_word", "talk:gyeju"] },
         F2_when:  { knew: true,  how: "그날 낮 계 모임에 있었다.",
                     proof: ["c_meeting_note", "talk:gyeju"] },
         F3_where: { knew: true,  how: "길을 바꾸자고 한 사람이 본인이다. 그 길이 조용하다고 했다.",
-                    proof: ["c_map_marks", "talk:gyeju"] },
+                    proof: ["c_map_marks", "talk:gyeju", "talk:peddler"] },
         F4_how:   { knew: true,  how: "침선방에 물건을 가져다주러 들렀다가 꿰매는 것을 보았다.",
-                    proof: ["c_sewing_room", "talk:seamstress"] }
+                    proof: ["c_sewing_room", "c_spool", "talk:seamstress"] }
     }
 };
 
