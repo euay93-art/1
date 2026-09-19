@@ -2,560 +2,513 @@
 
 7명 × 표정 5개 + 사진 1장 = **36장**.
 
-각 항목은 그대로 복사해 붙이면 되는 완성된 프롬프트다. 한 인물의 다섯 장은 **고정 블록이 글자 단위로 동일**하고 표정 문장만 다르다 — 그래야 다섯 장이 같은 사람으로 나온다.
+각 항목은 그대로 복사해 붙이면 되는 완성된 프롬프트다. 한 인물의 다섯 장은 **고정 블록이 글자 단위로 동일**하고 표정 문단만 다르다 — 그래야 다섯 장이 같은 사람으로 나온다.
+
+> 이 파일은 `node prompts/make.mjs` 로 찍어낸다. 고치려면 `make.mjs` 를 고치고 다시 돌린다.
 
 ---
 
 ## 먼저 읽을 것
 
-**순서**: 일곱 명의 `평상`부터 한 장씩 뽑아 나란히 놓고 **누가 누군지 바로 구별되는지** 확인한다. 통과하면 각 인물의 확정된 그 한 장을 **스타일 참조로 걸고** 나머지 네 표정을 뽑는다. 참조를 안 걸면 다섯 장이 다섯 사람이 된다.
+**결**: 어둡고 거친 그림이 아니라 **잘 만든 시대극 포스터**다. 빛은 따뜻하고 부드럽게, 살결은 맑게, 색은 깊되 탁하지 않게. 시대는 옷과 머리로 드러내고, 얼굴은 곱게 간다.
 
-**크롭**: 일곱 명 전부 같은 높이, 같은 거리, 가슴 위까지. 표정이 바뀔 때 얼굴이 튀면 안 된다.
+**순서**: 일곱 명의 `평상`부터 한 장씩 뽑아 나란히 놓고 **누가 누군지 바로 구별되는지** 본다. 통과하면 그 한 장을 **스타일 참조로 걸고** 나머지 네 표정을 뽑는다. 참조를 안 걸면 다섯 장이 다섯 사람이 된다.
+
+**크롭**: 일곱 명 전부 같은 높이, 같은 거리, 가슴 위까지. 표정이 바뀔 때 얼굴 크기가 튀면 안 된다.
 
 **한 인물 안에서는 옷·머리·조명이 완전히 고정**이다. 바뀌는 것은 얼굴뿐이다.
 
 **비율 3:4 세로 · 800×1067 이상 · 최종 WebP 80~120KB**
 
-
 ### 네거티브 프롬프트 (전부 공통)
 
 ```
-painted style breaking into photorealism, 3D render, glossy skin, anime, cartoon,
-chibi, doll-like, plastic, HDR, neon, bright saturated colours, modern clothing,
-modern hairstyle, modern makeup, Chinese hanfu, Japanese kimono, text, letters,
-watermark, signature, extra fingers, deformed hands, multiple people, full body,
-busy background, props, furniture
+harsh lighting, grim, gritty, muddy or desaturated colours, rough unfinished brushwork,
+wrinkles, blemishes, dirt, scars, gaunt or sickly face, unflattering angle, 3D render,
+plastic or glossy skin, anime, cartoon, chibi, doll-like, HDR, neon, modern clothing,
+modern hairstyle, Chinese hanfu, Japanese kimono, text, letters, watermark, signature,
+extra fingers, deformed hands, multiple people, full body, busy background, clutter
 ```
 
 ---
 
-
 # 기생
 
-> 고정 사항 — 다섯 장 내내 바뀌지 않는다. `gisaeng_평상.webp` 처럼 저장.
-
+> 가장 화려하다. 일곱 중 눈에 먼저 들어와야 한다. 다섯 장 내내 옷·머리·빛은 그대로다. `gisaeng_평상.webp` 처럼 저장.
 
 ### 기생 평상
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-three. Her black hair is dressed in a high traditional teureo-meori updo held by a single silver binyeo pin; small jade earrings. Fine silk hanbok: a pale blush-pink jeogori jacket with deep jade-green ties, over a deep jade skirt. Her face is powdered pale, her lips painted a muted red. She is the most ornate of the group — and the most practised.
+A strikingly beautiful young Korean woman of twenty-three, with luminous porcelain skin, large clear dark eyes, and a small softly curved mouth painted deep rose. Glossy black hair dressed in a high traditional teureo-meori updo held by a slender silver binyeo pin; small jade earrings catching the light. Fine silk hanbok — a pale blush-pink jeogori with deep jade-green ties, over a jade-green skirt, the silk softly sheened. She is the most ornate and the most practised of the group.
 
-Composed and still, looking straight at the viewer. Lips closed in the faint shape of a smile that her eyes do not join. This is the face she wears at work.
+Composed and still, looking straight at the viewer, lips closed in the faint shape of a smile that her eyes do not join. This is the face she wears at work.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 기생 슬픔
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-three. Her black hair is dressed in a high traditional teureo-meori updo held by a single silver binyeo pin; small jade earrings. Fine silk hanbok: a pale blush-pink jeogori jacket with deep jade-green ties, over a deep jade skirt. Her face is powdered pale, her lips painted a muted red. She is the most ornate of the group — and the most practised.
+A strikingly beautiful young Korean woman of twenty-three, with luminous porcelain skin, large clear dark eyes, and a small softly curved mouth painted deep rose. Glossy black hair dressed in a high traditional teureo-meori updo held by a slender silver binyeo pin; small jade earrings catching the light. Fine silk hanbok — a pale blush-pink jeogori with deep jade-green ties, over a jade-green skirt, the silk softly sheened. She is the most ornate and the most practised of the group.
 
-The professional smile is gone entirely. Her eyes are wet and rimmed red, her gaze dropped to one side. Her painted mouth is pressed thin. She is not letting herself cry.
+The practised smile is gone. Her long lashes are lowered and wet, her gaze dropped softly to one side, her painted mouth pressed thin. She is not letting herself cry.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 기생 경계
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-three. Her black hair is dressed in a high traditional teureo-meori updo held by a single silver binyeo pin; small jade earrings. Fine silk hanbok: a pale blush-pink jeogori jacket with deep jade-green ties, over a deep jade skirt. Her face is powdered pale, her lips painted a muted red. She is the most ornate of the group — and the most practised.
+A strikingly beautiful young Korean woman of twenty-three, with luminous porcelain skin, large clear dark eyes, and a small softly curved mouth painted deep rose. Glossy black hair dressed in a high traditional teureo-meori updo held by a slender silver binyeo pin; small jade earrings catching the light. Fine silk hanbok — a pale blush-pink jeogori with deep jade-green ties, over a jade-green skirt, the silk softly sheened. She is the most ornate and the most practised of the group.
 
-A perfect, warm smile — and behind it, eyes that are measuring the viewer coldly and without blinking. Chin very slightly lowered. Charm used as a shut door.
+A warm, perfect smile — and behind it, eyes measuring the viewer coolly, without blinking. Chin very slightly lowered. Charm used as a closed door.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 기생 동요
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-three. Her black hair is dressed in a high traditional teureo-meori updo held by a single silver binyeo pin; small jade earrings. Fine silk hanbok: a pale blush-pink jeogori jacket with deep jade-green ties, over a deep jade skirt. Her face is powdered pale, her lips painted a muted red. She is the most ornate of the group — and the most practised.
+A strikingly beautiful young Korean woman of twenty-three, with luminous porcelain skin, large clear dark eyes, and a small softly curved mouth painted deep rose. Glossy black hair dressed in a high traditional teureo-meori updo held by a slender silver binyeo pin; small jade earrings catching the light. Fine silk hanbok — a pale blush-pink jeogori with deep jade-green ties, over a jade-green skirt, the silk softly sheened. She is the most ornate and the most practised of the group.
 
-The smile has slipped halfway off her face and she has not caught it. Lips parted on a word that stopped. Eyes wide, fixed, no longer performing.
+The smile slips a fraction too late. Her lips are parted, her eyes wide and bright, a single loose strand of hair fallen against her cheek.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 기생 속내
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-three. Her black hair is dressed in a high traditional teureo-meori updo held by a single silver binyeo pin; small jade earrings. Fine silk hanbok: a pale blush-pink jeogori jacket with deep jade-green ties, over a deep jade skirt. Her face is powdered pale, her lips painted a muted red. She is the most ornate of the group — and the most practised.
+A strikingly beautiful young Korean woman of twenty-three, with luminous porcelain skin, large clear dark eyes, and a small softly curved mouth painted deep rose. Glossy black hair dressed in a high traditional teureo-meori updo held by a slender silver binyeo pin; small jade earrings catching the light. Fine silk hanbok — a pale blush-pink jeogori with deep jade-green ties, over a jade-green skirt, the silk softly sheened. She is the most ornate and the most practised of the group.
 
-Powder smudged, shoulders dropped, the arrangement of her face abandoned. Tired eyes, soft and direct. She looks much younger than she did a moment ago.
+The performance set down at last. She looks at the viewer plainly and softly, no ornament left in her expression — younger than she has looked all evening.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ---
 
-
 # 전화교환수
 
-> 고정 사항 — 다섯 장 내내 바뀌지 않는다. `operator_평상.webp` 처럼 저장.
-
+> 가장 현대적으로 보이는 인물. 안경이 표식이다. 다섯 장 내내 옷·머리·빛은 그대로다. `operator_평상.webp` 처럼 저장.
 
 ### 전화교환수 평상
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-five. Neat chin-length bobbed hair with a soft finger wave, parted at the side. Small round wire-rimmed spectacles. She wears modern Western dress of the period: a cream high-collared blouse buttoned to the throat under a dark charcoal vest. No ornament. She is the most modern-looking of the group — precise, clean, exact.
+A coolly elegant young Korean woman of twenty-five with clear pale skin, fine bones and calm almond eyes behind small round wire-rimmed spectacles. Glossy black hair in a neat chin-length bob with a soft finger wave, parted at the side. Modern Western dress of the period: a cream high-collared blouse buttoned to the throat under a well-cut dark charcoal vest. No ornament at all. She is the most modern-looking of the group — precise, immaculate, exact.
 
-Alert and level, looking directly at the viewer through her spectacles. Mouth closed and even. The face of someone who is listening carefully and remembering.
+Perfectly still, head level, looking directly at the viewer through her spectacles. Neutral and unreadable — a face that gives nothing back.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 전화교환수 슬픔
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-five. Neat chin-length bobbed hair with a soft finger wave, parted at the side. Small round wire-rimmed spectacles. She wears modern Western dress of the period: a cream high-collared blouse buttoned to the throat under a dark charcoal vest. No ornament. She is the most modern-looking of the group — precise, clean, exact.
+A coolly elegant young Korean woman of twenty-five with clear pale skin, fine bones and calm almond eyes behind small round wire-rimmed spectacles. Glossy black hair in a neat chin-length bob with a soft finger wave, parted at the side. Modern Western dress of the period: a cream high-collared blouse buttoned to the throat under a well-cut dark charcoal vest. No ornament at all. She is the most modern-looking of the group — precise, immaculate, exact.
 
-Her spectacles have been taken off and she holds them out of frame; without them her eyes look bare and swollen. Gaze aimed at nothing. Mouth unsteady.
+Her eyes are glassy behind the lenses and she is blinking too often to stop it. Her mouth is held firmly straight and her chin stays up.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 전화교환수 경계
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-five. Neat chin-length bobbed hair with a soft finger wave, parted at the side. Small round wire-rimmed spectacles. She wears modern Western dress of the period: a cream high-collared blouse buttoned to the throat under a dark charcoal vest. No ornament. She is the most modern-looking of the group — precise, clean, exact.
+A coolly elegant young Korean woman of twenty-five with clear pale skin, fine bones and calm almond eyes behind small round wire-rimmed spectacles. Glossy black hair in a neat chin-length bob with a soft finger wave, parted at the side. Modern Western dress of the period: a cream high-collared blouse buttoned to the throat under a well-cut dark charcoal vest. No ornament at all. She is the most modern-looking of the group — precise, immaculate, exact.
 
-Chin lowered slightly so she looks at the viewer over the top of her spectacles. Very still. Not one muscle offering anything.
+Her chin lifts a fraction and her gaze narrows behind the glass, sharp and appraising, one brow very slightly raised. She has already decided not to answer.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 전화교환수 동요
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-five. Neat chin-length bobbed hair with a soft finger wave, parted at the side. Small round wire-rimmed spectacles. She wears modern Western dress of the period: a cream high-collared blouse buttoned to the throat under a dark charcoal vest. No ornament. She is the most modern-looking of the group — precise, clean, exact.
+A coolly elegant young Korean woman of twenty-five with clear pale skin, fine bones and calm almond eyes behind small round wire-rimmed spectacles. Glossy black hair in a neat chin-length bob with a soft finger wave, parted at the side. Modern Western dress of the period: a cream high-collared blouse buttoned to the throat under a well-cut dark charcoal vest. No ornament at all. She is the most modern-looking of the group — precise, immaculate, exact.
 
-Eyes gone wide behind the lenses, brows drawn together. Lips parted. A person who has just heard something that does not fit what she knows.
+She has taken the spectacles off and holds them near her collar. Without them her eyes look startlingly young and uncertain, fixed on nothing.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 전화교환수 속내
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-five. Neat chin-length bobbed hair with a soft finger wave, parted at the side. Small round wire-rimmed spectacles. She wears modern Western dress of the period: a cream high-collared blouse buttoned to the throat under a dark charcoal vest. No ornament. She is the most modern-looking of the group — precise, clean, exact.
+A coolly elegant young Korean woman of twenty-five with clear pale skin, fine bones and calm almond eyes behind small round wire-rimmed spectacles. Glossy black hair in a neat chin-length bob with a soft finger wave, parted at the side. Modern Western dress of the period: a cream high-collared blouse buttoned to the throat under a well-cut dark charcoal vest. No ornament at all. She is the most modern-looking of the group — precise, immaculate, exact.
 
-Spectacles pushed up into her hair, eyes rubbed and reddened, the crisp posture gone slack. Exhausted and finally not performing competence.
+The careful mask is down. She looks straight at the viewer with quiet, tired honesty, her face soft and open for the first time.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ---
 
-
 # 침모
 
-> 고정 사항 — 다섯 장 내내 바뀌지 않는다. `seamstress_평상.webp` 처럼 저장.
-
+> 꾸미지 않았으나 고운 사람. 수수함이 아름다움을 가리면 안 된다. 다섯 장 내내 옷·머리·빛은 그대로다. `seamstress_평상.webp` 처럼 저장.
 
 ### 침모 평상
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A quietly beautiful Korean woman of twenty-eight. Her hair is drawn into a plain low bun with no ornament at all. She wears undyed cotton hanbok in muted grey-beige, worn soft with washing, no decoration of any kind. A brass thimble on one finger. Her hands are chapped, with fine needle marks. She is dressed to be forgotten by anyone who sees her.
+A serenely beautiful Korean woman of twenty-eight with smooth clear skin, gentle downturned eyes and a delicate mouth. Her glossy black hair is drawn into a plain low bun with no ornament, a few soft strands loose at the temples. Undyed cotton hanbok in soft dove-grey and warm ivory — simple, spotless, beautifully draped, without a single decoration. A small brass thimble on one finger. Hers is a quiet beauty that asks to be overlooked.
 
-Calm and unremarkable, eyes lowered a fraction from the viewer's. A face built over years to draw no attention whatsoever.
+Her eyes are lowered a little, as though to her hands below the frame. Calm and patient, entirely unremarkable — exactly as she intends to be.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 침모 슬픔
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A quietly beautiful Korean woman of twenty-eight. Her hair is drawn into a plain low bun with no ornament at all. She wears undyed cotton hanbok in muted grey-beige, worn soft with washing, no decoration of any kind. A brass thimble on one finger. Her hands are chapped, with fine needle marks. She is dressed to be forgotten by anyone who sees her.
+A serenely beautiful Korean woman of twenty-eight with smooth clear skin, gentle downturned eyes and a delicate mouth. Her glossy black hair is drawn into a plain low bun with no ornament, a few soft strands loose at the temples. Undyed cotton hanbok in soft dove-grey and warm ivory — simple, spotless, beautifully draped, without a single decoration. A small brass thimble on one finger. Hers is a quiet beauty that asks to be overlooked.
 
-Her lowered eyes have filled and spilled without her face moving at all. She has not wiped it. Mouth held perfectly steady. Grief kept in the same place she keeps everything else.
+Her eyes are closed, her brow faintly drawn together, and a single tear rests on her cheek. She has not moved to wipe it away.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 침모 경계
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A quietly beautiful Korean woman of twenty-eight. Her hair is drawn into a plain low bun with no ornament at all. She wears undyed cotton hanbok in muted grey-beige, worn soft with washing, no decoration of any kind. A brass thimble on one finger. Her hands are chapped, with fine needle marks. She is dressed to be forgotten by anyone who sees her.
+A serenely beautiful Korean woman of twenty-eight with smooth clear skin, gentle downturned eyes and a delicate mouth. Her glossy black hair is drawn into a plain low bun with no ornament, a few soft strands loose at the temples. Undyed cotton hanbok in soft dove-grey and warm ivory — simple, spotless, beautifully draped, without a single decoration. A small brass thimble on one finger. Hers is a quiet beauty that asks to be overlooked.
 
-Her eyes come up and meet the viewer's directly for the first time, and stay there. The plainness of her face has become unreadable rather than invisible.
+She has gone very still and her gaze has come up, level and direct. Nothing in her face moves at all. Stillness used as a wall.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 침모 동요
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A quietly beautiful Korean woman of twenty-eight. Her hair is drawn into a plain low bun with no ornament at all. She wears undyed cotton hanbok in muted grey-beige, worn soft with washing, no decoration of any kind. A brass thimble on one finger. Her hands are chapped, with fine needle marks. She is dressed to be forgotten by anyone who sees her.
+A serenely beautiful Korean woman of twenty-eight with smooth clear skin, gentle downturned eyes and a delicate mouth. Her glossy black hair is drawn into a plain low bun with no ornament, a few soft strands loose at the temples. Undyed cotton hanbok in soft dove-grey and warm ivory — simple, spotless, beautifully draped, without a single decoration. A small brass thimble on one finger. Hers is a quiet beauty that asks to be overlooked.
 
-Caught fully — head lifted, eyes wide, mouth open. The carefully maintained nothing has fallen off her face and there is a frightened woman underneath.
+Her lips are parted on a caught breath, her eyes darting aside, one hand risen near her collar.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 침모 속내
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A quietly beautiful Korean woman of twenty-eight. Her hair is drawn into a plain low bun with no ornament at all. She wears undyed cotton hanbok in muted grey-beige, worn soft with washing, no decoration of any kind. A brass thimble on one finger. Her hands are chapped, with fine needle marks. She is dressed to be forgotten by anyone who sees her.
+A serenely beautiful Korean woman of twenty-eight with smooth clear skin, gentle downturned eyes and a delicate mouth. Her glossy black hair is drawn into a plain low bun with no ornament, a few soft strands loose at the temples. Undyed cotton hanbok in soft dove-grey and warm ivory — simple, spotless, beautifully draped, without a single decoration. A small brass thimble on one finger. Hers is a quiet beauty that asks to be overlooked.
 
-Looking at the viewer openly, eyes soft and tired, mouth loose. She looks, for once, like someone who wants to be seen.
+She meets the viewer's eyes at last, and her face is open with something she has carried a long time — gentle, exhausted, relieved.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ---
 
-
 # 산파
 
-> 고정 사항 — 다섯 장 내내 바뀌지 않는다. `midwife_평상.webp` 처럼 저장.
-
+> 곱게 나이 든 얼굴. 늙은 얼굴이 아니라 깊은 얼굴이다. 다섯 장 내내 옷·머리·빛은 그대로다. `midwife_평상.webp` 처럼 저장.
 
 ### 산파 평상
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A handsome Korean woman of forty-one, the eldest of the group. Black hair pulled back tight and pinned, a few strands of grey at the temple. She wears plain dark hanbok with a white cotton apron over it, and the worn leather strap of a midwife's bag across one shoulder. Her face is strong-boned and lined at the eyes. Her hands are large and clean.
+A beautifully aged Korean woman of forty-one, the eldest of the six and still handsome — warm smooth skin, elegant strong cheekbones, calm deep eyes with only the faintest lines at their corners. Black hair pinned back smoothly with one fine streak of silver at the temple. Plain deep-indigo hanbok under a crisp white cotton apron, the soft leather strap of a midwife's bag across one shoulder. Her hands are large, clean and steady.
 
-Steady, unhurried, meeting the viewer's eye without any need to fill the silence. The calm of a woman who has been called out at three in the morning many times.
+Steady and unhurried, looking straight at the viewer with the calm of someone who has seen both ends of a life many times over.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 산파 슬픔
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A handsome Korean woman of forty-one, the eldest of the group. Black hair pulled back tight and pinned, a few strands of grey at the temple. She wears plain dark hanbok with a white cotton apron over it, and the worn leather strap of a midwife's bag across one shoulder. Her face is strong-boned and lined at the eyes. Her hands are large and clean.
+A beautifully aged Korean woman of forty-one, the eldest of the six and still handsome — warm smooth skin, elegant strong cheekbones, calm deep eyes with only the faintest lines at their corners. Black hair pinned back smoothly with one fine streak of silver at the temple. Plain deep-indigo hanbok under a crisp white cotton apron, the soft leather strap of a midwife's bag across one shoulder. Her hands are large, clean and steady.
 
-Jaw set hard, eyes bright with water she will not let fall. She is looking slightly past the viewer. Older in this moment than in any other.
+Her eyes shine and her strong mouth has softened and turned down. Grief without any noise in it — the grief of a woman who has grieved before.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 산파 경계
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A handsome Korean woman of forty-one, the eldest of the group. Black hair pulled back tight and pinned, a few strands of grey at the temple. She wears plain dark hanbok with a white cotton apron over it, and the worn leather strap of a midwife's bag across one shoulder. Her face is strong-boned and lined at the eyes. Her hands are large and clean.
+A beautifully aged Korean woman of forty-one, the eldest of the six and still handsome — warm smooth skin, elegant strong cheekbones, calm deep eyes with only the faintest lines at their corners. Black hair pinned back smoothly with one fine streak of silver at the temple. Plain deep-indigo hanbok under a crisp white cotton apron, the soft leather strap of a midwife's bag across one shoulder. Her hands are large, clean and steady.
 
-Perfectly still, head very slightly tilted, eyes narrowed a fraction. She is not hostile. She is waiting to see what the viewer is actually asking.
+Her gaze hardens and her jaw sets. She looks at the viewer the way she would look at a bad fever.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 산파 동요
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A handsome Korean woman of forty-one, the eldest of the group. Black hair pulled back tight and pinned, a few strands of grey at the temple. She wears plain dark hanbok with a white cotton apron over it, and the worn leather strap of a midwife's bag across one shoulder. Her face is strong-boned and lined at the eyes. Her hands are large and clean.
+A beautifully aged Korean woman of forty-one, the eldest of the six and still handsome — warm smooth skin, elegant strong cheekbones, calm deep eyes with only the faintest lines at their corners. Black hair pinned back smoothly with one fine streak of silver at the temple. Plain deep-indigo hanbok under a crisp white cotton apron, the soft leather strap of a midwife's bag across one shoulder. Her hands are large, clean and steady.
 
-Her stillness broken — eyes wide, a hand half raised into the lower frame, breath caught. The steadiest person here, knocked off balance.
+Her composure breaks for a moment — eyes widening, lips parting, her head turned a fraction away.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 산파 속내
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A handsome Korean woman of forty-one, the eldest of the group. Black hair pulled back tight and pinned, a few strands of grey at the temple. She wears plain dark hanbok with a white cotton apron over it, and the worn leather strap of a midwife's bag across one shoulder. Her face is strong-boned and lined at the eyes. Her hands are large and clean.
+A beautifully aged Korean woman of forty-one, the eldest of the six and still handsome — warm smooth skin, elegant strong cheekbones, calm deep eyes with only the faintest lines at their corners. Black hair pinned back smoothly with one fine streak of silver at the temple. Plain deep-indigo hanbok under a crisp white cotton apron, the soft leather strap of a midwife's bag across one shoulder. Her hands are large, clean and steady.
 
-The set jaw released. Eyes heavy, mouth soft, a long breath let out. She looks every one of her years and does not mind being seen doing it.
+She has leaned in slightly and her face has opened entirely: warm, tired, and without a single thing held back.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ---
 
-
 # 인쇄 담당
 
-> 고정 사항 — 다섯 장 내내 바뀌지 않는다. `printer_평상.webp` 처럼 저장.
-
+> 가장 어리고 가장 생기 있다. 잉크 자국은 때가 아니라 매력점이다. 다섯 장 내내 옷·머리·빛은 그대로다. `printer_평상.webp` 처럼 저장.
 
 ### 인쇄 담당 평상
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-two. Black hair tied up hastily with strands escaping around her face. Sleeves rolled to the elbow. She wears a dark cotton work smock over a plain pale blouse. Black mimeograph ink stains her fingers and there is a smear of it along one forearm and a small mark on her jaw where she pushed hair back. She is the most physical, most restless of the group.
+A fresh-faced beauty of twenty-two, the youngest of the group, with dewy skin, round bright eyes and a full soft mouth. Glossy black hair tied up loosely with strands escaping around her face. Sleeves rolled to the elbow over slim forearms. A dark indigo cotton work smock over a clean pale blouse. One small smudge of black mimeograph ink sits high on her cheekbone — the only mark on otherwise flawless skin. She is the most restless, most physical of the group.
 
-Bright-eyed, chin up, looking straight at the viewer with something close to impatience. Caught mid-task and not pretending otherwise.
+Bright and alert, looking straight at the viewer, chin up, her mouth already half-open on something she is about to say.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 인쇄 담당 슬픔
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-two. Black hair tied up hastily with strands escaping around her face. Sleeves rolled to the elbow. She wears a dark cotton work smock over a plain pale blouse. Black mimeograph ink stains her fingers and there is a smear of it along one forearm and a small mark on her jaw where she pushed hair back. She is the most physical, most restless of the group.
+A fresh-faced beauty of twenty-two, the youngest of the group, with dewy skin, round bright eyes and a full soft mouth. Glossy black hair tied up loosely with strands escaping around her face. Sleeves rolled to the elbow over slim forearms. A dark indigo cotton work smock over a clean pale blouse. One small smudge of black mimeograph ink sits high on her cheekbone — the only mark on otherwise flawless skin. She is the most restless, most physical of the group.
 
-Openly wrecked — eyes swollen and red, face blotched, ink smudged where she has wiped her face with the back of a hand. She cries the way she does everything: without managing it.
+Her face has crumpled open — eyes red and brimming, mouth pulled down, cheeks wet. She cries the way a child does, without hiding any of it.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 인쇄 담당 경계
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-two. Black hair tied up hastily with strands escaping around her face. Sleeves rolled to the elbow. She wears a dark cotton work smock over a plain pale blouse. Black mimeograph ink stains her fingers and there is a smear of it along one forearm and a small mark on her jaw where she pushed hair back. She is the most physical, most restless of the group.
+A fresh-faced beauty of twenty-two, the youngest of the group, with dewy skin, round bright eyes and a full soft mouth. Glossy black hair tied up loosely with strands escaping around her face. Sleeves rolled to the elbow over slim forearms. A dark indigo cotton work smock over a clean pale blouse. One small smudge of black mimeograph ink sits high on her cheekbone — the only mark on otherwise flawless skin. She is the most restless, most physical of the group.
 
-The brightness snapped off. Head lowered, eyes up, staring flatly at the viewer. Arms out of frame but the shoulders have squared. Ready for a fight.
+Her brows draw together and her mouth sets hard. She glares straight at the viewer, young and furious and entirely unafraid.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 인쇄 담당 동요
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-two. Black hair tied up hastily with strands escaping around her face. Sleeves rolled to the elbow. She wears a dark cotton work smock over a plain pale blouse. Black mimeograph ink stains her fingers and there is a smear of it along one forearm and a small mark on her jaw where she pushed hair back. She is the most physical, most restless of the group.
+A fresh-faced beauty of twenty-two, the youngest of the group, with dewy skin, round bright eyes and a full soft mouth. Glossy black hair tied up loosely with strands escaping around her face. Sleeves rolled to the elbow over slim forearms. A dark indigo cotton work smock over a clean pale blouse. One small smudge of black mimeograph ink sits high on her cheekbone — the only mark on otherwise flawless skin. She is the most restless, most physical of the group.
 
-Frozen mid-motion, eyes wide and fixed, mouth open. Every bit of her usual momentum stopped at once.
+She has gone pale and her eyes are darting; she bites the inside of her lip, one loose strand of hair stuck to her damp cheek.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 인쇄 담당 속내
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A beautiful young Korean woman of twenty-two. Black hair tied up hastily with strands escaping around her face. Sleeves rolled to the elbow. She wears a dark cotton work smock over a plain pale blouse. Black mimeograph ink stains her fingers and there is a smear of it along one forearm and a small mark on her jaw where she pushed hair back. She is the most physical, most restless of the group.
+A fresh-faced beauty of twenty-two, the youngest of the group, with dewy skin, round bright eyes and a full soft mouth. Glossy black hair tied up loosely with strands escaping around her face. Sleeves rolled to the elbow over slim forearms. A dark indigo cotton work smock over a clean pale blouse. One small smudge of black mimeograph ink sits high on her cheekbone — the only mark on otherwise flawless skin. She is the most restless, most physical of the group.
 
-Slumped, ink-stained hand pushed back through loose hair, eyes red and tired. Quieter than she has ever been.
+All the fight gone out of her. She looks up at the viewer with wide, wet, defenceless eyes and lets herself be seen.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ---
 
-
 # 행상
 
-> 고정 사항 — 다섯 장 내내 바뀌지 않는다. `peddler_평상.webp` 처럼 저장.
-
+> 바깥 사람. 볕에 그을린 얼굴이 아니라 볕을 머금은 얼굴로. 다섯 장 내내 옷·머리·빛은 그대로다. `peddler_평상.webp` 처럼 저장.
 
 ### 행상 평상
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A handsome Korean woman of twenty-six with sun-browned skin and a strong open face. Her hair is bound back under a folded cotton head-cloth. She wears sturdy plain cotton hanbok in faded indigo, with the wide cloth strap of a carrying bundle across her chest. Her cheeks are weathered. She is the healthiest, most outdoor-looking of the group.
+A warm, vivid beauty of twenty-six with a healthy golden glow to her skin, wide bright eyes and a generous mouth made for smiling. Her black hair is bound back under a folded indigo cotton head-cloth, a few strands loose at the temple. Sturdy cotton hanbok in deep faded indigo, with the wide cloth strap of a carrying bundle across her chest. She looks the healthiest and the most alive of the group.
 
-Broad, frank, looking straight at the viewer, the beginning of a grin at one corner. A face that greets everyone on the street by name.
+Open and easy, a broad friendly smile, meeting the viewer's eyes without a moment's hesitation. The most approachable face in the room.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 행상 슬픔
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A handsome Korean woman of twenty-six with sun-browned skin and a strong open face. Her hair is bound back under a folded cotton head-cloth. She wears sturdy plain cotton hanbok in faded indigo, with the wide cloth strap of a carrying bundle across her chest. Her cheeks are weathered. She is the healthiest, most outdoor-looking of the group.
+A warm, vivid beauty of twenty-six with a healthy golden glow to her skin, wide bright eyes and a generous mouth made for smiling. Her black hair is bound back under a folded indigo cotton head-cloth, a few strands loose at the temple. Sturdy cotton hanbok in deep faded indigo, with the wide cloth strap of a carrying bundle across her chest. She looks the healthiest and the most alive of the group.
 
-The openness collapsed inward. Eyes screwed half shut, mouth pulled down hard, weathered face crumpled. She grieves loudly and is trying not to.
+The smile is gone and her bright face has gone slack. Her eyes are wet and fixed on the middle distance, her mouth slightly open.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 행상 경계
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A handsome Korean woman of twenty-six with sun-browned skin and a strong open face. Her hair is bound back under a folded cotton head-cloth. She wears sturdy plain cotton hanbok in faded indigo, with the wide cloth strap of a carrying bundle across her chest. Her cheeks are weathered. She is the healthiest, most outdoor-looking of the group.
+A warm, vivid beauty of twenty-six with a healthy golden glow to her skin, wide bright eyes and a generous mouth made for smiling. Her black hair is bound back under a folded indigo cotton head-cloth, a few strands loose at the temple. Sturdy cotton hanbok in deep faded indigo, with the wide cloth strap of a carrying bundle across her chest. She looks the healthiest and the most alive of the group.
 
-Grin gone flat. Eyes steady and narrowed against the viewer the way they narrow against sun. Shrewd. She has been sized up by strangers all her life and knows how it is done.
+The friendliness stays on her mouth but leaves her eyes, which have gone flat and watchful. Her head tilts a little to one side.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 행상 동요
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A handsome Korean woman of twenty-six with sun-browned skin and a strong open face. Her hair is bound back under a folded cotton head-cloth. She wears sturdy plain cotton hanbok in faded indigo, with the wide cloth strap of a carrying bundle across her chest. Her cheeks are weathered. She is the healthiest, most outdoor-looking of the group.
+A warm, vivid beauty of twenty-six with a healthy golden glow to her skin, wide bright eyes and a generous mouth made for smiling. Her black hair is bound back under a folded indigo cotton head-cloth, a few strands loose at the temple. Sturdy cotton hanbok in deep faded indigo, with the wide cloth strap of a carrying bundle across her chest. She looks the healthiest and the most alive of the group.
 
-Mouth open, brows up, eyes darting off to one side. Genuinely rattled and not able to hide it for a second.
+Her smile holds a beat too long and then falters. Her eyes flick sideways and her throat moves as she swallows.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 행상 속내
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A handsome Korean woman of twenty-six with sun-browned skin and a strong open face. Her hair is bound back under a folded cotton head-cloth. She wears sturdy plain cotton hanbok in faded indigo, with the wide cloth strap of a carrying bundle across her chest. Her cheeks are weathered. She is the healthiest, most outdoor-looking of the group.
+A warm, vivid beauty of twenty-six with a healthy golden glow to her skin, wide bright eyes and a generous mouth made for smiling. Her black hair is bound back under a folded indigo cotton head-cloth, a few strands loose at the temple. Sturdy cotton hanbok in deep faded indigo, with the wide cloth strap of a carrying bundle across her chest. She looks the healthiest and the most alive of the group.
 
-Head-cloth pushed back off her hair, face bare and tired, eyes soft and level. The loudness gone out of her entirely.
+Everything easy about her is gone. She looks straight ahead, still and hollow, her face stripped down to what lies underneath.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ---
 
-
 # 계주
 
-> 고정 사항 — 다섯 장 내내 바뀌지 않는다. `gyeju_평상.webp` 처럼 저장.
-
+> 나머지 여섯이 올려다보는 사람. 기품으로 눌러야 한다. 다섯 장 내내 옷·머리·빛은 그대로다. `gyeju_평상.webp` 처럼 저장.
 
 ### 계주 평상
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A severe, striking Korean woman of fifty-four. Iron-grey hair drawn back into a tight unadorned knot. She wears plain dark hanbok, deep charcoal, with no ornament at all — not a pin, not a ring. Her face is deeply lined at mouth and brow. She does not smile in any of these. She is the one the others answer to.
+A striking, beautifully aged Korean woman of fifty-four with fine silver-streaked black hair drawn back into a smooth unadorned knot. Her skin is clear and softly lined only at the eyes; her bone structure is elegant and severe. Plain deep-charcoal silk hanbok with no ornament whatsoever — not a pin, not a ring. She carries herself perfectly straight. She is the one the others answer to.
 
-Looking at the viewer with flat, complete attention. Mouth a straight line. Absolutely still. Nothing given away and nothing asked for.
+Absolutely still, looking directly at the viewer. Unblinking, unhurried, unmoved. This is the face of someone deciding.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 계주 슬픔
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A severe, striking Korean woman of fifty-four. Iron-grey hair drawn back into a tight unadorned knot. She wears plain dark hanbok, deep charcoal, with no ornament at all — not a pin, not a ring. Her face is deeply lined at mouth and brow. She does not smile in any of these. She is the one the others answer to.
+A striking, beautifully aged Korean woman of fifty-four with fine silver-streaked black hair drawn back into a smooth unadorned knot. Her skin is clear and softly lined only at the eyes; her bone structure is elegant and severe. Plain deep-charcoal silk hanbok with no ornament whatsoever — not a pin, not a ring. She carries herself perfectly straight. She is the one the others answer to.
 
-Face unmoved, eyes wet. She has not blinked and will not. Grief held exactly as she holds everything else — by refusing it any room.
+Her eyes glitter and her mouth tightens, and nothing else about her changes. She would not call this weeping.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 계주 경계
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A severe, striking Korean woman of fifty-four. Iron-grey hair drawn back into a tight unadorned knot. She wears plain dark hanbok, deep charcoal, with no ornament at all — not a pin, not a ring. Her face is deeply lined at mouth and brow. She does not smile in any of these. She is the one the others answer to.
+A striking, beautifully aged Korean woman of fifty-four with fine silver-streaked black hair drawn back into a smooth unadorned knot. Her skin is clear and softly lined only at the eyes; her bone structure is elegant and severe. Plain deep-charcoal silk hanbok with no ornament whatsoever — not a pin, not a ring. She carries herself perfectly straight. She is the one the others answer to.
 
-Eyes hard and narrowed, head very slightly forward. The full weight of her attention aimed at the viewer. This is the look that ends conversations.
+Her gaze sharpens to a point and her chin lowers a fraction, and she waits. It is not a question. It is a weighing.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 계주 동요
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A severe, striking Korean woman of fifty-four. Iron-grey hair drawn back into a tight unadorned knot. She wears plain dark hanbok, deep charcoal, with no ornament at all — not a pin, not a ring. Her face is deeply lined at mouth and brow. She does not smile in any of these. She is the one the others answer to.
+A striking, beautifully aged Korean woman of fifty-four with fine silver-streaked black hair drawn back into a smooth unadorned knot. Her skin is clear and softly lined only at the eyes; her bone structure is elegant and severe. Plain deep-charcoal silk hanbok with no ornament whatsoever — not a pin, not a ring. She carries herself perfectly straight. She is the one the others answer to.
 
-Something has gone through her. Eyes wide, mouth open a fraction, the iron gone out of her face for one moment. It is frightening precisely because it is her.
+For one moment she is old — her eyes unfocused, her mouth slightly slack, her gaze gone somewhere far away.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
-
 
 ### 계주 속내
 
 ```
-Dark painterly portrait, digital gouache with visible brushwork, slightly rough and unpolished, painted not photographic. Muted palette: deep desaturated tones, a single soft directional light from the upper left, deep shadow on the right side of the face. Korea, 1934, Japanese colonial Gyeongseong.
+Cinematic character portrait in a refined semi-realistic painterly style — smooth polished rendering, delicate brushwork, the look of a high-end Korean period-drama key visual. Soft warm key light from the upper left with gentle fill, no harsh shadows. Luminous fair skin with a soft glow. Elegant jewel-toned palette — deep indigo, jade, plum, warm ivory — rich but never garish. Korea, 1934, Gyeongseong.
 
-A severe, striking Korean woman of fifty-four. Iron-grey hair drawn back into a tight unadorned knot. She wears plain dark hanbok, deep charcoal, with no ornament at all — not a pin, not a ring. Her face is deeply lined at mouth and brow. She does not smile in any of these. She is the one the others answer to.
+A striking, beautifully aged Korean woman of fifty-four with fine silver-streaked black hair drawn back into a smooth unadorned knot. Her skin is clear and softly lined only at the eyes; her bone structure is elegant and severe. Plain deep-charcoal silk hanbok with no ornament whatsoever — not a pin, not a ring. She carries herself perfectly straight. She is the one the others answer to.
 
-Eyes closed or nearly, head lowered, hand at her brow in the lower frame. An old woman who has been carrying this alone and has set it down for a second.
+She looks at the viewer with terrible directness, her face open and grieving and resolute all at once.
 
-Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain flat very dark blue-grey backdrop, no scenery, no props behind her. The face is clearly lit and fully visible. No text, no watermark, no border.
+Bust portrait, chest and above only, centred, eye level, facing the viewer. Plain softly graded deep indigo backdrop with a faint warm glow behind the head; no scenery, no props, no furniture. Beautiful flawless skin, fine delicate features, the face fully and clearly lit. Ultra-detailed eyes and hair, soft rim light along the jaw. No text, no watermark, no border.
 ```
 
-
 ---
-
 
 # 죽은 학생 (사진)
 
 > 이것만 그림이 아니라 **사진**이다. 유품으로 나오는 물건이라 질감이 달라야 한다. `student_photo.webp` 로 저장.
 
-
 ### 죽은 학생 (사진)
 
 ```
-A faded black-and-white photographic portrait from the 1930s, printed on paper, with
-period photographic grain, soft focus at the edges, slight silver tarnish and a bent
-corner. It shows a Korean schoolgirl of seventeen: chin-length bobbed hair, a white
-cotton jeogori and a dark ankle-length skirt — the school uniform of the period. She is
-smiling openly at the camera, delighted, caught mid-laugh, entirely alive.
+A gently aged black-and-white photographic portrait from the 1930s, printed on soft
+paper, with fine period grain and a slight silver sheen, softly focused at the edges,
+one corner faintly bent. It shows a lovely Korean schoolgirl of seventeen with clear
+skin, bright eyes and a wide open smile: chin-length bobbed hair, a white cotton jeogori
+and a dark ankle-length skirt — the school uniform of the period. She is caught mid-laugh,
+delighted, entirely alive.
 
-Bust portrait, chest and above, centred, plain studio backdrop. It is a photograph, not
-a painting: it must look like an object that has been kept in someone's pocket.
-No text, no watermark, no border, no frame.
+Bust portrait, chest and above, centred, plain studio backdrop, soft flattering studio
+light. It must read as a photograph, not a painting — an object someone has kept in a
+pocket for years. No text, no watermark, no border, no frame.
 ```

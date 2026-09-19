@@ -15,7 +15,9 @@ import { dirname, join } from "path";
 const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const K = require(join(ROOT, "server/knowledge.js"));
+const T = require(join(ROOT, "server/truth.js"));
 const { MEMBERS, FACTS, KNEW, CULPRIT, SPLIT_RULE, COLLUSION_LOCK } = K;
+const { TIMELINE, SECRETS, HOW_IT_WENT } = T;
 
 const SPOIL = process.argv.includes("--spoil");
 const ids = Object.keys(MEMBERS);
@@ -146,6 +148,50 @@ const talks = [...refs].filter(x => x.startsWith("talk:")).sort();
 ok(`현장 증거 ${clues.length}종 · 증언 ${talks.length}종`);
 console.log("  " + clues.join("  "));
 console.log("  " + talks.join("  "));
+
+// ── 10. 사건과 표가 어긋나지 않는가 ─────────────────────────
+// truth.js 의 사건 하나하나가 조각을 건넨다. 그 사건을 아는 사람을
+// 다 모으면 표의 '알았다' 목록과 글자 하나까지 같아야 한다.
+// 한쪽만 고치면 여기서 걸린다.
+head("10. 사건과 표의 대조");
+for (const f of facts) {
+    const by = new Set();
+    TIMELINE.filter(e => (e.grants || []).includes(f)).forEach(e => (e.by || []).forEach(x => by.add(x)));
+    const knowers = ids.filter(id => KNEW[id][f].knew);
+    const a = [...by].sort().join("|"), b = [...knowers].sort().join("|");
+    if (!by.size) bad(`${F(f)}: 이 조각을 건네는 사건이 없다 — 어디서 알았는지 사건에 없다`);
+    else if (a === b) ok(`${F(f)}: 사건에서 이것을 얻은 ${by.size}명 = 표에서 안다고 한 ${knowers.length}명`);
+    else {
+        const only1 = [...by].filter(x => !knowers.includes(x)).map(L);
+        const only2 = knowers.filter(x => !by.has(x)).map(L);
+        bad(`${F(f)}: 어긋난다 — 사건에만 ${only1.join(",") || "없음"} · 표에만 ${only2.join(",") || "없음"}`);
+    }
+}
+
+// ── 11. 단서 목록과 사건의 흔적이 맞물리는가 ────────────────
+head("11. 단서와 흔적");
+const marks = new Set();
+TIMELINE.forEach(e => (e.mark || []).forEach(m => marks.add(m)));
+const orphan = clues.filter(c => !marks.has(c));
+orphan.length ? bad(`표가 찾는데 사건이 남기지 않은 단서: ${orphan.join(", ")}`)
+              : ok(`표가 찾는 단서 ${clues.length}종이 모두 사건에 흔적을 두고 있다`);
+const spare = [...marks].filter(m => !refs.has(m));
+ok(`격자에 안 쓰이는 흔적 ${spare.length}종 — 분위기와 붉은 청어의 몫${spare.length ? " (" + spare.join(", ") + ")" : ""}`);
+
+// ── 12. 밀정 아닌 다섯도 숨기는 것이 있는가 ─────────────────
+// 다섯 중 누구 하나라도 숨기는 것이 없으면 "숨기는 자가 범인"이
+// 되어버린다. 심문이 성립하지 않는다.
+head("12. 다섯의 숨긴 것");
+let bare = 0;
+for (const id of ids) {
+    const sc = (SECRETS || {})[id];
+    if (!sc || !sc.hides) { bad(`${L(id)}: 숨기는 것이 없다 — 심문할 거리가 없다`); bare++; }
+    else if (id !== CULPRIT && !sc.truth) { bad(`${L(id)}: 숨긴 것이 풀리는 대목이 없다 — 누명이 안 벗겨진다`); bare++; }
+}
+if (!bare) ok(`여섯 모두 숨기는 것이 있고, 범인 아닌 다섯은 풀리는 대목이 있다`);
+const looks = new Set(ids.map(id => (SECRETS[id] || {}).lookslike));
+looks.size === ids.length ? ok("여섯의 혐의가 서로 다른 모양이다")
+                          : bad("혐의의 모양이 겹친다 — 인물이 구별되지 않는다");
 
 console.log("\n" + "─".repeat(54));
 console.log(`통과 ${pass} · 주의 ${warn} · 실패 ${fail}`);

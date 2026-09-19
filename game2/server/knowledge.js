@@ -115,7 +115,7 @@ const KNEW = {
     printer: {
         F1_who:   { knew: false, why: "찍어서 넘기는 데까지가 제 몫이다. 나르는 사람은 묻지 않는 것이 계의 법이다.",
                     proof: ["talk:printer", "talk:gyeju"] },
-        F2_when:  { knew: true,  how: "그날 밤에 대려고 새벽부터 찍었다.",
+        F2_when:  { knew: true,  how: "모임이 끝나자마자 등사판을 돌렸다. 밤에 대려면 그 시간뿐이었다.",
                     proof: ["c_ink_dates", "talk:printer"] },
         F3_where: { knew: false, why: "오후에 침선방으로 넘기고 등사실로 돌아가 밤까지 있었다.",
                     proof: ["c_ink_dates", "talk:printer"] },
