@@ -1,0 +1,14 @@
+{
+  "name": "chimseonkye",
+  "version": "1.0.0",
+  "private": true,
+  "description": "침선계 — 경성 1934, 밀정을 찾는 1인용 추리 게임",
+  "scripts": {
+    "start": "node server/server.js",
+    "seal": "node build/seal.mjs",
+    "verify": "node build/verify-knowledge.mjs && node build/verify-case.mjs",
+    "build": "node build/seal.mjs && node build/build-artifact.mjs",
+    "test": "node build/seal.mjs && node build/build-artifact.mjs && node test/playthrough.mjs"
+  },
+  "engines": { "node": ">=18" }
+}

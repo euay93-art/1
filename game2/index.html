@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>침선계</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="dust" id="dust" aria-hidden="true"></div>
+
+<!-- ── 타이틀 ───────────────────────────────────────────── -->
+<section class="screen active" id="screen-title">
+  <div class="title-wrap">
+    <div class="title-mark">針 線 契</div>
+    <h1>침선계</h1>
+    <p class="title-sub">경성 1934 — 우리 안에 하나</p>
+    <div class="title-line"></div>
+    <p class="title-blurb">
+      바느질 계로 위장한 여섯 해.<br>
+      물건을 나르던 열일곱 살이 붙들려 나흘 만에 죽었다.<br>
+      계주는 넷을 쪼개 나눠 줬는데, 순사는 넷을 다 쥐고 왔다.
+    </p>
+    <div class="title-btns">
+      <button class="btn btn-primary" id="btn-start">계주를 만나러 간다</button>
+      <button class="btn btn-ghost" id="btn-continue" hidden>이어서 하기</button>
+    </div>
+    <div class="ai-status" id="ai-status">인물 연결 확인 중…</div>
+  </div>
+</section>
+
+<!-- ── 프롤로그 ─────────────────────────────────────────── -->
+<section class="screen" id="screen-prologue">
+  <div class="prologue-wrap">
+    <div class="prologue-card" id="prologue-card">
+      <h2 id="prologue-head"></h2>
+      <p id="prologue-body"></p>
+    </div>
+    <div class="prologue-nav">
+      <span class="prologue-dots" id="prologue-dots"></span>
+      <button class="btn btn-primary" id="btn-prologue-next">다음</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── 본편 ─────────────────────────────────────────────── -->
+<section class="screen" id="screen-game">
+  <header class="hud">
+    <div class="hud-left">
+      <span class="hud-title">침선계</span>
+      <span class="hud-act" id="hud-act">一막</span>
+      <span class="hud-goal" id="hud-goal"></span>
+    </div>
+    <div class="hud-right">
+      <span class="hud-count" id="hud-count">증거 0 / 30</span>
+      <button class="btn btn-small btn-accuse" id="btn-goto-verdict" hidden>이름을 댄다</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="investigate">🔦 발로 뛴다</button>
+    <button class="tab" data-tab="interrogate">💬 만난다</button>
+    <button class="tab" data-tab="grid">🧮 격자</button>
+    <button class="tab" data-tab="notes">📕 수첩</button>
+  </nav>
+
+  <main class="panels">
+    <!-- 발로 뛴다 -->
+    <div class="panel active" id="panel-investigate">
+      <div class="loc-grid" id="loc-grid"></div>
+      <div class="loc-detail" id="loc-detail" hidden>
+        <button class="back-link" id="btn-loc-back">← 갈 곳 목록</button>
+        <h2 id="loc-name"></h2>
+        <p class="loc-desc" id="loc-desc"></p>
+        <div class="clue-list" id="clue-list"></div>
+      </div>
+    </div>
+
+    <!-- 만난다 -->
+    <div class="panel" id="panel-interrogate">
+      <div class="sus-grid" id="sus-grid"></div>
+      <div class="chat-wrap" id="chat-wrap" hidden>
+        <div class="chat-head">
+          <button class="back-link" id="btn-chat-back">← 사람 목록</button>
+          <div class="chat-who">
+            <span class="chat-face" id="chat-face"></span>
+            <span><b id="chat-name"></b><small id="chat-role"></small></span>
+          </div>
+        </div>
+        <div class="chat-log" id="chat-log" role="log" aria-live="polite"></div>
+        <div class="chat-chips" id="chat-chips"></div>
+        <div class="chat-input">
+          <button class="btn btn-evidence" id="btn-show-evidence" title="증거를 내놓는다" aria-label="증거 제시">📎</button>
+          <button class="btn btn-evidence" id="btn-show-quote" title="남의 말을 물려 놓는다" aria-label="증언 대질">🗣</button>
+          <input type="text" id="chat-text" aria-label="물어볼 말" placeholder="무엇이든 물어보십시오…" autocomplete="off">
+          <button class="btn btn-primary" id="btn-chat-send">묻기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 격자 -->
+    <div class="panel" id="panel-grid">
+      <p class="loc-desc">순사가 그날 밤 쥐고 있던 네 조각. 여섯 중 누가 무엇을 쥐었는지, 근거를 손에 넣는 대로 칸이 채워진다.</p>
+      <div id="grid-facts"></div>
+      <div id="grid-note"></div>
+      <div id="grid-body"></div>
+    </div>
+
+    <!-- 수첩 -->
+    <div class="panel" id="panel-notes">
+      <div class="nb-tabs">
+        <button class="nb-tab active" data-nb="clues">증거</button>
+        <button class="nb-tab" data-nb="words">들은 말</button>
+        <button class="nb-tab" data-nb="people">사람</button>
+      </div>
+      <div class="nb-body" id="nb-body"></div>
+    </div>
+  </main>
+</section>
+
+<!-- ── 최종 판단 ────────────────────────────────────────── -->
+<section class="screen" id="screen-verdict">
+  <div class="accuse-wrap">
+    <h2>이름을 댄다</h2>
+    <p class="accuse-lead" id="verdict-intro"></p>
+    <div id="verdict-names"></div>
+    <div id="verdict-proof"></div>
+    <div class="accuse-btns">
+      <button class="btn btn-ghost" id="btn-verdict-back">아직 알아볼 것이 남았다</button>
+      <button class="btn btn-ghost" id="btn-verdict-giveup">이름을 대지 않는다</button>
+      <button class="btn btn-primary" id="btn-verdict-submit">계주에게 말한다</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── 끝 ───────────────────────────────────────────────── -->
+<section class="screen" id="screen-ending">
+  <div class="ending-wrap">
+    <div class="rank-card">
+      <div class="rank-grade" id="rank-grade"></div>
+      <div class="rank-title" id="rank-title"></div>
+      <div class="rank-score" id="rank-score"></div>
+      <p class="rank-line" id="rank-line"></p>
+    </div>
+    <div id="ending-marks"></div>
+    <div id="disposal" hidden>
+      <h2 class="solution-head">그 사람을 어떻게 하겠는가</h2>
+      <div id="disposal-list"></div>
+      <p id="disposal-line"></p>
+    </div>
+    <h2 class="solution-head">전모</h2>
+    <div id="solution-body"></div>
+    <div class="ending-btns">
+      <button class="btn btn-primary" id="btn-replay">처음부터 다시</button>
+    </div>
+  </div>
+</section>
+
+<!-- 막 알림 -->
+<div class="curtain" id="curtain" hidden>
+  <div class="curtain-box">
+    <div class="curtain-act" id="curtain-act"></div>
+    <h2 class="curtain-name" id="curtain-name"></h2>
+    <p class="curtain-open" id="curtain-open"></p>
+    <p class="curtain-goal" id="curtain-goal"></p>
+    <button class="btn btn-primary" id="btn-curtain-close">계속한다</button>
+  </div>
+</div>
+
+<!-- 증거 제시 -->
+<div class="modal" id="modal-evidence" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+  <div class="modal-box">
+    <h3 id="modal-title">무엇을 내놓겠습니까?</h3>
+    <div class="modal-list" id="modal-evidence-list"></div>
+    <button class="btn btn-ghost" id="btn-modal-close">닫기</button>
+  </div>
+</div>
+
+<!-- 말 물리기 -->
+<div class="modal" id="modal-quote" role="dialog" aria-modal="true" aria-labelledby="quote-title" hidden>
+  <div class="modal-box">
+    <h3 id="quote-title">누구의 말을 물려 놓겠습니까?</h3>
+    <div class="modal-list" id="modal-quote-list"></div>
+    <button class="btn btn-ghost" id="btn-quote-close">닫기</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="js/case.js"></script>
+<script src="js/sealed.js"></script>
+<script src="js/people.js"></script>
+<script src="js/state.js"></script>
+<script src="js/grid.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/investigate.js"></script>
+<script src="js/interrogate.js"></script>
+<script src="js/notes.js"></script>
+<script src="js/verdict.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
